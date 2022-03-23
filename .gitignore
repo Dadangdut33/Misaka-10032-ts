@@ -1,0 +1,5 @@
+*.env
+Notes/
+.vs/
+node_modules/
+/prod/
