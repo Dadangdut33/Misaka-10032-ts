@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { Feature } from "./Feature";
 import { Command } from "./Command";
-import { CommandEvent } from "./CommandEvent";
+import { BotEvent } from "./BotEvent";
 
 const Utils = require("../local_dependencies/Utils.js");
 const { prefix } = require(`../config.json`);
@@ -14,7 +14,7 @@ export class Handler {
 	features: Map<string, Feature>;
 	commands: Map<string, Command>;
 	aliases: Map<string, Command>;
-	commandEvents: Map<string, CommandEvent[]>;
+	commandEvents: Map<string, BotEvent[]>;
 	categories: string[];
 
 	/**
@@ -55,7 +55,7 @@ export class Handler {
 
 		/**
 		 * A map containing all the commandEvents, mapped by event name
-		 * @type {Map<string, CommandEvent[]>}
+		 * @type {Map<string, BotEvent[]>}
 		 */
 		this.commandEvents = new Map();
 
@@ -96,7 +96,7 @@ export class Handler {
 				}
 			}
 
-			if (Node.prototype instanceof CommandEvent) {
+			if (Node.prototype instanceof BotEvent) {
 				const loaded = Array.from(this.commandEvents.values()).some((events) => events.some((event) => event instanceof Node));
 
 				if (!loaded) {
@@ -157,7 +157,7 @@ export class Handler {
 	 * @description Load an event
 	 * @param {Event} event - The event that needs to be loaded
 	 */
-	loadEvent(event: CommandEvent) {
+	loadEvent(event: BotEvent) {
 		const events = this.commandEvents.get(event.eventName) || [];
 		events.push(event);
 

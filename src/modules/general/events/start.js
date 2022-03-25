@@ -1,4 +1,4 @@
-const { CommandEvent } = require("../../../handler");
+const { BotEvent } = require("../../../handler");
 const { prefix } = require("../../../config");
 const Moment = require("moment-timezone");
 // public
@@ -18,7 +18,7 @@ const welcomeMsg = require("./types/private/welcome-message");
 // slashes
 const slashCommands = require("./types/slash-commands/slasher");
 
-module.exports = class extends CommandEvent {
+module.exports = class extends BotEvent {
 	constructor() {
 		super("ready");
 	}

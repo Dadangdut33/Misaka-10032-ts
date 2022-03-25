@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 import { Toggleable } from "./Toggleable";
 
-export class CommandEvent extends Toggleable {
+export class BotEvent extends Toggleable {
 	eventName: string;
 
 	/**

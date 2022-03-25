@@ -1,11 +1,11 @@
 import { Command } from "./Command";
-import { CommandEvent } from "./CommandEvent";
+import { BotEvent } from "./BotEvent";
 import { Toggleable } from "./Toggleable";
 
 export class Feature extends Toggleable {
 	name: string;
 	commands: Command[];
-	commandEvents: CommandEvent[];
+	commandEvents: BotEvent[];
 
 	/**
 	 * @description Create a new Feature
@@ -45,7 +45,7 @@ export class Feature extends Toggleable {
 	 * @description Register a new event
 	 * @param {Event} event - The event that needs to be registered
 	 */
-	registerEvent(event: CommandEvent) {
+	registerEvent(event: BotEvent) {
 		this.commandEvents.push(event);
 	}
 
