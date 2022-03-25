@@ -262,7 +262,7 @@ module.exports = (client) => {
 		if (message.mentions.everyone) return;
 
 		// check if message mentions bot and it's not a command and also not from a bot
-		if (message.mentions.has(client.user) && !message.author.bot && !message.content.startsWith(prefix)) {
+		if (message.mentions.has(client.user) && !message.author.bot && !message.content.startsWith(prefix) && message.reference === null) {
 			// reply with hello and prefix
 			message.channel.send(`Hello there! My prefix is \`${prefix}\``);
 		}
