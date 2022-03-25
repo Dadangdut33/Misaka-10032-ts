@@ -2,10 +2,8 @@ import { Message } from "discord.js";
 import { Toggleable } from "./Toggleable";
 
 interface optionsInterface {
-	name: string;
 	aliases: string[];
 	categories: string;
-	description: string;
 	usage: string;
 	info: string;
 	guildOnly: boolean;

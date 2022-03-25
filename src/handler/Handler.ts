@@ -74,7 +74,7 @@ export class Handler {
 	load(directory: string, dependencies: object) {
 		// Find and require all JavaScript files
 		const nodes = Utils.readdirSyncRecursive(directory)
-			.filter((file: string) => file.endsWith(".js"))
+			.filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"))
 			.map(require);
 
 		// Load all Features
