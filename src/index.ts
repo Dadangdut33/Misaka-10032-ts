@@ -29,19 +29,19 @@ handler.load(path.join(__dirname, "./modules"), {
 });
 
 // Database
-// import mongoose from "mongoose";
+import mongoose from "mongoose";
 
-// mongoose
-// 	.connect(process.env["MONGODB_SRV"]! , { // ! is a non-null assertion operator
-// 		useNewUrlParser: true,
-// 		useUnifiedTopology: true,
-// 		useFindAndModify: false,
-// 	})
-// 	.then(() => {
-// 		console.log(`Connected to database!`);
-// 	})
-// 	.catch((err: any) => {
-// 		console.log(err);
-// 	});
+mongoose
+	.connect(process.env["MONGODB_SRV"]! , { // ! is a non-null assertion operator
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+		useFindAndModify: false,
+	})
+	.then(() => {
+		console.log(`Connected to database!`);
+	})
+	.catch((err: any) => {
+		console.log(err);
+	});
 
 client.login(process.env.TOKEN);
