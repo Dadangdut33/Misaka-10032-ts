@@ -1,5 +1,5 @@
-const { BotEvent } = require("../../../handler");
-const { prefix } = require("../../../config");
+const { BotEvent } = require("../../handler");
+const { prefix } = require("../../config.json");
 const Moment = require("moment-timezone");
 // public
 const activityRand = require("./types/public/bot-activity");

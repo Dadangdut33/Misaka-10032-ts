@@ -1,4 +1,4 @@
-const { insert_DB_One, find_DB_Return } = require("../../../../../local_dependencies/functions");
+const { insert_DB_One, find_DB_Return } = require("../../../../local_dependencies/functions");
 const { MessageEmbed } = require("discord.js");
 
 module.exports = (client, guild_ID, highlightChannel) => {
@@ -44,7 +44,11 @@ module.exports = (client, guild_ID, highlightChannel) => {
 
 				const embed = new MessageEmbed()
 					.setColor("YELLOW")
-					.setAuthor(msg.author.username, msg.author.displayAvatarURL({ format: "jpg", size: 2048 }), `https://discord.com/channels/${guild_ID}/${reaction.message.channel.id}/${reaction.message.id}`)
+					.setAuthor(
+						msg.author.username,
+						msg.author.displayAvatarURL({ format: "jpg", size: 2048 }),
+						`https://discord.com/channels/${guild_ID}/${reaction.message.channel.id}/${reaction.message.id}`
+					)
 					.setDescription(msg ? msg : "-")
 					.setImage(attachment)
 					.addField(`Source`, `[Jump](https://discord.com/channels/${guild_ID}/${reaction.message.channel.id}/${reaction.message.id})`)

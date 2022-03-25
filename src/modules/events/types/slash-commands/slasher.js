@@ -1,4 +1,4 @@
-const { prefix } = require("../../../../../config");
+const { prefix } = require("../../../../config.json");
 
 module.exports = (client) => {
 	// loop through all guilds
