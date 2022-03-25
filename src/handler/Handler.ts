@@ -1,12 +1,11 @@
-import { Client, MessageEmbed, Message } from "discord.js"
 import fs from "fs";
 import path from "path";
+import { Client, MessageEmbed, Message } from "discord.js"
 import { Feature } from "./Feature";
 import { Command } from "./Command";
 import { BotEvent } from "./BotEvent";
-
-const Utils = require("../local_dependencies/Utils.js");
-const { prefix } = require(`../config.json`);
+import { Utils } from "../local_dependencies/Utils"
+import { prefix } from "../config.json";
 
 export class Handler {
 	client: Client;

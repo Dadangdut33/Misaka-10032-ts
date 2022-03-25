@@ -1,16 +1,16 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
-class Utils {
+export class Utils {
 	/**
 	 * @description Read a directory recursively to get all files
 	 * @param {string} directory - The directory to read
 	 * @returns {Array<string>} All the paths to the files
 	 */
-	static readdirSyncRecursive(directory) {
-		let files = [];
+	static readdirSyncRecursive(directory: string) {
+		let files: string[] = [];
 
-		fs.readdirSync(directory).forEach((file) => {
+		fs.readdirSync(directory).forEach((file: string) => {
 			const location = path.join(directory, file);
 
 			// If the file is a directory read it recursively
@@ -29,12 +29,10 @@ class Utils {
 	 * @param {boolean} bool - The boolean to stringify.
 	 * @returns {string} Boolean as Yes or No, accordingly.
 	 */
-	static boolToString(bool) {
+	static boolToString(bool: boolean) {
 		if (typeof bool === "boolean") {
 			return bool ? "Yes" : "No";
 		}
 		return String(bool);
 	}
 }
-
-module.exports = Utils;
