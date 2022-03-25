@@ -1,20 +1,28 @@
-const { Client, MessageEmbed } = require("discord.js");
-const Feature = require("./Feature.js");
-const Command = require("./Command.js");
-const Event = require("./Event.js");
-const Utils = require("../local_dependencies/Utils.js");
-const fs = require("fs");
-const { prefix } = require(`../config.json`);
-const Moment = require("moment-timezone");
-const path = require("path");
+import { Client, MessageEmbed, Message } from "discord.js"
+import fs from "fs";
+import path from "path";
+import { Feature } from "./Feature";
+import { Command } from "./Command";
+import { CommandEvent } from "./CommandEvent";
 
-class Handler {
+const Utils = require("../local_dependencies/Utils.js");
+const { prefix } = require(`../config.json`);
+
+export class Handler {
+	client: Client;
+	prefix: string;
+	features: Map<string, Feature>;
+	commands: Map<string, Command>;
+	aliases: Map<string, Command>;
+	commandEvents: Map<string, CommandEvent[]>;
+	categories: string[];
+
 	/**
 	 * @description Create a new handler instance
 	 * @param {Client} client - The discord.js client
 	 * @param {string} prefix - The prefix of the bot
 	 */
-	constructor(client) {
+	constructor(client: Client) {
 		/**
 		 * The discord.js client
 		 * @type {Client}
@@ -46,10 +54,10 @@ class Handler {
 		this.aliases = new Map();
 
 		/**
-		 * A map containing all the events, mapped by event name
-		 * @type {Map<string, Array<Event>>}
+		 * A map containing all the commandEvents, mapped by event name
+		 * @type {Map<string, CommandEvent[]>}
 		 */
-		this.events = new Map();
+		this.commandEvents = new Map();
 
 		/**
 		 * A map containing commands categories
@@ -64,25 +72,23 @@ class Handler {
 	 * @param {object} dependencies - The dependencies of the modules
 	 * @returns {undefined}
 	 */
-	load(directory, dependencies) {
-		this.directory = directory;
-		this.dependencies = dependencies;
-
+	load(directory: string, dependencies: object) {
 		// Find and require all JavaScript files
 		const nodes = Utils.readdirSyncRecursive(directory)
-			.filter((file) => file.endsWith(".js"))
+			.filter((file: string) => file.endsWith(".js"))
 			.map(require);
 
 		// Load all Features
-		nodes.forEach((Node) => {
+		nodes.forEach((Node: any) => {
 			if (Node.prototype instanceof Feature) {
 				this.loadFeature(new Node(dependencies));
 			}
 		});
 
 		// Load all Command and Event classes that haven't loaded yet
-		nodes.forEach((Node) => {
+		nodes.forEach((Node: any) => {
 			if (Node.prototype instanceof Command) {
+
 				const loaded = Array.from(this.commands.values()).some((command) => command instanceof Node);
 
 				if (!loaded) {
@@ -90,8 +96,8 @@ class Handler {
 				}
 			}
 
-			if (Node.prototype instanceof Event) {
-				const loaded = Array.from(this.events.values()).some((events) => events.some((event) => event instanceof Node));
+			if (Node.prototype instanceof CommandEvent) {
+				const loaded = Array.from(this.commandEvents.values()).some((events) => events.some((event) => event instanceof Node));
 
 				if (!loaded) {
 					this.loadEvent(new Node(dependencies));
@@ -107,7 +113,7 @@ class Handler {
 	 * @description Load a feature and it's commands
 	 * @param {Feature} feature - The feature that needs to be loaded
 	 */
-	loadFeature(feature) {
+	loadFeature(feature: Feature) {
 		if (this.features.has(feature.name)) {
 			throw new Error(`Can't load Feature, the name '${feature.name}' is already used`);
 		}
@@ -118,7 +124,7 @@ class Handler {
 			this.loadCommand(command);
 		});
 
-		feature.events.forEach((event) => {
+		feature.commandEvents.forEach((event) => {
 			this.loadEvent(event);
 		});
 	}
@@ -127,7 +133,7 @@ class Handler {
 	 * @description Load a command
 	 * @param {Command} command - The command that needs to be loaded
 	 */
-	loadCommand(command) {
+	loadCommand(command: Command) {
 		// Command name might be in use or name might already be an existing alias
 		if (this.commands.has(command.name) || this.aliases.has(command.name)) {
 			throw new Error(`Can't load command, the name '${command.name}' is already used as a command name or alias`);
@@ -151,11 +157,11 @@ class Handler {
 	 * @description Load an event
 	 * @param {Event} event - The event that needs to be loaded
 	 */
-	loadEvent(event) {
-		const events = this.events.get(event.eventName) || [];
+	loadEvent(event: CommandEvent) {
+		const events = this.commandEvents.get(event.eventName) || [];
 		events.push(event);
 
-		this.events.set(event.eventName, events);
+		this.commandEvents.set(event.eventName, events);
 	}
 
 	/**
@@ -163,7 +169,7 @@ class Handler {
 	 */
 	register() {
 		// Handle events
-		for (const [name, handlers] of this.events) {
+		for (const [name, handlers] of this.commandEvents) {
 			this.client.on(name, (...params) => {
 				for (const handler of handlers) {
 					// Run event if enabled
@@ -179,7 +185,7 @@ class Handler {
 		}
 
 		// Handle commands
-		this.client.on("message", async (message) => {
+		this.client.on("message", async (message: Message) => {
 			if (message.author.bot || !message.content.startsWith(this.prefix)) {
 				return;
 			}
@@ -215,5 +221,3 @@ class Handler {
 		});
 	}
 }
-
-module.exports = Handler;

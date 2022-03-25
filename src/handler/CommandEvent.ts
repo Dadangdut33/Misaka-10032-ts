@@ -1,11 +1,14 @@
-const Toggleable = require("./Toggleable.js");
+import { Client } from "discord.js";
+import { Toggleable } from "./Toggleable";
 
-class Event extends Toggleable {
+export class CommandEvent extends Toggleable {
+	eventName: string;
+
 	/**
 	 * @description Create a new event
 	 * @param {string} eventName - The name of the event
 	 */
-	constructor(eventName) {
+	constructor(eventName: string) {
 		super();
 
 		this.eventName = eventName;
@@ -14,9 +17,7 @@ class Event extends Toggleable {
 	/**
 	 * @description Method that runs when the event is fired
 	 */
-	run() {
+	run(client: Client, ...args: any[]) {
 		throw new Error("Event is missing run method");
 	}
 }
-
-module.exports = Event;

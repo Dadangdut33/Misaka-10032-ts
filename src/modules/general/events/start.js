@@ -1,4 +1,4 @@
-const { Event } = require("../../../handler");
+const { CommandEvent } = require("../../../handler");
 const { prefix } = require("../../../config");
 const Moment = require("moment-timezone");
 // public
@@ -18,14 +18,13 @@ const welcomeMsg = require("./types/private/welcome-message");
 // slashes
 const slashCommands = require("./types/slash-commands/slasher");
 
-module.exports = class extends Event {
+module.exports = class extends CommandEvent {
 	constructor() {
 		super("ready");
 	}
 
 	run(client) {
 		//Log Table to Console and login to console
-		// table("notable");
 		// prettier-ignore
 		console.log(
 			`Logged in as ${client.user.tag} at ${Moment(client.readyAt).tz("Asia/Jakarta").format("dddd DD MMMM YYYY HH:mm:ss")}\nManaging ${client.guilds.cache.size} Guilds, ${client.channels.cache.size} Channels, and ${client.users.cache.size} Members`

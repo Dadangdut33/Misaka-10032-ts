@@ -9,12 +9,6 @@ A Personal discord bot i made. I use it for my private discord server. **Rewrite
 </details>
 
 ---
-
-## How to start the bot
-First install all the packages by doing `npm install`
-
-Then run the bot by doing `npm start`.
-
 ## Some info
 The bot is currently still in proggress of rewrite in typescript and still using discord.js v12. After rewrite in typescript is done, i will try to use discord.js v13.
 
@@ -34,6 +28,10 @@ If you want to clone it and use it for your server, you gonna have to change som
      3. You can also change [this meme responses](https://img-comment-fun.9cache.com/media/aOv2bpN/axNG6q5j_700w_0.jpg). That are located in [meme-response.js](https://github.com/Dadangdut33/Misaka-10032/blob/main/modules/general/events/types/public/random-response/meme-response.js)
      4. You can change or disable some of the events listeners in [start.js](https://github.com/Dadangdut33/Misaka-10032/blob/main/modules/general/events/start.js). 
      
+## How to start the bot
+First install all the packages by doing `npm install`
+
+Then run the bot by doing `npm start`.
 ## Questions?
 Feel free to ask me in discussions if you have any questions
 

@@ -1,18 +1,18 @@
-const Command = require("./Command.js");
-const Event = require("./Event.js");
-const Toggleable = require("./Toggleable.js");
+import { Command } from "./Command";
+import { CommandEvent } from "./CommandEvent";
+import { Toggleable } from "./Toggleable";
 
-class Feature extends Toggleable {
+export class Feature extends Toggleable {
+	name: string;
+	commands: Command[];
+	commandEvents: CommandEvent[];
+
 	/**
 	 * @description Create a new Feature
 	 * @param {string} name - The name of this Feature
 	 */
-	constructor(name) {
+	constructor(name: string) {
 		super();
-
-		if (typeof name !== "string") {
-			throw new TypeError("Feature name must be a string");
-		}
 
 		/**
 		 * The name of this feature
@@ -30,18 +30,14 @@ class Feature extends Toggleable {
 		 * All events that belong to this Feature
 		 * @type {Array<Event>}
 		 */
-		this.events = [];
+		this.commandEvents = [];
 	}
 
 	/**
 	 * @description Register a new command
 	 * @param {Command} command - The command that needs to be registered
 	 */
-	registerCommand(command) {
-		if (!(command instanceof Command)) {
-			throw new TypeError("Can't register command, it does not extend Command");
-		}
-
+	registerCommand(command: Command) {
 		this.commands.push(command);
 	}
 
@@ -49,12 +45,8 @@ class Feature extends Toggleable {
 	 * @description Register a new event
 	 * @param {Event} event - The event that needs to be registered
 	 */
-	registerEvent(event) {
-		if (!(event instanceof Event)) {
-			throw new TypeError("Can't register event, it does not extend Event");
-		}
-
-		this.events.push(event);
+	registerEvent(event: CommandEvent) {
+		this.commandEvents.push(event);
 	}
 
 	/**
@@ -79,7 +71,7 @@ class Feature extends Toggleable {
 		super.enable();
 
 		this.commands.forEach((command) => command.enable());
-		this.events.forEach((event) => event.enable());
+		this.commandEvents.forEach((event) => event.enable());
 	}
 
 	/**
@@ -91,8 +83,6 @@ class Feature extends Toggleable {
 		super.disable();
 
 		this.commands.forEach((command) => command.disable());
-		this.events.forEach((event) => event.disable());
+		this.commandEvents.forEach((event) => event.disable());
 	}
 }
-
-module.exports = Feature;

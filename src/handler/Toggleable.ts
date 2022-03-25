@@ -1,4 +1,6 @@
-class Toggleable {
+export class Toggleable {
+	isEnabled: boolean;
+
 	constructor() {
 		this.isEnabled = true;
 	}
@@ -24,4 +26,3 @@ class Toggleable {
 		this.isEnabled = false;
 	}
 }
-module.exports = Toggleable;
