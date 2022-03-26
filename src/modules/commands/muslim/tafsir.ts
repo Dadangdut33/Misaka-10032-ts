@@ -1,7 +1,7 @@
-const { MessageEmbed } = require("discord.js");
-const { Command } = require("../../../../handler");
-const { prefix } = require("../../../../config");
-const { paginationEmbed } = require("../../../../local_dependencies/functions.js");
+import { MessageEmbed, Message } from "discord.js";
+import { Command } from "../../../handler";
+import { prefix } from "../../../config.json";
+import { paginationEmbed } from "../../../local_dependencies/functions.js";
 
 module.exports = class extends Command {
 	constructor() {
@@ -9,13 +9,13 @@ module.exports = class extends Command {
 			aliases: [],
 			categories: "muslim",
 			info: `Online tafsir using [Sutanlab API](https://github.com/sutanlab/quran-api).\n\n Tafsir hanya bisa untuk per ayat karena satu tafsir saja panjang sekali dan tidak cukup untuk diletakkan di embed discord.`,
-			usage: `${prefix}command/alias <nomor surat> <ayat>`,
+			usage: `\`${prefix}command/alias <nomor surat> <ayat>\``,
 			guildOnly: true,
 		});
 	}
 
-	async run(message, args) {
-		if (!args[0] || isNaN(args[0]) || isNaN(args[1])) {
+	async run(message: Message, args: string[]) {
+		if (!args[0] || isNaN(parseInt(args[0])) || isNaN(parseInt(args[1]))) {
 			info();
 			return;
 		}
@@ -56,7 +56,7 @@ module.exports = class extends Command {
 			end += 2048;
 		}
 
-		paginationEmbed(message, pages, "", 600000);
+		paginationEmbed(message, pages, [], 600000);
 
 		function info() {
 			let embed = new MessageEmbed()
@@ -67,7 +67,7 @@ module.exports = class extends Command {
 			return message.channel.send(embed);
 		}
 
-		function descEmbed(parsedData, tafsir) {
+		function descEmbed(parsedData: any, tafsir: string) {
 			let embed = new MessageEmbed()
 				.setTitle(`Q.S. ${parsedData.data.surah.name.transliteration.id}:${parsedData.data.surah.number} (${parsedData.data.number.inSurah}) ${parsedData.data.surah.name.short}`)
 				.setDescription(tafsir);

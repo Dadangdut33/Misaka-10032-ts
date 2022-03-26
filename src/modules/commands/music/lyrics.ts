@@ -10,7 +10,7 @@ module.exports = class extends Command {
 			aliases: ["ly"],
 			categories: "music",
 			info: "Get lyrics of song. Source from genius.com",
-			usage: `${prefix}lyrics <song name> or ${prefix}alias <song name>`,
+			usage: `\`${prefix}lyrics <song name> or ${prefix}alias <song name>\``,
 			guildOnly: false,
 		});
 	}
