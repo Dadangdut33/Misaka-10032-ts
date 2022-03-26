@@ -1,6 +1,6 @@
-const { stripIndents } = require("common-tags");
-const { prefix } = require("../../../../config");
-const { Command } = require("../../../../handler");
+import { Message } from "discord.js";
+import { prefix } from "../../../config.json";
+import { Command } from "../../../handler";
 
 module.exports = class extends Command {
 	constructor() {
@@ -8,12 +8,12 @@ module.exports = class extends Command {
 			aliases: ["p"],
 			categories: "info-bot",
 			info: "Get the ping of the bot",
-			usage: `${prefix}ping or ${prefix}alias`,
+			usage: `\`${prefix}ping or ${prefix}alias\``,
 			guildOnly: false,
 		});
 	}
 
-	async run(message) {
+	async run(message: Message) {
 		const msg = await message.channel.send("🏓 Pinging...");
 		const ping = Math.round(msg.createdTimestamp - message.createdTimestamp);
 
@@ -21,6 +21,6 @@ module.exports = class extends Command {
 			return msg.edit("Please try again...");
 		}
 
-		return msg.edit(`🏓 Pong\n>>> Latency is ${Math.floor(msg.createdAt - message.createdAt)}ms\nAPI Latency is ${Math.round(message.client.ws.ping)}ms`);
+		return msg.edit(`🏓 Pong\n>>> Latency is ${Math.floor(msg.createdAt.getTime() - message.createdAt.getTime())}ms\nAPI Latency is ${Math.round(message.client.ws.ping)}ms`);
 	}
 };

@@ -1,7 +1,7 @@
 import prettyMilliseconds from "pretty-ms";
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../../handler";
-import { prefix, build, Repo_Link } from "../../../../config.json";
+import { Command } from "../../../handler";
+import { prefix, build, Repo_Link } from "../../../config.json";
 
 module.exports = class extends Command {
 	constructor() {
@@ -9,7 +9,7 @@ module.exports = class extends Command {
 			categories: "info-bot",
 			aliases: ["No alias is set for this command"],
 			info: "Shows what the bot is about. This include the bot's status & description",
-			usage: `${prefix}about`,
+			usage: `\`${prefix}about\``,
 			guildOnly: true,
 		});
 	}
@@ -18,7 +18,9 @@ module.exports = class extends Command {
 			.setTitle("Hello there!")
 			.setColor("YELLOW")
 			.setThumbnail(message.client!.user!.displayAvatarURL())
-			.setDescription(`My name is **Misaka 10032** *says Misaka, trying to explain herself* jk...\n\nCreated by Dadangdut33 **for private use only**.\n\n**[Click here to see my source code](${Repo_Link})** \n*The bot is currently being rewritten in typescript`)
+			.setDescription(
+				`My name is **Misaka 10032** *says Misaka, trying to explain herself* jk...\n\nCreated by Dadangdut33 **for private use only**.\n\n**[Click here to see my source code](${Repo_Link})** \n*The bot is currently being rewritten in typescript`
+			)
 			.addField("TOTAL SERVERS/\nCHANNELS", `${message.client.guilds.cache.size}/${message.client.channels.cache.size}`, true)
 			.addField("TOTAL MEMBERS", message.client.users.cache.size, true)
 			.addField("PRESENCE", message.client!.user!.presence.activities[0] ? message.client!.user!.presence.activities[0].name : `No presence set`, true)
