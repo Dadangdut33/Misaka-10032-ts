@@ -1,12 +1,22 @@
 const { insert_DB_One, find_DB_Return } = require("../../../../local_dependencies/functions");
 const { MessageEmbed } = require("discord.js");
 
-module.exports = (client, guild_ID, hallOfFame) => {
+module.exports = (client, guild_ID, channelToWatch = [], hallOfFame) => {
 	const guild = client.guilds.cache.get(guild_ID);
 	if (!guild) return console.log("Invalid guild for message spotlight");
 
 	// get channel by id
 	const channel = guild.channels.cache.get(hallOfFame);
+
+	// listener for a channel message
+	client.on("message", async (message) => {
+		if (message.author.bot) return;
+		if (!channelToWatch.includes(message.channel.id)) return;
+
+		// add a reaction to the message
+		message.react("👍");
+		message.react("👎");
+	});
 
 	client.on("messageReactionAdd", async (reaction, user) => {
 		try {
@@ -16,6 +26,9 @@ module.exports = (client, guild_ID, hallOfFame) => {
 
 			// make sure it is in the same guild
 			if (reaction.message.guild.id !== guild.id) return;
+
+			// make sure it is in the channel
+			if (!channelToWatch.includes(reaction.message.channel.id)) return;
 
 			// make sure user is admin
 			if (!msg.member.hasPermission("ADMINISTRATOR")) return;
@@ -70,7 +83,7 @@ module.exports = (client, guild_ID, hallOfFame) => {
 			if (extraEmbedSend) return; // extra embed already send
 
 			// last check through the embeded content in message
-			if (msg.embeds[0].type === "video") channel.send(msg.embeds[0].url);
+			if (msg.embeds[0]) if (msg.embeds[0].type === "video") channel.send(msg.embeds[0].url);
 		} catch (e) {
 			console.log(e);
 			channel.send(`**Error**\n${e}`);
