@@ -5,7 +5,8 @@
   "main": "./src/index.ts",
   "scripts": {
     "build": "tsc",
-    "build_n_run": "rimraf prod && tsc && node prod/index.js",
+    "build-run": "rimraf prod && tsc && node prod/index.js",
+    "start-build": "node prod/index.js",
     "start": "ts-node src/index.ts"
   },
   "license": "MIT",

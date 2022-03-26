@@ -28,9 +28,9 @@ If you want to clone it and use it for your server, you gonna have to change som
      4. You can change or disable some of the events listeners in [start.js](https://github.com/Dadangdut33/Misaka-10032/blob/main/modules/general/events/start.js). 
      
 ## How to start the bot
-First install all the packages by doing `npm install`
+First install all the packages by doing `npm install` Then run the bot by doing `npm start`.
+Alternatively, you can build/compile the bot to js by doing `npm run build`. You can also start the builded version by doing `npm run start-build`. Or you can build and run the file directly by running `npm run build-run`.
 
-Then run the bot by doing `npm start`.
 ## Questions?
 Feel free to ask me in discussions if you have any questions
 
