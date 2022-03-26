@@ -59,7 +59,7 @@ module.exports = class extends BotEvent {
 			vc_label_id = "798031042954919957",
 			channel_Spotlight_id = "935898723735728148",
 			oleGuildID = "913987561922396190",
-			ole_meme_channel_id = ["921456103722721303", "921456103722721303"],
+			ole_meme_channel_id = ["921456103722721303", "955132878939897976"],
 			ole_hall_of_fame = "955133343094165594",
 			ole_welcome_msg = "913987561922396193";
 
