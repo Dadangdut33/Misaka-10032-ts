@@ -6,7 +6,7 @@ const owoify = require("owoify-js").default;
 module.exports = class extends Command {
 	constructor() {
 		super("owo", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: '*"owoifys"* sentence(s) using [owoify-js](https://www.npmjs.com/package/owoify-js)',
 			usage: `${prefix}command/alias <text>`,

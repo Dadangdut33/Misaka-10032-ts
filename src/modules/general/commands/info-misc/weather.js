@@ -7,7 +7,7 @@ const Moment = require("moment-timezone");
 module.exports = class extends Command {
 	constructor() {
 		super("weather", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "info-misc",
 			info: "Gives weather information of given location",
 			usage: `${prefix}weather <location>`,

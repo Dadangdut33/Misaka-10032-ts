@@ -6,7 +6,7 @@ module.exports = class extends Command {
 	constructor() {
 		super("choose", {
 			categories: "fun",
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			info: "Help the bot choose for you.",
 			usage: `${prefix}choose [[option 1]] [[option 2]] ... [[option x]]\`\`\`**Or**\`\`\`css\n${prefix}choose [arguments] [[option 1]] [[option 2]] ... [[option x]]\`\`\`\`\`\`-> Notice the []`,
 			guildOnly: false,

@@ -12,7 +12,7 @@ module.exports = class extends Command {
 	constructor() {
 		super("airing", {
 			categories: "anime",
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			info: "Get current season's airing information using the [currently-airing-anime npm](https://github.com/ricklancee/currently-airing-anime)",
 			usage: `${prefix}command`,
 			guildOnly: true,

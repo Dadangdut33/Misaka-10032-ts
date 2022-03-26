@@ -8,7 +8,7 @@ module.exports = class extends Command {
 	constructor() {
 		super("rps", {
 			categories: "fun",
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			info: "Rock Paper Scissors game. React to one of the emojis to play the game",
 			usage: `${prefix}rps`,
 			guildOnly: true,

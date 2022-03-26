@@ -5,7 +5,7 @@ const { prefix } = require("../../../../config");
 module.exports = class extends Command {
 	constructor() {
 		super("qr", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "tool",
 			info: "Convert text (Can be link or just plain text) to QR code",
 			usage: `${prefix}command/alias <link/text>`,

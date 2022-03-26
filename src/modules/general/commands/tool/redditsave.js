@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 module.exports = class extends Command {
 	constructor() {
 		super("redditsave", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "tool",
 			info: "Get media download links of a reddit post using webscraper and [redditsave](https://redditsave.com/)",
 			usage: `${prefix}command/alias <post link>`,

@@ -7,7 +7,7 @@ module.exports = class extends Command {
 	constructor() {
 		super("wallpaper", {
 			categories: "anime-misc",
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			info: "Post random anime wallpaper fetched from [Nekos.life API](https://nekos.life/)",
 			usage: `${prefix}command`,
 			guildOnly: false,

@@ -6,7 +6,7 @@ const { paginationEmbed } = require("../../../../local_dependencies/functions.js
 module.exports = class extends Command {
 	constructor() {
 		super("tafsir", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "muslim",
 			info: `Online tafsir using [Sutanlab API](https://github.com/sutanlab/quran-api).\n\n Tafsir hanya bisa untuk per ayat karena satu tafsir saja panjang sekali dan tidak cukup untuk diletakkan di embed discord.`,
 			usage: `${prefix}command/alias <nomor surat> <ayat>`,

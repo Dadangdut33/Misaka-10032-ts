@@ -6,7 +6,7 @@ var zalgo = require("to-zalgo");
 module.exports = class extends Command {
 	constructor() {
 		super("zalgo", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: "**z̵̭͕̖̹͙̦̠̋̑͂̂͜ͅa̴̤̖̲̣̗̗̖̠͍͉̞̳̣̥͌́ͅl̷̮̱̤̀́͐̕g̵̡̘̞̞̰͉̹̙̮̮̳̠͕̓̀̑̆ǫ̷̼̪̰̘̥̻̝̾͋́̂͆́̚͘ȋ̴̻͈͈̹͈̮͆̾͂͝f̶̛̘̮͉͎̏̈́̌̒ŷ̸̧̡̢̧̯̟̬͎̦̩̻͍͂̑͋̈́̌̈͛͒̐̏̈́̄͌̑** letter(s) using [to-zalgo](https://www.npmjs.com/package/to-zalgo)",
 			usage: `${prefix}command/alias <text>`,

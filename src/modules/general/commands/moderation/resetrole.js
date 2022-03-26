@@ -4,7 +4,7 @@ const { Command } = require("../../../../handler");
 module.exports = class extends Command {
 	constructor() {
 		super("resetrole", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "moderation",
 			info: "Reset roles, only usable by admin and mods",
 			usage: `${prefix}command/alias <tagged roles>`,
@@ -13,7 +13,7 @@ module.exports = class extends Command {
 	}
 
 	async run(message, args) {
-		if (!message.member.hasPermission("MANAGE_MESSAGES")) {
+		if (!message.member.hasPermission("ADMINISTRATOR")) {
 			return message.channel.send("You don't have the required permissions to use this command.").then((msg) =>
 				msg.delete({
 					timeout: 5000,

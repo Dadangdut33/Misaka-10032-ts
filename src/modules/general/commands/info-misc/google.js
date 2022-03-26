@@ -6,7 +6,7 @@ const sec = require("search-scraper");
 module.exports = class extends Command {
 	constructor() {
 		super("google", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "info-misc",
 			info: "Search for stuff on google and return the results as link",
 			usage: `${prefix}command/alias <...>`,

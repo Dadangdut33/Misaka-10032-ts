@@ -6,7 +6,7 @@ var banish = require("to-zalgo/banish");
 module.exports = class extends Command {
 	constructor() {
 		super("banish", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: "Normalize **ẑ̴̧̳̯̔̒ā̶̟͖̗̤̙̿̉̎͛͋̆͂͝͝l̶̡̠̞̫̣̪̮̯̤̙͂̀͝͝ͅģ̵̡̨͚͚̤̦̪͕͓̞̖͖̄̏̏́̊̃̆͜o̴̡̧͎̻͈͓̞̮̩̎͆̓̉͒̽̎̿̐̋̊͆̈͠ͅě̷͔̠d̶̡̨̮̮̮̳̙͚̙͕͙̥̔̇̊̍̇** letter(s) using [to-zalgo](https://www.npmjs.com/package/to-zalgo)",
 			usage: `${prefix}command/alias <text>`,

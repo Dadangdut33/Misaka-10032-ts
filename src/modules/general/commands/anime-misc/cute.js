@@ -7,7 +7,7 @@ module.exports = class extends Command {
 	constructor() {
 		super("cute", {
 			categories: "anime-misc",
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			info: "Sends cute anime girls from reddit",
 			usage: `${prefix}cute`,
 			guildOnly: false,

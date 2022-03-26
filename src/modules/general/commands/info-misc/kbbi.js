@@ -8,7 +8,7 @@ const axios = require("axios");
 module.exports = class extends Command {
 	constructor() {
 		super("kbbi", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "info-misc",
 			info: "Mencari definisi kata dari [KBBI](https://kbbi.web.id/)",
 			usage: `${prefix}command/alias <...>`,

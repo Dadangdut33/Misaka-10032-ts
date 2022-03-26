@@ -6,7 +6,7 @@ const tinytext = require("tiny-text");
 module.exports = class extends Command {
 	constructor() {
 		super("small", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: "`ˢᵐᵃᶫᶫᶦᶠʸˢ` ᵃ ˢᵉᶰᵗᵉᶰᶜᵉ ᵘˢᶦᶰᵍ [tiny-text](https://www.npmjs.com/package/tiny-text)",
 			usage: `${prefix}command/alias <text>`,

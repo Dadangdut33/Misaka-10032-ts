@@ -6,7 +6,7 @@ const figlet = require("figlet");
 module.exports = class extends Command {
 	constructor() {
 		super("ascii", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: "Convert text to ASCII art using [Figlet](https://www.npmjs.com/package/figlet)",
 			usage: `${prefix}command/alias <text>`,

@@ -5,7 +5,7 @@ const { prefix } = require("../../../../config");
 module.exports = class extends Command {
 	constructor() {
 		super("rng", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "tool",
 			info: "Generate random number",
 			usage: `${prefix}command/alias <min range> <max range>`,
@@ -15,7 +15,9 @@ module.exports = class extends Command {
 
 	async run(message, args) {
 		if (!args[0] || !args[1] || isNaN(args[0]) || isNaN(args[1])) {
-			let embed = new MessageEmbed().setDescription(`Invalid format. For more info please check using the help command. Example should be like this :arrow_down:\`\`\`css\n${prefix}rng 0 10\`\`\``);
+			let embed = new MessageEmbed().setDescription(
+				`Invalid format. For more info please check using the help command. Example should be like this :arrow_down:\`\`\`css\n${prefix}rng 0 10\`\`\``
+			);
 
 			message.channel.send(embed);
 		} else {

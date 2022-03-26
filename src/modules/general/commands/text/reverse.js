@@ -6,7 +6,7 @@ const { reverseString } = require("../../../../local_dependencies/functions");
 module.exports = class extends Command {
 	constructor() {
 		super("reverse", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: '*"esrever"* a sentence',
 			usage: `${prefix}command/alias <text>`,

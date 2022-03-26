@@ -7,7 +7,7 @@ import { Command } from "../../../handler";
 module.exports = class extends Command {
 	constructor() {
 		super("uptime", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "info-bot",
 			info: "Get info of bot's uptime",
 			usage: `\`${prefix}uptime\``,

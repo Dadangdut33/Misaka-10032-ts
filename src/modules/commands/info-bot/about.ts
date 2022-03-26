@@ -7,7 +7,7 @@ module.exports = class extends Command {
 	constructor() {
 		super("about", {
 			categories: "info-bot",
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			info: "Shows what the bot is about. This include the bot's status & description",
 			usage: `\`${prefix}about\``,
 			guildOnly: true,

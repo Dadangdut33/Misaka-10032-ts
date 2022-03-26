@@ -133,13 +133,13 @@ export class Handler {
 
 		command.aliases.forEach((alias) => {
 			// Alias might already be a command or might already be in use
-			if (this.aliases.has("No alias is set for this command") == true) {
-				//Do nothing don't throw error
-			} else if (this.commands.has(alias) || this.aliases.has(alias)) {
-				throw new Error(`Can't load command, the alias '${alias}' is already used as a command name or alias`);
-			}
+			// if (this.commands.has(alias) || this.aliases.has(alias)) {
+			// 	throw new Error(`Can't load command, the alias '${alias}' is already used as a command name or alias`);
+			// }
 
-			this.aliases.set(alias, command);
+			if (alias.length > 0) {
+				this.aliases.set(alias, command);
+			}
 		});
 	}
 

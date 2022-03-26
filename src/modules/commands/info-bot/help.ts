@@ -100,7 +100,7 @@ module.exports = class extends Command {
 				)
 				.setThumbnail("https://cdn.discordapp.com/attachments/653206818759376916/740451618344009800/unknown.png")
 				.addField(`Command Name`, `${command.name}`, true)
-				.addField(`Aliases`, `${command.aliases.join(", ")}`, true)
+				.addField(`Aliases`, `${command.aliases.length > 0 ? command.aliases.join(", ") : "-"}`, true)
 				.addField(`Category`, `${command.categories}`, true)
 				.addField(`Guild Only`, `${command.guildOnly}`, false)
 				.addField(`Description`, `${command.info}`)

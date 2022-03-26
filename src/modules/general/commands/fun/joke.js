@@ -7,7 +7,7 @@ module.exports = class extends Command {
 	constructor() {
 		super("joke", {
 			categories: "fun",
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			info: "Gives you random joke using [duncte123 API](https://docs.duncte123.com/)",
 			usage: `${prefix}joke`,
 			guildOnly: false,

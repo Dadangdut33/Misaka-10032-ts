@@ -6,7 +6,7 @@ const { fancy } = require("../../../../local_dependencies/fancyfies");
 module.exports = class extends Command {
 	constructor() {
 		super("fancybold", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: '*"𝒻𝒶𝓃𝒸𝓎"* letter(s) but in **𝒷𝑜𝓁𝒹**',
 			usage: `${prefix}command/alias <text>`,

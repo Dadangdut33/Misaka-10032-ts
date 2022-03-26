@@ -5,7 +5,7 @@ module.exports = class extends Command {
 	constructor() {
 		super("8ball", {
 			categories: "fun",
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			info: "*The Magic 8 Ball is a toy used for fortune-telling or seeking advice* or at least that's what it's supposed to do, so yeah.",
 			usage: `${prefix}8ball [...]`,
 			guildOnly: false,

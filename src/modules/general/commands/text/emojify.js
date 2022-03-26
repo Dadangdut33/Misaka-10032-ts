@@ -7,7 +7,7 @@ var splitter = new GraphemeSplitter();
 module.exports = class extends Command {
 	constructor() {
 		super("emojify", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: ":regional_indicator_e: :regional_indicator_m: :regional_indicator_o: :regional_indicator_j: :regional_indicator_i: :regional_indicator_f: :regional_indicator_y: letter(s)",
 			usage: `${prefix}command/alias <text>`,

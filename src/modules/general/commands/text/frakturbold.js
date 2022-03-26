@@ -6,7 +6,7 @@ var fraktur = require("fraktur");
 module.exports = class extends Command {
 	constructor() {
 		super("frakturbold", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "text",
 			info: '*"𝔣𝔯𝔞𝔨𝔱𝔲𝔯"* letter(s) but in **𝔟𝔬𝔩𝔡** using [fraktur](https://www.npmjs.com/package/fraktur/v/1.1.0)',
 			usage: `${prefix}command/alias <text>`,

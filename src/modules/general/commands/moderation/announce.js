@@ -5,7 +5,7 @@ const { Command } = require("../../../../handler");
 module.exports = class extends Command {
 	constructor() {
 		super("announce", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "moderation",
 			info: "Announce stuff but with more feature using embed. Only usable by admin and mods. Leave the not desired optional empty but don't erase the quote",
 			usage: `${prefix}announce \"title with quotes\" \"description with quotes\" \"image URL with quotes\" \"field title with quotes)\" \"field content with quotes\"\`\`\`**Notes**\`\`\`css\nImage URL is optional leave it as empty quotes if not used\`\`\`\`\`\`css\nField title is optional but field value is a must -> IF you insert field title\`\`\`\`\`\`css\nYou can subtitute quotes by using single quotes inside the announcement`,

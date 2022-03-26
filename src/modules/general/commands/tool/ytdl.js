@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 module.exports = class extends Command {
 	constructor() {
 		super("ytdl", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "tool",
 			info: "Get download links of mp3/mp4 files of a yt link via [yt-download.org](https://www.yt2mp3.ws/developers/)",
 			usage: `${prefix}command/alias <video link>`,

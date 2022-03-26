@@ -6,7 +6,7 @@ const pollEmbed = require("discord.js-poll-embed");
 module.exports = class extends Command {
 	constructor() {
 		super("poll", {
-			aliases: ["No alis is set for this command"],
+			aliases: [],
 			categories: "tool",
 			info: "Create poll. Please not that it's not recommended to create a long poll because the bot is not hosted in a legit way so it's not always on 24/7 which means the collector won't work after reset. You can still see the poll results based on the emojis tho xD\n\n**Tips**\n1 hour = 3600 seconds\n\n**Poll limit is 10 options**",
 			usage: `${prefix}command <timeout> <[title]> <[options 1]> <[options 2]> ... <[options x]>\`\`\`**Notes**\`\`\`Notice the -> []. If you want the poll to have infinite time, input 0 in timeout`,

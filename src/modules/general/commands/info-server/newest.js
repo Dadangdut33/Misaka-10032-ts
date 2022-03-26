@@ -7,7 +7,7 @@ const prettyMS = require("pretty-ms");
 module.exports = class extends Command {
 	constructor() {
 		super("newest", {
-			aliases: ["No alias is set for this command"],
+			aliases: [],
 			categories: "info-server",
 			info: "List the newest member (Max 25)",
 			usage: `${prefix}command`,
