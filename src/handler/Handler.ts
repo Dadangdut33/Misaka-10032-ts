@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { Client, MessageEmbed, Message } from "discord.js"
+import { Client, MessageEmbed, Message } from "discord.js";
 import { Feature } from "./Feature";
 import { Command } from "./Command";
 import { BotEvent } from "./BotEvent";
-import { Utils } from "../local_dependencies/Utils"
+import { Utils } from "../local_dependencies/Utils";
 import { prefix } from "../config.json";
 
 export class Handler {
@@ -14,7 +14,6 @@ export class Handler {
 	commands: Map<string, Command>;
 	aliases: Map<string, Command>;
 	commandEvents: Map<string, BotEvent[]>;
-	categories: string[];
 
 	/**
 	 * @description Create a new handler instance
@@ -57,19 +56,12 @@ export class Handler {
 		 * @type {Map<string, BotEvent[]>}
 		 */
 		this.commandEvents = new Map();
-
-		/**
-		 * A map containing commands categories
-		 * @type {string}
-		 */
-		this.categories = fs.readdirSync(path.join(__dirname, "../modules/general/commands/"));
 	}
 
 	/**
 	 * @description Load all command/event modules from a directory
 	 * @param {string} directory - The directory of the modules
 	 * @param {object} dependencies - The dependencies of the modules
-	 * @returns {undefined}
 	 */
 	load(directory: string, dependencies: object) {
 		// Find and require all JavaScript files
@@ -87,7 +79,6 @@ export class Handler {
 		// Load all Command and Event classes that haven't loaded yet
 		nodes.forEach((Node: any) => {
 			if (Node.prototype instanceof Command) {
-
 				const loaded = Array.from(this.commands.values()).some((command) => command instanceof Node);
 
 				if (!loaded) {
@@ -210,7 +201,7 @@ export class Handler {
 			}
 
 			try {
-				await cmd.run(message, args);
+				cmd.run(message, args);
 			} catch (err) {
 				console.error(err);
 				let embed = new MessageEmbed().setTitle(`Error └[∵┌]└[ ∵ ]┘[┐∵]┘`).setDescription(`**Error Details**\n${err}`).setColor("#000000");
