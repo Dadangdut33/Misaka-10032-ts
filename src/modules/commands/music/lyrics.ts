@@ -1,8 +1,8 @@
-const { MessageEmbed } = require("discord.js");
-const Genius = require("genius-lyrics");
-const { prefix } = require("../../../../config");
-const { Command } = require("../../../../handler");
-const Moment = require("moment-timezone");
+import { MessageEmbed, Message } from "discord.js";
+import { Command } from "../../../handler";
+import { prefix } from "../../../config.json";
+import moment from "moment-timezone";
+import Genius from "genius-lyrics";
 
 module.exports = class extends Command {
 	constructor() {
@@ -15,7 +15,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message, args) {
+	async run(message: Message, args: string[]) {
 		let embed = new MessageEmbed().setDescription("Looking For Lyrics ...").setColor("YELLOW");
 
 		if (!args.length) {
@@ -40,7 +40,7 @@ module.exports = class extends Command {
 
 			const fetched = await songs[0].fetch();
 			if (fetched.releasedAt) {
-				var dateGet = Moment(fetched.releasedAt).tz("Asia/Jakarta").format("DD-MMMM-YYYY");
+				var dateGet = moment(fetched.releasedAt).tz("Asia/Jakarta").format("DD-MMMM-YYYY");
 
 				edited.addField(`Released at`, `${dateGet}`, true);
 			}
@@ -53,7 +53,6 @@ module.exports = class extends Command {
 
 				start += 2048;
 				end += 2048;
-				console.log(i);
 				message.channel.send(embed);
 			}
 		} catch (e) {
