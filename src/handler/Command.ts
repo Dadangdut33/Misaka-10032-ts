@@ -7,6 +7,18 @@ interface optionsInterface {
 	usage: string;
 	info: string;
 	guildOnly: boolean;
+	permissions?:
+		| "ADMINISTRATOR"
+		| "MANAGE_MESSAGES"
+		| "MANAGE_CHANNELS"
+		| "MANAGE_ROLES"
+		| "MANAGE_GUILD"
+		| "KICK_MEMBERS"
+		| "BAN_MEMBERS"
+		| "CREATE_INSTANT_INVITE"
+		| "MANAGE_NICKNAMES"
+		| "MANAGE_WEBHOOKS"
+		| "MANAGE_EMOJIS";
 }
 
 export class Command extends Toggleable {
@@ -16,6 +28,18 @@ export class Command extends Toggleable {
 	info: string;
 	usage: string;
 	guildOnly: boolean;
+	permissions?:
+		| "ADMINISTRATOR"
+		| "MANAGE_MESSAGES"
+		| "MANAGE_CHANNELS"
+		| "MANAGE_ROLES"
+		| "MANAGE_GUILD"
+		| "KICK_MEMBERS"
+		| "BAN_MEMBERS"
+		| "CREATE_INSTANT_INVITE"
+		| "MANAGE_NICKNAMES"
+		| "MANAGE_WEBHOOKS"
+		| "MANAGE_EMOJIS";
 
 	/**
 	 * @description Create a new command
@@ -36,6 +60,10 @@ export class Command extends Toggleable {
 		this.info = options.info;
 		this.usage = options.usage;
 		this.guildOnly = options.guildOnly;
+
+		if (options.permissions) {
+			this.permissions = options.permissions;
+		}
 	}
 
 	/**

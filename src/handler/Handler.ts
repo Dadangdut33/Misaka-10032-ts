@@ -194,8 +194,20 @@ export class Handler {
 				return;
 			}
 
+			// guild only commands
 			if (cmd.guildOnly && !message.guild) {
 				message.channel.send("This command is only available in guilds");
+				return;
+			}
+
+			// Check if the user has permissions, guild only commands
+			if (cmd.permissions && message.guild) {
+				if (!message.member!.hasPermission(cmd.permissions))
+					message.channel.send("You don't have the required permissions to use this command.").then((msg) =>
+						msg.delete({
+							timeout: 5000,
+						})
+					);
 				return;
 			}
 
