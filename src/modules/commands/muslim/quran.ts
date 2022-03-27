@@ -10,7 +10,7 @@ module.exports = class extends Command {
 			aliases: ["alquran", "ayat"],
 			categories: "muslim",
 			info: `Online quran using [Fathimah API](https://fathimah.docs.apiary.io/).\n\n Ayat maksimal untuk ditunjukan adalah 10, limit dari API nya. **Untuk pencarian dengan ayat mulai dan ayat berhenti perhatikan (-) nya**\n\n**Contoh**\`\`\`${prefix}quran cari 2 13-23\`\`\``,
-			usage: `**-** \`${prefix}command/alias <list>\`\n**-** \`${prefix}command/alias <random>\`\n**-** \`${prefix}command/alias <cari/search/ayat/baca/read> <nomor surat> <ayat mulai-ayat berhenti>\`or\n**-** \`${prefix}command/alias <cari/ayat> <nomor surat> <ayat yang ingin dicari>\``,
+			usage: `**[-]** \`${prefix}command/alias <list>\`\n**[-]** \`${prefix}command/alias <random>\`\n**[-]** \`${prefix}command/alias <cari/search/ayat/baca/read> <nomor surat> <ayat mulai-ayat berhenti>\`or\n**[-]** \`${prefix}command/alias <cari/ayat> <nomor surat> <ayat yang ingin dicari>\``,
 			guildOnly: true,
 		});
 	}

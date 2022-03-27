@@ -10,7 +10,7 @@ module.exports = class extends Command {
 			aliases: ["info"],
 			categories: "info-server",
 			info: "Shows yours or tagged user information (Join date, ID, Avatar, & Roles)",
-			usage: `${prefix}profile [tagged user] or ${prefix}alias [tagged user]`,
+			usage: `\`${prefix}command/alias [tagged user]\``,
 			guildOnly: true,
 		});
 	}

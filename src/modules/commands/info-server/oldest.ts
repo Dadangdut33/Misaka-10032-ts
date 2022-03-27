@@ -10,7 +10,7 @@ module.exports = class extends Command {
 			aliases: [],
 			categories: "info-server",
 			info: "List the oldest member (Max 25)",
-			usage: `${prefix}command`,
+			usage: `\`${prefix}oldest\``,
 			guildOnly: true,
 		});
 	}

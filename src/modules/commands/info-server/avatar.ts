@@ -8,7 +8,7 @@ module.exports = class extends Command {
 			aliases: ["profilepicture"],
 			categories: "info-server",
 			info: "Show avatar/profile picture of tagged user",
-			usage: `${prefix}command/alias [tagged user]`,
+			usage: `\`${prefix}command/alias [tagged user]\``,
 			guildOnly: true,
 		});
 	}

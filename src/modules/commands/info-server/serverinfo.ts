@@ -10,7 +10,7 @@ module.exports = class extends Command {
 			aliases: ["sinfo"],
 			categories: "info-server",
 			info: "Get current server info",
-			usage: `${prefix}command/alias`,
+			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
 	}
