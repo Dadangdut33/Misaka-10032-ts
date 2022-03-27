@@ -2,7 +2,7 @@ const { MessageEmbed } = require("discord.js");
 const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
 const malScraper = require("mal-scraper");
-const { promptMessage } = require("../../../../local_dependencies/functions.js");
+const { promptMessage } = require("../../../../local_lib/functions.js");
 const chooseArr = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
 module.exports = class extends Command {

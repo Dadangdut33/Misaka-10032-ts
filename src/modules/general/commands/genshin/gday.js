@@ -2,7 +2,7 @@ const { MessageEmbed } = require("discord.js");
 const { Command } = require("../../../../handler");
 const Moment = require("moment-timezone");
 const { prefix } = require("../../../../config");
-const { paginationEmbed, find_DB, capitalizeFirstLetter } = require("../../../../local_dependencies/functions.js");
+const { paginationEmbed, find_DB, capitalizeFirstLetter } = require("../../../../local_lib/functions.js");
 const emojiList = ["⏪", "⏩", "❌"];
 
 module.exports = class extends Command {

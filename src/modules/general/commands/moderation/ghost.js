@@ -5,7 +5,7 @@ const { Command } = require("../../../../handler");
 module.exports = class extends Command {
 	constructor() {
 		super("ghost", {
-			aliases: ["bc", "broadcast"],
+			aliases: [],
 			categories: "moderation",
 			info: "For ghost pinging, only usable by admin and mods",
 			usage: `${prefix}ghost <content>`,

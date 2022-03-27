@@ -1,6 +1,6 @@
 const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
-const factRand = require("../../../../local_dependencies/factspool");
+const factRand = require("../../../../local_lib/factspool");
 const { MessageEmbed } = require("discord.js");
 
 module.exports = class extends Command {

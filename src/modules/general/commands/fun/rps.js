@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { promptMessage } = require("../../../../local_dependencies/functions.js");
+const { promptMessage } = require("../../../../local_lib/functions.js");
 const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
 const chooseArr = ["🗻", "✂", "📰"];

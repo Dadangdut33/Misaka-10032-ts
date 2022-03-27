@@ -1,7 +1,7 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command } from "../../../handler";
 import { prefix } from "../../../config.json";
-import { paginationEmbed } from "../../../local_dependencies/functions.js";
+import { paginationEmbed } from "../../../local_lib/functions.js";
 const { htmlToText } = require("html-to-text");
 
 module.exports = class extends Command {

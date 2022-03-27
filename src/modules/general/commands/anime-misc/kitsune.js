@@ -1,4 +1,4 @@
-const { Random } = require("../../../../local_dependencies/api_call/random.js");
+const { Random } = require("../../../../local_lib/api_call/random.js");
 const random = new Random();
 const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");

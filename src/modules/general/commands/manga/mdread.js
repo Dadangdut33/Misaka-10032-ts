@@ -1,7 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
-const { paginationEmbed } = require("../../../../local_dependencies/functions.js");
+const { paginationEmbed } = require("../../../../local_lib/functions.js");
 const MFA = require("mangadex-full-api");
 const Moment = require("moment-timezone");
 

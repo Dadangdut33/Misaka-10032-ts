@@ -3,7 +3,7 @@ const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
 var Chance = require("chance");
 var chance = new Chance();
-const { paginationEmbed } = require("../../../../local_dependencies/functions.js");
+const { paginationEmbed } = require("../../../../local_lib/functions.js");
 const emojiList = ["⏪", "⏩", "❌"];
 
 // ok ok this code sucks i know. I made it when i was still confused about programming. will refactor later. i guess
@@ -382,7 +382,9 @@ module.exports = class extends Command {
 		function info() {
 			let embed = new MessageEmbed()
 				.setTitle(`Invalid Arguments Provided`)
-				.setDescription(`Please input correct arguments. **Limit** of the simulator is **__200 pulls__**,  example of a correct way to use it: :arrow_down:\`\`\`${prefix}simpull single 4\`\`\``);
+				.setDescription(
+					`Please input correct arguments. **Limit** of the simulator is **__200 pulls__**,  example of a correct way to use it: :arrow_down:\`\`\`${prefix}simpull single 4\`\`\``
+				);
 
 			message.channel.send(embed);
 		}

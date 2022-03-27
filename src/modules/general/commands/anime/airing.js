@@ -5,7 +5,7 @@ const { prefix } = require("../../../../config");
 const fetch = require("node-fetch");
 const { id } = require("common-tags");
 global.fetch = fetch;
-const { paginationEmbed } = require("../../../../local_dependencies/functions.js");
+const { paginationEmbed } = require("../../../../local_lib/functions.js");
 const emojiList = ["⏪", "⏩", "❌"];
 
 module.exports = class extends Command {

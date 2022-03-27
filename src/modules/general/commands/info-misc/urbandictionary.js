@@ -3,7 +3,7 @@ const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
 const request = require("request-promise");
 const cheerio = require("cheerio");
-const { paginationEmbed } = require("../../../../local_dependencies/functions.js");
+const { paginationEmbed } = require("../../../../local_lib/functions.js");
 
 module.exports = class extends Command {
 	constructor() {

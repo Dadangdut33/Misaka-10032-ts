@@ -7,7 +7,7 @@ const prettyMS = require("pretty-ms");
 module.exports = class extends Command {
 	constructor() {
 		super("profile", {
-			aliases: ["info", "avatar"],
+			aliases: ["info"],
 			categories: "info-server",
 			info: "Shows yours or tagged user information (Join date, ID, Avatar, & Roles)",
 			usage: `${prefix}profile [tagged user] or ${prefix}alias [tagged user]`,
@@ -63,7 +63,10 @@ module.exports = class extends Command {
 			Embed.addField(`Roles`, `\`\`\`css\n${roles.join(`, `)}\`\`\``);
 			Embed.addField(
 				`Avatar URL`,
-				`[JPG](${message.author.displayAvatarURL({ format: "jpg", size: 2048 })}) | [PNG](${message.author.displayAvatarURL({ format: "png", size: 2048 })}) | [WEBP](${message.author.displayAvatarURL({
+				`[JPG](${message.author.displayAvatarURL({ format: "jpg", size: 2048 })}) | [PNG](${message.author.displayAvatarURL({
+					format: "png",
+					size: 2048,
+				})}) | [WEBP](${message.author.displayAvatarURL({
 					format: "webp",
 					size: 2048,
 				})})`
@@ -117,7 +120,11 @@ module.exports = class extends Command {
 			Embed.addField(`Activity Type`, `${type}`, true);
 			Embed.addField(`Activity State`, `${state}`, true);
 			Embed.addField(`Account Age`, `${prettyMS(age)}`, false);
-			Embed.addField(`Account Created At`, `${Moment(message.client.users.cache.get(User.id).createdAt).tz("Asia/Jakarta").format("dddd DD MMMM YYYY HH:mm:ss")} GMT+0700 (Western Indonesia Time)`, false);
+			Embed.addField(
+				`Account Created At`,
+				`${Moment(message.client.users.cache.get(User.id).createdAt).tz("Asia/Jakarta").format("dddd DD MMMM YYYY HH:mm:ss")} GMT+0700 (Western Indonesia Time)`,
+				false
+			);
 			Embed.addField(`Roles`, `\`\`\`css\n${roles.join(`, `)}\`\`\``);
 			Embed.addField(
 				`Avatar URL`,

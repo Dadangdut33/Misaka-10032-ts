@@ -1,10 +1,8 @@
-import fs from "fs";
-import path from "path";
 import { Client, MessageEmbed, Message } from "discord.js";
 import { Feature } from "./Feature";
 import { Command } from "./Command";
 import { BotEvent } from "./BotEvent";
-import { Utils } from "../local_dependencies/Utils";
+import { Utils } from "../local_lib/Utils";
 import { prefix } from "../config.json";
 
 export class Handler {
@@ -133,9 +131,10 @@ export class Handler {
 
 		command.aliases.forEach((alias) => {
 			// Alias might already be a command or might already be in use
-			// if (this.commands.has(alias) || this.aliases.has(alias)) {
-			// 	throw new Error(`Can't load command, the alias '${alias}' is already used as a command name or alias`);
-			// }
+			if (this.commands.has(alias) || this.aliases.has(alias)) {
+				// if dupe throw error
+				throw new Error(`Can't load command, the alias '${alias}' is already used as a command name or alias`);
+			}
 
 			if (alias.length > 0) {
 				this.aliases.set(alias, command);

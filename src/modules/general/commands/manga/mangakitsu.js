@@ -3,7 +3,7 @@ const Kitsu = require("kitsu.js");
 const kitsu = new Kitsu();
 const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
-const { promptMessage } = require("../../../../local_dependencies/functions.js");
+const { promptMessage } = require("../../../../local_lib/functions.js");
 const chooseArr = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
 module.exports = class extends Command {
@@ -87,7 +87,11 @@ module.exports = class extends Command {
 				embed
 					.setTitle("")
 					.setColor("F75136")
-					.setAuthor(`${manga.titles.english ? manga.titles.english : capitalizeTheFirstLetterOfEachWord(args.join(" "))} | ${manga.mangaType}`, manga.posterImage.original, `https://kitsu.io/manga/${manga.id}`)
+					.setAuthor(
+						`${manga.titles.english ? manga.titles.english : capitalizeTheFirstLetterOfEachWord(args.join(" "))} | ${manga.mangaType}`,
+						manga.posterImage.original,
+						`https://kitsu.io/manga/${manga.id}`
+					)
 					.setDescription(manga.synopsis)
 					.addField(`Japanese Name`, `${manga.titles.romaji ? `${manga.titles.romaji} (${manga.titles.japanese})` : "-"}`, false)
 					.addField(`Synonyms`, `${synon.join(", ")}`, false)

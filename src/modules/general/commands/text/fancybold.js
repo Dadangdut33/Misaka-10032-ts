@@ -1,7 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
-const { fancy } = require("../../../../local_dependencies/fancyfies");
+const { fancy } = require("../../../../local_lib/fancyfies");
 
 module.exports = class extends Command {
 	constructor() {

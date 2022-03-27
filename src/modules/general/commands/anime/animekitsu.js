@@ -4,7 +4,7 @@ const kitsu = new Kitsu();
 const { Command } = require("../../../../handler");
 const { prefix } = require("../../../../config");
 const malScraper = require("mal-scraper");
-const { promptMessage } = require("../../../../local_dependencies/functions.js");
+const { promptMessage } = require("../../../../local_lib/functions.js");
 const chooseArr = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
 module.exports = class extends Command {
@@ -135,7 +135,9 @@ module.exports = class extends Command {
 				// If regex fail to find [kitsu]
 				msg.edit(`**Search Aborted!**`);
 
-				let embed = new MessageEmbed().setTitle(`Wrong arguments provided`).setDescription(`The optional inside the bracket should be -> [kitsu]\nPlease check using the help commands if you are still unsure`);
+				let embed = new MessageEmbed()
+					.setTitle(`Wrong arguments provided`)
+					.setDescription(`The optional inside the bracket should be -> [kitsu]\nPlease check using the help commands if you are still unsure`);
 
 				return message.channel.send(embed);
 			}
