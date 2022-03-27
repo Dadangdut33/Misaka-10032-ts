@@ -31,17 +31,19 @@ handler.load(path.join(__dirname, "./modules"), {
 // Database
 import mongoose from "mongoose";
 
-mongoose
-	.connect(process.env["MONGODB_SRV"]!, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-		useFindAndModify: false,
-	})
-	.then(() => {
-		console.log(`Connected to database!`);
-	})
-	.catch((err: any) => {
-		console.log(err);
-	});
+if (process.env.conn_db !== "false") {
+	mongoose
+		.connect(process.env.MONGODB_SRV!, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+			useFindAndModify: false,
+		})
+		.then(() => {
+			console.log(`Connected to database!`);
+		})
+		.catch((err: any) => {
+			console.log(err);
+		});
+}
 
 client.login(process.env.TOKEN);
