@@ -2,12 +2,12 @@ import { Message } from "discord.js";
 import { Toggleable } from "./Toggleable";
 
 interface optionsInterface {
-	aliases: string[];
+	aliases?: string[];
 	categories: string;
 	usage: string;
 	info: string;
 	guildOnly: boolean;
-	permissions?:
+	permission?:
 		| "ADMINISTRATOR"
 		| "MANAGE_MESSAGES"
 		| "MANAGE_CHANNELS"
@@ -21,25 +21,14 @@ interface optionsInterface {
 		| "MANAGE_EMOJIS";
 }
 
-export class Command extends Toggleable {
+export class Command extends Toggleable implements optionsInterface {
 	name: string;
-	categories: string;
 	aliases: string[];
-	info: string;
-	usage: string;
-	guildOnly: boolean;
-	permissions?:
-		| "ADMINISTRATOR"
-		| "MANAGE_MESSAGES"
-		| "MANAGE_CHANNELS"
-		| "MANAGE_ROLES"
-		| "MANAGE_GUILD"
-		| "KICK_MEMBERS"
-		| "BAN_MEMBERS"
-		| "CREATE_INSTANT_INVITE"
-		| "MANAGE_NICKNAMES"
-		| "MANAGE_WEBHOOKS"
-		| "MANAGE_EMOJIS";
+	categories;
+	info;
+	usage;
+	guildOnly;
+	permission?;
 
 	/**
 	 * @description Create a new command
@@ -56,13 +45,17 @@ export class Command extends Toggleable {
 
 		this.name = name;
 		this.categories = options.categories;
-		this.aliases = options.aliases;
 		this.info = options.info;
 		this.usage = options.usage;
 		this.guildOnly = options.guildOnly;
 
-		if (options.permissions) {
-			this.permissions = options.permissions;
+		// alias set
+		if (options.aliases) this.aliases = options.aliases;
+		else this.aliases = [];
+
+		// permission set
+		if (options.permission) {
+			this.permission = options.permission;
 		}
 	}
 

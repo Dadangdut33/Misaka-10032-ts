@@ -201,8 +201,8 @@ export class Handler {
 			}
 
 			// Check if the user has permissions, guild only commands
-			if (cmd.permissions && message.guild) {
-				if (!message.member!.hasPermission(cmd.permissions)) {
+			if (cmd.permission && message.guild) {
+				if (!message.member!.hasPermission(cmd.permission)) {
 					message.channel.send("You don't have the required permissions to use this command.").then((msg) =>
 						msg.delete({
 							timeout: 5000,

@@ -10,7 +10,7 @@ module.exports = class extends Command {
 			info: "For ghost pinging, only usable by admin and mods",
 			usage: `${prefix}ghost <content>`,
 			guildOnly: true,
-			permissions: "MANAGE_MESSAGES",
+			permission: "MANAGE_MESSAGES",
 		});
 	}
 
