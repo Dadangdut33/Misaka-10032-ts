@@ -17,7 +17,6 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[]) {
 		let data: string = await random.getAnimeImgURLV2("cuddle");
-		throw "test";
 		// check if valid link or not
 		if (!data.includes("http")) {
 			return message.channel.send(data ? data : "Something went wrong");
