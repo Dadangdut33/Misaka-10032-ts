@@ -1,8 +1,8 @@
-const { Random } = require("../../../../local_lib/api_call/random.js");
+import { MessageEmbed, Message } from "discord.js";
+import { Command } from "../../../handler";
+import { prefix } from "../../../config.json";
+import { Random } from "../../../local_lib/api_call/random";
 const random = new Random();
-const { Command } = require("../../../../handler");
-const { prefix } = require("../../../../config");
-const { MessageEmbed } = require("discord.js");
 
 module.exports = class extends Command {
 	constructor() {
@@ -15,8 +15,12 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message, args) {
-		let data = await random.getAnimeImgURL("kiss");
+	async run(message: Message, args: string[]) {
+		let data: string = await random.getAnimeImgURL("kiss");
+		// check if valid link or not
+		if (!data.includes("http")) {
+			return message.channel.send(data ? data : "Something went wrong");
+		}
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
 			.setDescription(`${message.author.username} kisses ${args.join(" ")}`)
