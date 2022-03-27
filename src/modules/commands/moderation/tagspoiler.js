@@ -1,6 +1,6 @@
 const { MessageEmbed, DiscordAPIError } = require("discord.js");
-const { prefix } = require("../../../../config");
-const { Command } = require("../../../../handler");
+const { prefix } = require("../../../config");
+const { Command } = require("../../../handler");
 const Moment = require("moment-timezone");
 
 module.exports = class extends Command {
