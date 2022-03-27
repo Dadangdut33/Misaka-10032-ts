@@ -1,11 +1,11 @@
 // keep alive by setting up a server and pinging it (if not premium)
-import { Request, Response} from 'express';
+import { Request, Response } from "express";
 const express = require("express");
 const app = express();
 const port = 3000;
 
-app.get("/", (req: Request, res: Response) => res.send("Hello World!"));
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+app.get("/", (req: Request, res: Response) => res.send("<h1>Hello World!</h1>"));
+app.listen(port, () => console.log(`Server listening at http://localhost:${port}`));
 
 // --------
 import path from "path";
@@ -14,7 +14,7 @@ import { Handler } from "./handler";
 require("dotenv").config();
 
 // --------
-// client/bot, 
+// client/bot
 // for v13 intent 32767 is ALL INTENT
 // const client = new Client({ intents: 32767 , disableEveryone: false, partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
 
@@ -32,7 +32,7 @@ handler.load(path.join(__dirname, "./modules"), {
 import mongoose from "mongoose";
 
 mongoose
-	.connect(process.env["MONGODB_SRV"]! , { // ! is a non-null assertion operator
+	.connect(process.env["MONGODB_SRV"]!, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 		useFindAndModify: false,

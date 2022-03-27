@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("resetrole", {
 			categories: "moderation",
 			info: "Reset roles, only usable by admin and mods",
-			usage: `${prefix}command/alias <tagged roles>`,
+			usage: `\`${prefix}command/alias <tagged roles>\``,
 			guildOnly: true,
 			permission: "ADMINISTRATOR",
 		});

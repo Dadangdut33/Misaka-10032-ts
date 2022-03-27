@@ -21,7 +21,7 @@ module.exports = class extends Command {
 		super("announce", {
 			categories: "moderation",
 			info: "Announce stuff but with more feature using embed. Only usable by admin and mods. Leave the not desired optional empty but don't erase the quote",
-			usage: `\`${prefix}announce \"title with quotes\" \"description with quotes\" \"image URL with quotes\" \"field title with quotes\" \"field content with quotes\"\`\n**Notes:**\n**•** Image URL is optional leave it as empty quotes if not used\n**•** Field title is optional but field value is a must -> IF you insert field title\n**•** You can subtitute quotes by using single quotes inside the announcement`,
+			usage: `\`${prefix}announce "title with quotes" "description with quotes" "image URL with quotes" "field title with quotes" "field content with quotes"\`\n**Notes:**\n**•** Image URL is optional leave it as empty quotes if not used\n**•** Field title is optional but field value is a must -> IF you insert field title\n**•** You can subtitute quotes by using single quotes inside the announcement`,
 			guildOnly: true,
 			permission: "MANAGE_MESSAGES",
 		});

@@ -8,7 +8,7 @@ module.exports = class extends Command {
 			aliases: [],
 			categories: "moderation",
 			info: "For ghost pinging, only usable by admin and mods",
-			usage: `${prefix}ghost <content>`,
+			usage: `\`${prefix}ghost <content>\``,
 			guildOnly: true,
 			permission: "MANAGE_MESSAGES",
 		});
