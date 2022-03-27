@@ -1,4 +1,4 @@
-import { MessageEmbed, Message, User } from "discord.js";
+import { MessageEmbed, Message } from "discord.js";
 import { Command } from "../../../handler";
 import { prefix } from "../../../config.json";
 import moment from "moment-timezone";
