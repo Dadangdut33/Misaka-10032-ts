@@ -45,9 +45,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: String[]) {
-		var x = Math.floor(Math.random() * responses.length);
-
-		message.channel.send(`:8ball: | ${responses[x]} **${message.author.toString()}**`);
+	async run(message: Message, args: string[]) {
+		return message.channel.send(`:8ball: | ${responses[Math.random() * responses.length]} **${message.author.toString()}**`);
 	}
 };
