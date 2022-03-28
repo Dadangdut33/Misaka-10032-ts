@@ -83,7 +83,10 @@ module.exports = class extends Command {
 
 			//Prevent wrong invalid timezone input
 			if (parseInt(args[4]) > 13 || parseInt(args[4]) < -12) {
-				let embed = new MessageEmbed().setTitle(`Invalid timezone provided`).setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`).setTimestamp();
+				let embed = new MessageEmbed()
+					.setTitle(`Invalid timezone provided`)
+					.setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`)
+					.setTimestamp();
 
 				return message.channel.send(embed);
 			}
@@ -182,7 +185,10 @@ module.exports = class extends Command {
 
 			//Prevent wrong invalid timezone input
 			if (parseInt(splitted[2]) > 13 || parseInt(splitted[2]) < -12) {
-				let embed = new MessageEmbed().setTitle(`Invalid timezone provided`).setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`).setTimestamp();
+				let embed = new MessageEmbed()
+					.setTitle(`Invalid timezone provided`)
+					.setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`)
+					.setTimestamp();
 
 				return message.channel.send(embed);
 			}
@@ -264,7 +270,7 @@ module.exports = class extends Command {
 			let embed = new MessageEmbed()
 				.setColor("RANDOM")
 				.setTitle(`Invalid coordinate provided!`)
-				.setDescription(`For more detailed info please check using the help command. Example :arrow_down:\`\`\`css\n${prefix}pt coordinates 21.403643126916453 39.8159612615235\`\`\``);
+				.setDescription(`For more detailed info please check using the help command. Example\`\`\`css\n${prefix}pt coordinates 21.403643126916453 39.8159612615235\`\`\``);
 
 			message.channel.send(embed);
 		}
@@ -274,7 +280,7 @@ module.exports = class extends Command {
 				.setColor("RANDOM")
 				.setTitle(`You can also enter custom timezone`)
 				.setDescription(
-					`For more detailed info please check using the help command. Example :arrow_down:\`\`\`css\n${prefix}pt coordinates 21.403643126916453 39.8159612615235 + 3\`\`\`Above are example to check praytime in Mecca. If you want to check the timezones of cities you can check using the \`citycoordinate\` command`
+					`For more detailed info please check using the help command. Example\`\`\`css\n${prefix}pt coordinates 21.403643126916453 39.8159612615235 + 3\`\`\`Above are example to check praytime in Mecca. If you want to check the timezones of cities you can check using the \`citycoordinate\` command`
 				);
 
 			message.channel.send(embed);
@@ -285,7 +291,7 @@ module.exports = class extends Command {
 				.setColor("RANDOM")
 				.setTitle(`You can also enter custom timezone`)
 				.setDescription(
-					`For more detailed info please check using the help command. Example :arrow_down:\`\`\`css\n${prefix}pt city "Mecca" [+ 3]\`\`\`Above are example to check praytime in Mecca. If you want to check the timezones of cities you can check using the \`citycoordinate\` command`
+					`For more detailed info please check using the help command. Example\`\`\`css\n${prefix}pt city "Mecca" [+ 3]\`\`\`Above are example to check praytime in Mecca. If you want to check the timezones of cities you can check using the \`citycoordinate\` command`
 				);
 
 			message.channel.send(embed);
@@ -294,7 +300,7 @@ module.exports = class extends Command {
 		function errorinfo() {
 			let embed = new MessageEmbed()
 				.setTitle(`Error`)
-				.setDescription(`City not found, maybe you type it wrong? Correct example should be like this :arrow_down:\`\`\`css\n${prefix}pt city "Mecca"\`\`\``);
+				.setDescription(`City not found, maybe you type it wrong? Correct example should be like this\`\`\`css\n${prefix}pt city "Mecca"\`\`\``);
 
 			return message.channel.send(embed);
 		}
