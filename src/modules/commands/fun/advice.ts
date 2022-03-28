@@ -1,4 +1,4 @@
-import { Random } from "../../../local_lib/api_call/random";
+import { Random } from "../../../local_lib/lib/random_api";
 import { Message } from "discord.js";
 import { Command } from "../../../handler";
 import { prefix } from "../../../config.json";

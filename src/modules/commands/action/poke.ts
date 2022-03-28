@@ -1,7 +1,7 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command } from "../../../handler";
 import { prefix } from "../../../config.json";
-import { Random } from "../../../local_lib/api_call/random";
+import { Random } from "../../../local_lib/lib/random_api";
 
 module.exports = class extends Command {
 	constructor() {

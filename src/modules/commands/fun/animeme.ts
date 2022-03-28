@@ -8,7 +8,7 @@ module.exports = class extends Command {
 		super("animeme", {
 			categories: "fun",
 			info: "Sends a funny anime meme from reddit",
-			usage: `${prefix}animeme`,
+			usage: `\`${prefix}animeme\``,
 			guildOnly: false,
 		});
 	}
