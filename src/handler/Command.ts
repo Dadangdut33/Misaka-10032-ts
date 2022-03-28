@@ -3,7 +3,22 @@ import { Toggleable } from "./Toggleable";
 
 interface optionsInterface {
 	aliases?: string[];
-	categories: string;
+	categories:
+		| "action"
+		| "changelog"
+		| "fun"
+		| "info-bot"
+		| "info-server"
+		| "moderation"
+		| "music"
+		| "muslim"
+		| "anime"
+		| "anime-misc"
+		| "genshin"
+		| "info-misc"
+		| "manga"
+		| "text"
+		| "tool";
 	usage: string;
 	info: string;
 	guildOnly: boolean;
