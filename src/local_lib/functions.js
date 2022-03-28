@@ -1,5 +1,5 @@
 const { DiscordAPIError, MessageEmbed } = require("discord.js");
-const axios = require("axios");
+const fetch = require("node-fetch");
 const mongoose = require("mongoose");
 
 module.exports = {
@@ -83,12 +83,11 @@ module.exports = {
 
 	randomPuppy: async function (random) {
 		//Perform a GET request
-		const { data } = await axios.get(`https://www.reddit.com/r/${random}.json?limit=150`, {
+		const { data } = await fetch(`https://www.reddit.com/r/${random}.json?limit=150`, {
 			headers: {
-				"Content-Type": "application/json",
+				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
 			},
 		});
-
 		const { children } = data.data;
 
 		//Filter posts from those with no images
@@ -99,7 +98,12 @@ module.exports = {
 				//Some posts doesn't include any image links
 				if (url_overridden_by_dest != null || url_overridden_by_dest != undefined) {
 					//Filter out empty links and those linked to a gallery
-					if (url_overridden_by_dest.length > 0 && !url_overridden_by_dest.includes("gallery") && url_overridden_by_dest.includes("redd") && url_overridden_by_dest.includes("png")) {
+					if (
+						url_overridden_by_dest.length > 0 &&
+						!url_overridden_by_dest.includes("gallery") &&
+						url_overridden_by_dest.includes("redd") &&
+						url_overridden_by_dest.includes("png")
+					) {
 						return url_overridden_by_dest;
 					}
 				}
@@ -133,9 +137,10 @@ module.exports = {
 			if (!msg && !msg.channel) throw new Error("Channel is inaccessible.");
 			if (!pages) throw new Error("Pages are not given.");
 			if (emojiList.length !== 3 || emojiList === false) emojiList = ["⏪", "⏩", "❌"];
-			let page = 0;
-			var deleted = false;
-			var curPage;
+			let page = 0,
+				deleted = false,
+				curPage;
+
 			if (!customFooter) {
 				curPage = await msg.channel.send(pages[page].setFooter(`Page ${page + 1} / ${pages.length}`));
 			} else {
@@ -143,7 +148,9 @@ module.exports = {
 			}
 
 			for (const emoji of emojiList) await curPage.react(emoji);
-			const reactionCollector = curPage.createReactionCollector((reaction, user) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id === msg.author.id, { time: timeout });
+			const reactionCollector = curPage.createReactionCollector((reaction, user) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id === msg.author.id, {
+				time: timeout,
+			});
 			reactionCollector.on("collect", (reaction) => {
 				reaction.users.remove(msg.author);
 				switch (reaction.emoji.name) {
@@ -200,15 +207,13 @@ module.exports = {
 		} catch (e) {
 			// Catch error
 			if (e instanceof DiscordAPIError) {
-				let embed = new MessageEmbed().setTitle("Error").setDescription(`Data is too long to be returned as embed!`).addField(`Details`, e).setColor("00000");
+				let embed = new MessageEmbed().setTitle("Error").setDescription(`Data is too long to be returned as embed!`).addField(`Details`, e).setColor("#000");
 
 				msg.channel.send(embed);
-				throw `${e}`;
 			} else {
-				let embed = new MessageEmbed().setTitle("ERROR").setDescription(e).setColor("00000");
+				let embed = new MessageEmbed().setTitle("Error").setDescription(e).setColor("#000");
 
 				msg.channel.send(embed);
-				throw `${e}`;
 			}
 		}
 	},
