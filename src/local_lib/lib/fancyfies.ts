@@ -64,12 +64,12 @@ let map = {
 	".": ["."],
 	",": [","],
 };
-function getKeyByValue(object, value) {
+
+function getKeyByValue(object: any, value: any) {
 	let foundKey = "";
 	Object.keys(object).find((key) => {
-		for (i in object[key]) {
+		for (let i in object[key]) {
 			if (punycode.ucs2.decode(object[key][i]).toString().normalize() === value.toString().normalize()) {
-				//console.log(`key: ${key}\tPunycode i: ${punycode.ucs2.decode(object[key][i])}\tValue: ${value} isEqual?: ${punycode.ucs2.decode(object[key][i]).toString().normalize() === value.toString().normalize()}`);
 				foundKey = key;
 			}
 		}
@@ -77,17 +77,17 @@ function getKeyByValue(object, value) {
 	return foundKey;
 }
 
-module.exports = {
-	fancy: function (characterString) {
-		let fanciedString = "";
-		let punycodeArray = punycode.ucs2.decode(characterString);
-		for (let i = 0; i < punycodeArray.length; i++) {
-			let key = getKeyByValue(map, punycodeArray[i]);
+export function fancy(characterString: string) {
+	let fanciedString = "";
+	let punycodeArray = punycode.ucs2.decode(characterString);
+	for (let i = 0; i < punycodeArray.length; i++) {
+		let key = getKeyByValue(map, punycodeArray[i]);
 
-			if (key == isNaN) key = punycodeArray[i];
-			fanciedString += key;
-		}
+		// @ts-ignore
+		if (key == isNaN) key = punycodeArray[i];
 
-		return fanciedString;
-	},
-};
+		fanciedString += key;
+	}
+
+	return fanciedString;
+}
