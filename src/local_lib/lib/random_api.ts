@@ -157,31 +157,12 @@ export class Random {
 		return get.slip ? get.slip.advice : false;
 	}
 
-	async getShip(stringArr: string[]) {
-		let localChar = stringArr.toString();
-
-		const replacer: any = { ",": "%20", x: "/" };
-		let chara = localChar.replace(/[,x]/gi, (m: string) => replacer[m]);
-
-		const main = await fetch(
-			// "https://apis.duncte123.me/love/" + char1 + `/` + char2
-			// "https://apis.duncte123.me/love/" + chara
-			"https://apis.beta.duncte123.me/love/" + chara
-		);
+	async getShip(chara1: string, chara2: string) {
+		const main = await fetch("https://apis.beta.duncte123.me/love/" + chara1 + `/` + chara2);
 		const mat: any = await main.json();
 
-		if (!mat.success) {
-			return "Error 01: Unable to access the json content of API";
-		}
+		console.log(mat);
 
-		let content = {
-			embed: {
-				color: "RANDOM",
-				title: `The Algorithm has spoken`,
-				description: `The calculated score of ${mat.data.names} is \`${mat.data.score_int}%\`\n\n${mat.data.message}`,
-			},
-		};
-
-		return content;
+		return mat;
 	}
 }
