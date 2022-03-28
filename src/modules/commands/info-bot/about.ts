@@ -28,18 +28,11 @@ module.exports = class extends Command {
 			.addField("UPTIME", prettyMilliseconds(message.client.uptime!), true)
 			.addField("STATUS", message.client!.user!.presence.status, true)
 			.addField("CREATOR", "Dadangdut33#5411", true)
-			.addFields(
-				{
-					name: "Dadang's MAL Account",
-					value: `[MyAnimeList](https://myanimelist.net/profile/Dadangdut33)`,
-					inline: true,
-				},
-				{
-					name: "Dadang's Github Account",
-					value: `[Github](https://github.com/Dadangdut33)`,
-					inline: true,
-				}
-			)
+			.addFields({
+				name: "Dadang's Github Account",
+				value: `[Github](https://github.com/Dadangdut33)`,
+				inline: true,
+			})
 			.setFooter(`Version ${build}`)
 			.setTimestamp();
 
