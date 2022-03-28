@@ -164,17 +164,10 @@ export class Random {
 	}
 
 	async getAdvice() {
-		const main = await fetch("https://api.adviceslip.com/advice");
-		const mat: any = await main.json();
+		const fetchApi = await fetch("https://api.adviceslip.com/advice");
+		const get: any = await fetchApi.json();
 
-		let content = {
-			embed: {
-				description: mat.slip.advice,
-				color: "RANDOM",
-			},
-		};
-
-		return content;
+		return get.slip ? get.slip.advice : false;
 	}
 
 	async getShip(stringArr: string[]) {
