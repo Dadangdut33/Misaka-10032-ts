@@ -214,7 +214,7 @@ export class Handler {
 			}
 
 			try {
-				await cmd.run(message, args); // await because the command that runs is async
+				await cmd.run(message, args, this.client); // await because the command that runs is async
 			} catch (err) {
 				console.error(err);
 				let embed = new MessageEmbed().setTitle(`Error └[∵┌]└[ ∵ ]┘[┐∵]┘`).setDescription(`**Error Details**\n\`\`\`js\n${err}\`\`\``).setColor("#000000");

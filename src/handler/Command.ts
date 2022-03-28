@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { Toggleable } from "./Toggleable";
 
 interface optionsInterface {
@@ -77,7 +77,7 @@ export class Command extends Toggleable implements optionsInterface {
 	/**
 	 * @description Method that runs when the command is executed
 	 */
-	run(message: Message, args: string[]) {
+	run(message: Message, args: string[], client: Client) {
 		throw new Error(`Command '${this.name}' is missing run method`);
 	}
 }
