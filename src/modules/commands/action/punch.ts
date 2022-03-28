@@ -2,7 +2,6 @@ import { MessageEmbed, Message } from "discord.js";
 import { Command } from "../../../handler";
 import { prefix } from "../../../config.json";
 import { Random } from "../../../local_lib/api_call/random";
-const random = new Random();
 
 module.exports = class extends Command {
 	constructor() {
@@ -15,7 +14,7 @@ module.exports = class extends Command {
 		});
 	}
 	async run(message: Message, args: string[]) {
-		let data: string = await random.getAnimeImgURL("punch");
+		let data: string = await new Random().getAnimeImgURL("punch");
 		// check if there is http or not
 		if (!data.includes("http")) {
 			return message.channel.send(data ? data : "Something went wrong");
