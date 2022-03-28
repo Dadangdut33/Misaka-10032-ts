@@ -48,7 +48,7 @@ module.exports = class extends Command {
 				.setColor("RANDOM")
 				.setThumbnail("https://cdn.discordapp.com/attachments/653206818759376916/795497635812343848/Kirino_Question.png")
 				.setDescription(
-					`All available commands for ${message.client.user?.username}#${message.client.user?.discriminator} Version \`${build}\`\nThe bot currently has \`${totalCommands} commands.\`\nThe bot's prefix is: \`${prefix}\`\nFor more details use \`\`\`ts\n${prefix}help <command> or ${prefix}h <command>\`\`\``
+					`All available commands for ${message.client.user?.username}#${message.client.user?.discriminator} Version \`${build}\`\nThe bot currently has \`${totalCommands} commands.\`\nThe bot's prefix is: \`${prefix}\`\nFor more details use \`\`\`ts\n${prefix}help <command/alias>\`\`\``
 				);
 
 			// loop the categories

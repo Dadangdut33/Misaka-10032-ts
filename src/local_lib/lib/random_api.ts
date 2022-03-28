@@ -24,20 +24,7 @@ export class Random {
 		const main = await fetch("https://apis.beta.duncte123.me/joke"); //https://apis.beta.duncte123.me/joke https://apis.duncte123.me/joke
 		const mat: any = await main.json();
 
-		if (!mat.success) {
-			return "Error 01: Unable to access the json content of API";
-		}
-
-		let content = {
-			embed: {
-				color: "RANDOM",
-				title: mat.data.title,
-				url: mat.data.url,
-				description: mat.data.body,
-			},
-		};
-
-		return content;
+		return mat;
 	}
 
 	async getKitsune() {

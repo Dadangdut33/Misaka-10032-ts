@@ -5,29 +5,34 @@ import { prefix } from "../../../config.json";
 
 module.exports = class extends Command {
 	constructor() {
-		super("advice", {
+		super("joke", {
 			categories: "fun",
-			aliases: ["adv"],
-			info: "Gives you random advice using [Adviceslip API](https://api.adviceslip.com/)",
-			usage: `\`${prefix}advice or ${prefix}adv\``,
+			aliases: ["jokes"],
+			info: "Gives you random joke using [duncte123 API](https://docs.duncte123.com/)",
+			usage: `\`${prefix}joke\``,
 			guildOnly: false,
 		});
 	}
 
 	async run(message: Message, args: string[]) {
 		const msg = await message.channel.send(`Loading...`);
-		let data = await new Random().getAdvice();
 
-		if (!data) {
-			msg.edit(`Can't reached API, try again later!`);
-			return;
-		}
+		let success = true;
+		let { data } = await new Random().getJoke().catch((e) => {
+			msg.edit(`Can't reached API, try again later!\nDetails: \`\`\`ts\n${e}\`\`\``);
+			success = false;
+		});
+		console.log(data);
+
+		if (!success || !data) return;
 
 		msg.delete();
 		return message.channel.send({
 			embed: {
-				description: data,
 				color: "RANDOM",
+				title: data.title,
+				url: data.url,
+				description: data.body,
 			},
 		});
 	}
