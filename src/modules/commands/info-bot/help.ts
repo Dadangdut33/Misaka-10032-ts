@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, Handler } from "../../../handler";
-import { prefix, build, Repo_Link } from "../../../config.json";
+import { build, Repo_Link } from "../../../config.json";
 
 const mapCommands = (source: Map<string, Command>, categories: string) => {
 	return `${Array.from(source)
@@ -15,7 +15,8 @@ const countACategory = (source: Map<string, Command>, categories: string) => {
 
 module.exports = class extends Command {
 	commandHandler: Handler;
-	constructor({ commandHandler }: any) {
+	prefix: string;
+	constructor({ commandHandler, prefix }: any) {
 		super("help", {
 			aliases: ["h"],
 			categories: "info-bot",
@@ -25,6 +26,7 @@ module.exports = class extends Command {
 		});
 
 		this.commandHandler = commandHandler;
+		this.prefix = prefix;
 	}
 
 	async run(message: Message, args: string[]) {
@@ -48,7 +50,7 @@ module.exports = class extends Command {
 				.setColor("RANDOM")
 				.setThumbnail("https://cdn.discordapp.com/attachments/653206818759376916/795497635812343848/Kirino_Question.png")
 				.setDescription(
-					`All available commands for ${message.client.user?.username}#${message.client.user?.discriminator} Version \`${build}\`\nThe bot currently has \`${totalCommands} commands.\`\nThe bot's prefix is: \`${prefix}\`\nFor more details use \`\`\`ts\n${prefix}help <command/alias>\`\`\``
+					`All available commands for ${message.client.user?.username}#${message.client.user?.discriminator} Version \`${build}\`\nThe bot currently has \`${totalCommands} commands.\`\nThe bot's prefix is: \`${this.prefix}\`\nFor more details use \`\`\`ts\n${this.prefix}help <command/alias>\`\`\``
 				);
 
 			// loop the categories
