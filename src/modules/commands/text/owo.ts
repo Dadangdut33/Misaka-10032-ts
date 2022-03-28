@@ -1,13 +1,14 @@
 import { Message } from "discord.js";
 import { Command } from "../../../handler";
 import { prefix } from "../../../config.json";
-import { fancy } from "../../../local_lib/lib/fancyfies";
+import owoify from "owoify-js";
 
 module.exports = class extends Command {
 	constructor() {
-		super("fancy", {
+		super("owo", {
+			aliases: [],
 			categories: "text",
-			info: '*"𝒻𝒶𝓃𝒸𝓎"* letter(s)',
+			info: '*"owoifys"* sentence(s) using [owoify-js](https://www.npmjs.com/package/owoify-js)',
 			usage: `\`${prefix}command/alias <text>\``,
 			guildOnly: false,
 		});
@@ -17,14 +18,10 @@ module.exports = class extends Command {
 		if (!args[0])
 			return message.channel.send({
 				embed: {
-					description: "Please enter the text that you want to" + ` "𝒻𝒶𝓃𝒸𝒾𝒻𝓎𝓈"`,
+					description: "Please enter the text that you want to" + ` "*owoifys*"`,
 				},
 			});
 
-		var fancied = fancy(args.join(" "));
-
-		if (fancied === "") fancied = "Invalid text inputted";
-
-		return message.channel.send(fancied);
+		return message.channel.send(owoify(args.join(" ")));
 	}
 };

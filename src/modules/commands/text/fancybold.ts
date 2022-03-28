@@ -17,7 +17,7 @@ module.exports = class extends Command {
 		if (!args[0])
 			return message.channel.send({
 				embed: {
-					description: "Please enter the text that you want to" + ` \"**𝒻𝒶𝓃𝒸𝒾𝒻𝓎𝓈**\"`,
+					description: "Please enter the text that you want to" + ` "**𝒻𝒶𝓃𝒸𝒾𝒻𝓎𝓈**"`,
 				},
 			});
 
