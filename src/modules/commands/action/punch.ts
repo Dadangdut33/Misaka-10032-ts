@@ -16,14 +16,13 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		let data: string = await new Random().getAnimeImgURL("punch");
 		// check if there is http or not
-		if (!data.includes("http")) {
-			return message.channel.send(data ? data : "Something went wrong");
-		}
+		if (!data.includes("http")) return message.channel.send(data ? data : "Something went wrong");
+
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
 			.setDescription(`${message.author.username} punches ${args.join(" ")}`)
 			.setImage(data);
 
-		message.channel.send(embed);
+		return message.channel.send(embed);
 	}
 };
