@@ -20,7 +20,7 @@ module.exports = class extends Command {
 
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setDescription(`${message.author.username} **B-ba-baakaa** ${args.join(" ")}`)
+			.setDescription(`${message.author.username} **B-ba-baakaa** >///< ${args.join(" ")}`)
 			.setImage(data);
 
 		return message.channel.send(embed);
