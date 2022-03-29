@@ -74,10 +74,6 @@ module.exports = class extends BotEvent {
 				auditlog: "moderator-only",
 				auditmsg: "moderator-only",
 			},
-			"651015913080094721": {
-				auditlog: "test-bot",
-				auditmsg: "test-bot",
-			},
 		});
 
 		// welcome message
