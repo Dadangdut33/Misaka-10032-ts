@@ -8,7 +8,7 @@ module.exports = class extends Command {
 		super("statscalc", {
 			categories: "tool",
 			info: "Calculate the statistical of given data. Calculated data are results including sorted data, average of data, median, letiation, standard deviation, & average deviation",
-			usage: `${prefix}command/alias <data separated by space>`,
+			usage: `\`${prefix}command/alias <data separated by space>\``,
 			guildOnly: false,
 		});
 		this.prefix = prefix;

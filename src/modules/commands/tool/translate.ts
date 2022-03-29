@@ -1,10 +1,10 @@
-const { MessageEmbed } = require("discord.js");
-const { Command } = require("../../../../handler");
-const { prefix } = require("../../../../config");
-const axios = require("axios");
+import { Message, MessageEmbed } from "discord.js";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
+import axios from "axios";
 
 module.exports = class extends Command {
-	constructor() {
+	prefix;
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("translate", {
 			aliases: ["tl"],
 			categories: "tool",
@@ -12,23 +12,20 @@ module.exports = class extends Command {
 			usage: `${prefix}command/alias <source lang code> <destination lang code> <text to translate>`,
 			guildOnly: true,
 		});
+		this.prefix = prefix;
 	}
 
-	async run(message, args) {
+	async run(message: Message, args: string[]) {
 		if (args.length < 3) {
-			let embed = new MessageEmbed().setTitle(`Input Error`).setDescription(`Please input the correct format. Ex: \`\`\`${prefix}tl id en Selamat pagi!\`\`\``);
+			let embed = new MessageEmbed().setTitle(`Input Error`).setDescription(`Please input the correct format. Ex: \`\`\`${this.prefix}tl id en Selamat pagi!\`\`\``);
 
 			return message.channel.send(embed);
 		}
 		const msg = await message.channel.send(`Loading...`);
 
-		const options = {
-			method: "GET",
-			url: `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${args[0]}&tl=${args[1]}&dt=t&q=${encodeURIComponent(args.slice(2).join(" "))}`,
-		};
-
 		// get results
-		axios(options)
+		axios
+			.get(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${args[0]}&tl=${args[1]}&dt=t&q=${encodeURIComponent(args.slice(2).join(" "))}`)
 			.then((res) => {
 				const data = res.data;
 				const result = data[0][0][0];
@@ -44,7 +41,7 @@ module.exports = class extends Command {
 				return message.channel.send(embed);
 			})
 			.catch((err) => {
-				msg.edit(`Error: ${err.message}`);
+				msg.edit(`Error: ${err}`);
 			});
 	}
 };
