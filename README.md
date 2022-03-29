@@ -5,7 +5,7 @@ A Personal discord bot i made. I use it for my private discord server. **Rewrite
 <details open>
   <summary><b>Preview</b></summary>
   <p align="center">
-    <img src="https://github.com/Dadangdut33/Misaka-10032-ts/blob/main/preview.png?raw=true">
+    <img src="https://raw.githubusercontent.com/Dadangdut33/Misaka-10032-ts/master/preview.png">
   </p>
 </details>
 
