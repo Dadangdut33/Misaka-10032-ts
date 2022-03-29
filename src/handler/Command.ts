@@ -77,7 +77,7 @@ export class Command extends Toggleable implements optionsInterface {
 	/**
 	 * @description Method that runs when the command is executed
 	 */
-	run(message: Message, args: string[], client: Client) {
+	async run(message: Message, args: string[], client: Client): Promise<any> {
 		throw new Error(`Command '${this.name}' is missing run method`);
 	}
 }
