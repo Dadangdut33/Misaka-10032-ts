@@ -9,8 +9,8 @@ module.exports = class extends Command {
 			aliases: ["tl"],
 			categories: "tool",
 			info: "Translate text using google translate.\n[Click here to see full language code](https://developers.google.com/admin-sdk/directory/v1/languages)",
-			usage: `${prefix}command/alias <source lang code> <destination lang code> <text to translate>`,
-			guildOnly: true,
+			usage: `\`${prefix}command/alias <source lang code> <destination lang code> <text to translate>\``,
+			guildOnly: false,
 		});
 		this.prefix = prefix;
 	}
@@ -32,7 +32,7 @@ module.exports = class extends Command {
 
 				msg.delete();
 				let embed = new MessageEmbed()
-					.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
+					.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "png", size: 2048 }))
 					.setTitle(`${args[0]} to ${args[1]}`)
 					.setDescription(result ? result : "Fail to fetch!")
 					.addField("Not correct?", `Check that the language code is correct first in [here](https://developers.google.com/admin-sdk/directory/v1/languages)`)
