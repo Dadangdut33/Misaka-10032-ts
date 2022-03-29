@@ -1,11 +1,10 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
 import moment from "moment-timezone";
 import prettyMilliseconds from "pretty-ms";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("profile", {
 			aliases: ["info"],
 			categories: "info-server",
@@ -78,7 +77,9 @@ module.exports = class extends Command {
 				type = "-";
 			if (User!.presence.activities[0] !== undefined) {
 				if (User!.presence.activities[0].name !== null) {
-					state = `${User!.presence.activities[0].emoji ? `${User!.presence.activities[0].emoji} ` : ""}${User!.presence.activities[0].state ? User!.presence.activities[0].state : "-"}`;
+					state = `${User!.presence.activities[0].emoji ? `${User!.presence.activities[0].emoji} ` : ""}${
+						User!.presence.activities[0].state ? User!.presence.activities[0].state : "-"
+					}`;
 					name = User!.presence.activities[0].name;
 					type = User!.presence.activities[0].type;
 					if (state === null) {
@@ -107,7 +108,10 @@ module.exports = class extends Command {
 			embed.addField(`Roles`, `${roles.join(` `)}`);
 			embed.addField(
 				`Avatar URL`,
-				`[JPG](${User!.user.displayAvatarURL({ format: "jpg", size: 2048 })}) | [PNG](${User!.user.displayAvatarURL({ format: "png", size: 2048 })}) | [WEBP](${User!.user.displayAvatarURL({
+				`[JPG](${User!.user.displayAvatarURL({ format: "jpg", size: 2048 })}) | [PNG](${User!.user.displayAvatarURL({
+					format: "png",
+					size: 2048,
+				})}) | [WEBP](${User!.user.displayAvatarURL({
 					format: "webp",
 					size: 2048,
 				})})`

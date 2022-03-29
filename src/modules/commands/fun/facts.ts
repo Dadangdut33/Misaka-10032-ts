@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { facts } from "../../../local_lib/lib/factspool";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("facts", {
 			categories: "fun",
 			aliases: ["fact"],

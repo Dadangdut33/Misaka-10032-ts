@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 const zalgo = require("to-zalgo");
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("zalgo", {
 			categories: "text",
 			info: "**z̵̭͕̖̹͙̦̠̋̑͂̂͜ͅa̴̤̖̲̣̗̗̖̠͍͉̞̳̣̥͌́ͅl̷̮̱̤̀́͐̕g̵̡̘̞̞̰͉̹̙̮̮̳̠͕̓̀̑̆ǫ̷̼̪̰̘̥̻̝̾͋́̂͆́̚͘ȋ̴̻͈͈̹͈̮͆̾͂͝f̶̛̘̮͉͎̏̈́̌̒ŷ̸̧̡̢̧̯̟̬͎̦̩̻͍͂̑͋̈́̌̈͛͒̐̏̈́̄͌̑** letter(s) using [to-zalgo](https://www.npmjs.com/package/to-zalgo)",

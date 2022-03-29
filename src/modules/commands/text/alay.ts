@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 const Chance = require("chance");
 
 function alayifys(text: string) {
@@ -11,7 +10,7 @@ function alayifys(text: string) {
 }
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("alay", {
 			aliases: ["imdisabled", "imretarded"],
 			categories: "text",

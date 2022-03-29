@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 const responses = [
 	"If my intuition is correct, you should choose",
@@ -15,13 +14,15 @@ const responses = [
 ];
 
 module.exports = class extends Command {
-	constructor() {
+	prefix;
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("choose", {
 			categories: "fun",
 			info: "Help the bot choose for you.",
 			usage: `**[-]**\`${prefix}choose [[option 1]] [[option 2]] ... [[option x]]\`\n**[-]**\`${prefix}choose [arguments] [[option 1]] [[option 2]] ... [[option x]]\`\n***Notice the []**`,
 			guildOnly: false,
 		});
+		this.prefix = prefix;
 	}
 
 	async run(message: Message, args: string[]) {
@@ -32,7 +33,7 @@ module.exports = class extends Command {
 			return message.channel.send({
 				embed: {
 					color: "RANDOM",
-					description: `Please enter the correct argument example should be like this :arrow_down:\`\`\`css\n${prefix}choose [eat] [sleep] [study]\`\`\`For more info use the help commands.`,
+					description: `Please enter the correct argument example should be like this :arrow_down:\`\`\`css\n${this.prefix}choose [eat] [sleep] [study]\`\`\`For more info use the help commands.`,
 				},
 			});
 

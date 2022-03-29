@@ -22,12 +22,14 @@ require("dotenv").config();
 const client = new Client({ disableMentions: "none", partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
 
 // load client to handler
-import { prefix } from "./config.json";
+import { prefix, build, repo_link } from "./config.json";
 const handler = new Handler(client);
 handler.load(path.join(__dirname, "./modules"), {
 	client: client,
 	commandHandler: handler,
 	prefix: prefix,
+	build: build,
+	repo_link: repo_link,
 });
 
 // Database

@@ -1,9 +1,8 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("avatar", {
 			aliases: ["profilepicture"],
 			categories: "info-server",
@@ -22,7 +21,10 @@ module.exports = class extends Command {
 			embed.setImage(message.author.displayAvatarURL({ format: "jpg", size: 2048 }));
 			embed.addField(
 				`Avatar URL`,
-				`[JPG](${message.author.displayAvatarURL({ format: "jpg", size: 2048 })}) | [PNG](${message.author.displayAvatarURL({ format: "png", size: 2048 })}) | [WEBP](${message.author.displayAvatarURL({
+				`[JPG](${message.author.displayAvatarURL({ format: "jpg", size: 2048 })}) | [PNG](${message.author.displayAvatarURL({
+					format: "png",
+					size: 2048,
+				})}) | [WEBP](${message.author.displayAvatarURL({
 					format: "webp",
 					size: 2048,
 				})})`

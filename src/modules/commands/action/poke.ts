@@ -1,10 +1,9 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { Random } from "../../../local_lib/lib/random_api";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("poke", {
 			categories: "action",
 			aliases: ["pokes"],

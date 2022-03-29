@@ -1,11 +1,11 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { paginationEmbed } from "../../../local_lib/functions.js";
 const { htmlToText } = require("html-to-text");
 
 module.exports = class extends Command {
-	constructor() {
+	prefix;
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("quran", {
 			aliases: ["alquran", "ayat"],
 			categories: "muslim",
@@ -13,12 +13,21 @@ module.exports = class extends Command {
 			usage: `**[-]** \`${prefix}command/alias <list>\`\n**[-]** \`${prefix}command/alias <random>\`\n**[-]** \`${prefix}command/alias <cari/search/ayat/baca/read> <nomor surat> <ayat mulai-ayat berhenti>\`or\n**[-]** \`${prefix}command/alias <cari/ayat> <nomor surat> <ayat yang ingin dicari>\``,
 			guildOnly: true,
 		});
+		this.prefix = prefix;
+	}
+
+	invalid_args() {
+		return new MessageEmbed()
+			.setTitle("Invalid Arguments")
+			.setDescription(
+				`**Usage should be like this:** \n\`${this.prefix}command/alias <list>\` or\n\`${this.prefix}command/alias <random>\` or\n\`${this.prefix}command/alias <cari/search/ayat/read/baca> <nomor surat> <ayat mulai-ayat berhenti>\` or\n\`${this.prefix}command/alias <cari/ayat> <nomor surat> <ayat yang ingin dicari>\`\n\n**Example:**\n\`${this.prefix}quran cari 2 13-23\``
+			)
+			.setFooter("For more info check using help commands!");
 	}
 
 	async run(message: Message, args: string[]) {
 		if (!args[0]) {
-			info();
-			return;
+			return message.channel.send(this.invalid_args());
 		}
 
 		if (args[0].toLowerCase() == "list") {
@@ -44,7 +53,13 @@ module.exports = class extends Command {
 			const pages = [page1List, page2List, page3List];
 
 			paginationEmbed(message, pages, [], 300000); // 5 Menit
-		} else if (args[0].toLowerCase() == "cari" || args[0].toLowerCase() == "search" || args[0].toLowerCase() == "ayat" || args[0].toLowerCase() == "baca" || args[0].toLowerCase() == "read") {
+		} else if (
+			args[0].toLowerCase() == "cari" ||
+			args[0].toLowerCase() == "search" ||
+			args[0].toLowerCase() == "ayat" ||
+			args[0].toLowerCase() == "baca" ||
+			args[0].toLowerCase() == "read"
+		) {
 			args.shift(); // Remove first element
 			// Now surat is on args[0], ayat is on args[1]
 			const data = await fetch(`https://api.banghasan.com/quran/format/json/surat/${args[0]}/ayat/${args[1]}`);
@@ -122,18 +137,7 @@ module.exports = class extends Command {
 
 			return message.channel.send(embed);
 		} else {
-			info();
-		}
-
-		function info() {
-			let embed = new MessageEmbed()
-				.setTitle("Invalid Arguments")
-				.setDescription(
-					`**Usage should be like this:** \n\`${prefix}command/alias <list>\` or\n\`${prefix}command/alias <random>\` or\n\`${prefix}command/alias <cari/search/ayat/read/baca> <nomor surat> <ayat mulai-ayat berhenti>\` or\n\`${prefix}command/alias <cari/ayat> <nomor surat> <ayat yang ingin dicari>\`\n\n**Example:**\n\`${prefix}quran cari 2 13-23\``
-				)
-				.setFooter("For more info check using help commands!");
-
-			return message.channel.send(embed);
+			return message.channel.send(this.invalid_args());
 		}
 	}
 };

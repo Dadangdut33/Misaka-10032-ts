@@ -1,9 +1,8 @@
 import { Message } from "discord.js";
-import { prefix } from "../../../config.json";
-import { Command } from "../../../handler";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("ping", {
 			aliases: ["p"],
 			categories: "info-bot",

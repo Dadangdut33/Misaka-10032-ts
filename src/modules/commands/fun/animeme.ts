@@ -1,10 +1,9 @@
 import { Message, MessageEmbed } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { randomPuppy } from "../../../local_lib/functions";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("animeme", {
 			categories: "fun",
 			info: "Sends a funny anime meme from reddit",

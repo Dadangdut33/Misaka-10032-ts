@@ -1,11 +1,10 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
 import moment from "moment-timezone";
 import Genius from "genius-lyrics";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("lyrics", {
 			aliases: ["ly"],
 			categories: "music",
@@ -36,7 +35,12 @@ module.exports = class extends Command {
 				return;
 			}
 
-			const edited = new MessageEmbed().setTitle(songs[0].title).setURL(songs[0].url).addField(`Lyrics State`, songs[0].raw.lyrics_state, true).setImage(songs[0].image).setColor("YELLOW");
+			const edited = new MessageEmbed()
+				.setTitle(songs[0].title)
+				.setURL(songs[0].url)
+				.addField(`Lyrics State`, songs[0].raw.lyrics_state, true)
+				.setImage(songs[0].image)
+				.setColor("YELLOW");
 
 			const fetched = await songs[0].fetch();
 			if (fetched.releasedAt) {

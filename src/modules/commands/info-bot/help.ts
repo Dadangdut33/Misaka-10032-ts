@@ -1,6 +1,5 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, Handler, handlerLoadOptionsInterface } from "../../../handler";
-import { build, Repo_Link } from "../../../config.json";
 
 const mapCommands = (source: Map<string, Command>, categories: string) => {
 	return `${Array.from(source)
@@ -14,10 +13,13 @@ const countACategory = (source: Map<string, Command>, categories: string) => {
 };
 
 module.exports = class extends Command {
-	commandHandler: Handler;
-	prefix: string;
+	commandHandler;
+	prefix;
+	build;
+	repo_link;
+
 	// destructuring commandHandler and prefix from the command class
-	constructor({ commandHandler, prefix }: handlerLoadOptionsInterface) {
+	constructor({ commandHandler, prefix, build, repo_link }: handlerLoadOptionsInterface) {
 		super("help", {
 			aliases: ["h"],
 			categories: "info-bot",
@@ -27,6 +29,8 @@ module.exports = class extends Command {
 		});
 		this.commandHandler = commandHandler;
 		this.prefix = prefix;
+		this.build = build;
+		this.repo_link = repo_link;
 	}
 
 	async run(message: Message, args: string[]) {
@@ -50,7 +54,7 @@ module.exports = class extends Command {
 				.setColor("RANDOM")
 				.setThumbnail("https://cdn.discordapp.com/attachments/653206818759376916/795497635812343848/Kirino_Question.png")
 				.setDescription(
-					`All available commands for ${message.client.user?.username}#${message.client.user?.discriminator} Version \`${build}\`\nThe bot currently has \`${totalCommands} commands.\`\nThe bot's prefix is: \`${this.prefix}\`\nFor more details use \`\`\`ts\n${this.prefix}help <command/alias>\`\`\``
+					`All available commands for ${message.client.user?.username}#${message.client.user?.discriminator} Version \`${this.build}\`\nThe bot currently has \`${totalCommands} commands.\`\nThe bot's prefix is: \`${this.prefix}\`\nFor more details use \`\`\`ts\n${this.prefix}help <command/alias>\`\`\``
 				);
 
 			// loop the categories
@@ -67,7 +71,7 @@ module.exports = class extends Command {
 				},
 				{
 					name: `Bot's Repository`,
-					value: `[GitHub](${Repo_Link})`,
+					value: `[GitHub](${this.repo_link})`,
 					inline: true,
 				}
 			);
@@ -108,7 +112,7 @@ module.exports = class extends Command {
 				.addField(`Description`, `${command.info}`)
 				.addField(`Usage`, `${command.usage}`)
 				.addField(`Command's Source Code`, `[Click Here](https://github.com/Dadangdut33/Misaka-10032/blob/main/modules/commands/${command.categories}/${command.name}.ts)`, true)
-				.addField(`Bot's Repository`, `[GitHub](${Repo_Link})`, true);
+				.addField(`Bot's Repository`, `[GitHub](${this.repo_link})`, true);
 
 			message.channel.send(embed);
 		}

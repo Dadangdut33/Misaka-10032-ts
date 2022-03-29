@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { reverseString } from "../../../local_lib/functions";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("reverse", {
 			categories: "text",
 			info: '*"esrever"* a sentence',

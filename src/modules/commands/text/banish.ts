@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 const banish = require("to-zalgo/banish");
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("banish", {
 			categories: "text",
 			info: "Normalize **ẑ̴̧̳̯̔̒ā̶̟͖̗̤̙̿̉̎͛͋̆͂͝͝l̶̡̠̞̫̣̪̮̯̤̙͂̀͝͝ͅģ̵̡̨͚͚̤̦̪͕͓̞̖͖̄̏̏́̊̃̆͜o̴̡̧͎̻͈͓̞̮̩̎͆̓̉͒̽̎̿̐̋̊͆̈͠ͅě̷͔̠d̶̡̨̮̮̮̳̙͚̙͕͙̥̔̇̊̍̇** letter(s) using [to-zalgo](https://www.npmjs.com/package/to-zalgo)",

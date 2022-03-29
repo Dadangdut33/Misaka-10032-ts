@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 const responses = [
 	"it is certain",
@@ -36,7 +35,7 @@ const responses = [
 ];
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("8ball", {
 			categories: "fun",
 			info: "*The Magic 8 Ball is a toy used for advice gaccha* or at least that's what it's supposed to do, so yeah.",

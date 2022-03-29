@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 const figlet = require("figlet");
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("ascii", {
 			categories: "text",
 			info: "Convert text to ASCII art using [Figlet](https://www.npmjs.com/package/figlet)",

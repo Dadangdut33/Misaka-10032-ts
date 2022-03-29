@@ -1,17 +1,19 @@
 import prettyMilliseconds from "pretty-ms";
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix, build, Repo_Link } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	build;
+	repo_link;
+	constructor({ prefix, build, repo_link }: handlerLoadOptionsInterface) {
 		super("about", {
 			categories: "info-bot",
-			aliases: [],
 			info: "Shows what the bot is about. This include the bot's status & description",
 			usage: `\`${prefix}about\``,
 			guildOnly: true,
 		});
+		this.build = build;
+		this.repo_link = repo_link;
 	}
 	async run(message: Message, args: string[]) {
 		const embed = new MessageEmbed()
@@ -19,7 +21,7 @@ module.exports = class extends Command {
 			.setColor("YELLOW")
 			.setThumbnail(message.client!.user!.displayAvatarURL())
 			.setDescription(
-				`My name is **Misaka 10032** *says Misaka, trying to explain herself* jk...\n\nCreated by Dadangdut33 **for private use only**.\n\n**[Click here to see my source code](${Repo_Link})** \n*The bot is currently being rewritten in typescript`
+				`My name is **Misaka 10032** *says Misaka, trying to explain herself* jk...\n\nCreated by Dadangdut33 **for private use only**.\n\n**[Click here to see my source code](${this.repo_link})** \n*The bot is currently being rewritten in typescript`
 			)
 			.addField("TOTAL SERVERS/\nCHANNELS", `${message.client.guilds.cache.size}/${message.client.channels.cache.size}`, true)
 			.addField("TOTAL MEMBERS", message.client.users.cache.size, true)
@@ -33,7 +35,7 @@ module.exports = class extends Command {
 				value: `[Github](https://github.com/Dadangdut33)`,
 				inline: true,
 			})
-			.setFooter(`Version ${build}`)
+			.setFooter(`Version ${this.build}`)
 			.setTimestamp();
 
 		message.channel.send(embed);

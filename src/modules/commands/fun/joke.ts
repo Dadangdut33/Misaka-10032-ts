@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
 import { Random } from "../../../local_lib/lib/random_api";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("joke", {
 			categories: "fun",
 			aliases: ["jokes"],

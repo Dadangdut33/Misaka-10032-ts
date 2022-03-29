@@ -1,11 +1,10 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
 import moment from "moment-timezone";
 import prettyMilliseconds from "pretty-ms";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("serverinfo", {
 			aliases: ["sinfo"],
 			categories: "info-server",

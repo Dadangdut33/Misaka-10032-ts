@@ -9,6 +9,8 @@ export interface handlerLoadOptionsInterface {
 	client: Client;
 	commandHandler: Handler;
 	prefix: string;
+	build: string;
+	repo_link: string;
 }
 interface IPrototype {
 	prototype: ClassDecorator;

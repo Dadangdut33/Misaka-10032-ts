@@ -1,6 +1,5 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 function validURL(str: string) {
 	//Check if it's a valid url or not
@@ -17,7 +16,7 @@ function validURL(str: string) {
 }
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("announce", {
 			categories: "moderation",
 			info: "Announce stuff but with more feature using embed. Only usable by admin and mods. Leave the not desired optional empty but don't erase the quote",

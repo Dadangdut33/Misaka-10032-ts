@@ -1,11 +1,10 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
 import moment from "moment-timezone";
 import prettyMilliseconds from "pretty-ms";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("newest", {
 			aliases: [],
 			categories: "info-server",
@@ -18,8 +17,7 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0]) {
 			//Get data
-			var memberList: string[] = [];
-			memberList = getMember();
+			var memberList: string[] = getMember();
 
 			//Sort it and reverse it
 			memberList.sort().reverse();
@@ -43,7 +41,9 @@ module.exports = class extends Command {
 				var today = moment().tz("Asia/Jakarta");
 				var age = today.valueOf() - GuildMember.joinedAt!.getTime();
 
-				return `${GuildMember.joinedTimestamp} ,, ${moment(GuildMember.joinedAt).tz("Asia/Jakarta").format("DD/MM/YYYY HH:mm:ss")} - <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
+				return `${GuildMember.joinedTimestamp} ,, ${moment(GuildMember.joinedAt).tz("Asia/Jakarta").format("DD/MM/YYYY HH:mm:ss")} - <@${GuildMember.id}> (${prettyMilliseconds(
+					age
+				)})`;
 			});
 		}
 	}

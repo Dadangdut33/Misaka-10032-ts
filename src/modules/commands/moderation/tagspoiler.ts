@@ -1,10 +1,9 @@
 import { Message, MessageEmbed, DiscordAPIError } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
 import moment from "moment-timezone";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("tagspoiler", {
 			aliases: ["ts"],
 			categories: "moderation",
@@ -40,7 +39,9 @@ module.exports = class extends Command {
 					size = message.attachments.map((attachment) => attachment.size),
 					attachmentExists = attachmentName.length > 0;
 
-				let embed = new MessageEmbed().setTitle(`**Reason:** ${reason.trim()}`).setDescription(`**Message Content Below:**\n${message.content ? `||${message.content.replace(/\||```/g, "")}||` : "-"}`);
+				let embed = new MessageEmbed()
+					.setTitle(`**Reason:** ${reason.trim()}`)
+					.setDescription(`**Message Content Below:**\n${message.content ? `||${message.content.replace(/\||```/g, "")}||` : "-"}`);
 
 				// send attachment
 				if (attachmentExists) {
@@ -51,7 +52,11 @@ module.exports = class extends Command {
 
 				embed
 					.addField(`Go To`, `[Message Position](https://discord.com/channels/${message.guild!.id}/${message.channel.id}/${message.id})`, false)
-					.addField(`Reminder`, `Please use the tag spoiler if your message contains spoiler so this won't happen again in the future. Example of how to use it -> \`||spoiler here||\``, false)
+					.addField(
+						`Reminder`,
+						`Please use the tag spoiler if your message contains spoiler so this won't happen again in the future. Example of how to use it -> \`||spoiler here||\``,
+						false
+					)
 					.addField(`Message Sent At`, moment(message.createdTimestamp).tz("Asia/Jakarta").format("dddd, D-M-YY (HH:mm:ss)"), true)
 					.addField(`Message Author`, message.author, true)
 					.addField(`Marked by`, author, true)

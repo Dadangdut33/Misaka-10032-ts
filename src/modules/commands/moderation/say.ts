@@ -1,9 +1,8 @@
 import { Message, MessageEmbed } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("say", {
 			categories: "moderation",
 			info: "Says your input via the bot, only usable by admin and mods",

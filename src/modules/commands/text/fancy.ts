@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { fancy } from "../../../local_lib/lib/fancyfies";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("fancy", {
 			categories: "text",
 			info: '*"𝒻𝒶𝓃𝒸𝓎"* letter(s)',

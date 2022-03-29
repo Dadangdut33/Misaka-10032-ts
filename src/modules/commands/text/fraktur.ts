@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 const fraktur = require("fraktur");
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("fraktur", {
 			categories: "text",
 			info: '*"𝔣𝔯𝔞𝔨𝔱𝔲𝔯"* letter(s) using [fraktur](https://www.npmjs.com/package/fraktur/v/1.1.0)',

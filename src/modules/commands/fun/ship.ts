@@ -1,10 +1,10 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { Random } from "../../../local_lib/lib/random_api";
 
 module.exports = class extends Command {
-	constructor() {
+	prefix;
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("ship", {
 			categories: "fun",
 			aliases: [],
@@ -12,6 +12,7 @@ module.exports = class extends Command {
 			usage: `\`${prefix}command <charname> x <charname> *Notice the (x)\``,
 			guildOnly: false,
 		});
+		this.prefix = prefix;
 	}
 
 	async run(message: Message, args: string[]) {
@@ -19,7 +20,7 @@ module.exports = class extends Command {
 			return message.channel.send({
 				embed: {
 					title: "Invalid format",
-					description: `Please enter the name that you want to ship. Usage should be like this example :arrow_down:\`\`\`ts\n${prefix}ship Togashi Yuta x Takanashi Rikka\`\`\``,
+					description: `Please enter the name that you want to ship. Usage should be like this example :arrow_down:\`\`\`ts\n${this.prefix}ship Togashi Yuta x Takanashi Rikka\`\`\``,
 				},
 			});
 

@@ -1,6 +1,5 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { promptMessage } from "../../../local_lib/functions";
 const chooseArr = ["🗻", "✂", "📰"];
 
@@ -15,7 +14,7 @@ function getResult(me: string, clientChosen: string) {
 }
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("rps", {
 			categories: "fun",
 			info: "Rock Paper Scissors game. React to one of the emojis to play the game",

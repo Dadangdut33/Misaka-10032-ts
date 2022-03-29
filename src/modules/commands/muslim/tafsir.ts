@@ -1,10 +1,10 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { paginationEmbed } from "../../../local_lib/functions.js";
 
 module.exports = class extends Command {
-	constructor() {
+	prefix;
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("tafsir", {
 			aliases: [],
 			categories: "muslim",
@@ -12,12 +12,25 @@ module.exports = class extends Command {
 			usage: `\`${prefix}command/alias <nomor surat> <ayat>\``,
 			guildOnly: true,
 		});
+		this.prefix = prefix;
+	}
+
+	invalid_args() {
+		return new MessageEmbed()
+			.setTitle("Invalid Arguments")
+			.setDescription(`**Usage should be like this:** \n\`${this.prefix}command/alias <nomor surat> <ayat>\``)
+			.setFooter("For more info check using help commands!");
+	}
+
+	descEmbed(parsedData: any, tafsir: string) {
+		return new MessageEmbed()
+			.setTitle(`Q.S. ${parsedData.data.surah.name.transliteration.id}:${parsedData.data.surah.number} (${parsedData.data.number.inSurah}) ${parsedData.data.surah.name.short}`)
+			.setDescription(tafsir);
 	}
 
 	async run(message: Message, args: string[]) {
 		if (!args[0] || isNaN(parseInt(args[0])) || isNaN(parseInt(args[1]))) {
-			info();
-			return;
+			return message.channel.send(this.invalid_args());
 		}
 
 		const API = await fetch(`https://api.quran.sutanlab.id/surah/${args[0]}/${args[1]}`);
@@ -29,7 +42,7 @@ module.exports = class extends Command {
 			return message.channel.send(embed);
 		}
 
-		var pages = [];
+		let pages = [];
 
 		let infoPage = new MessageEmbed()
 			.setTitle(`Q.S. ${parsedData.data.surah.name.transliteration.id}:${parsedData.data.surah.number} (${parsedData.data.number.inSurah}) ${parsedData.data.surah.name.short}`)
@@ -48,31 +61,14 @@ module.exports = class extends Command {
 		pages.push(infoPage);
 		pages.push(theAyat);
 
-		var start = 0,
+		let start = 0,
 			end = 2048; // Cut it to 2048
-		for (var i = 0; i < parsedData.data.tafsir.id.long.length / 2048; i++) {
-			pages.push(descEmbed(parsedData, parsedData.data.tafsir.id.long.slice(start, end)));
+		for (let i = 0; i < parsedData.data.tafsir.id.long.length / 2048; i++) {
+			pages.push(this.descEmbed(parsedData, parsedData.data.tafsir.id.long.slice(start, end)));
 			start += 2048;
 			end += 2048;
 		}
 
 		paginationEmbed(message, pages, [], 600000);
-
-		function info() {
-			let embed = new MessageEmbed()
-				.setTitle("Invalid Arguments")
-				.setDescription(`**Usage should be like this:** \n\`${prefix}command/alias <nomor surat> <ayat>\``)
-				.setFooter("For more info check using help commands!");
-
-			return message.channel.send(embed);
-		}
-
-		function descEmbed(parsedData: any, tafsir: string) {
-			let embed = new MessageEmbed()
-				.setTitle(`Q.S. ${parsedData.data.surah.name.transliteration.id}:${parsedData.data.surah.number} (${parsedData.data.number.inSurah}) ${parsedData.data.surah.name.short}`)
-				.setDescription(tafsir);
-
-			return embed;
-		}
 	}
 };

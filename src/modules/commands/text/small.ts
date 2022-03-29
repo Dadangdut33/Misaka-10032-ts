@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Command } from "../../../handler";
-import { prefix } from "../../../config.json";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 const tinytext = require("tiny-text");
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("small", {
 			categories: "text",
 			info: "`ˢᵐᵃᶫᶫᶦᶠʸˢ` ᵃ ˢᵉᶰᵗᵉᶰᶜᵉ ᵘˢᶦᶰᵍ [tiny-text](https://www.npmjs.com/package/tiny-text)",
