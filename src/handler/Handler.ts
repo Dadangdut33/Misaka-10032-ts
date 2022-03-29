@@ -10,6 +10,10 @@ export interface handlerLoadOptionsInterface {
 	commandHandler: Handler;
 	prefix: string;
 }
+interface IPrototype {
+	prototype: ClassDecorator;
+	new (...args: handlerLoadOptionsInterface[]): any;
+}
 
 export class Handler {
 	client: Client;
@@ -74,19 +78,19 @@ export class Handler {
 			.map(require);
 
 		// Load all Features
-		nodes.forEach((Node: any) => {
+		nodes.forEach((Node: IPrototype) => {
 			if (Node.prototype instanceof Feature) {
-				this.loadFeature(new Node(dependencies));
+				this.loadFeature(new Node(dependencies)); // load each feature class along with passed dependencies
 			}
 		});
 
 		// Load all Command and Event classes that haven't loaded yet
-		nodes.forEach((Node: any) => {
+		nodes.forEach((Node: IPrototype) => {
 			if (Node.prototype instanceof Command) {
 				const loaded = Array.from(this.commands.values()).some((command) => command instanceof Node);
 
 				if (!loaded) {
-					this.loadCommand(new Node(dependencies));
+					this.loadCommand(new Node(dependencies)); // load each command class along with passed dependencies
 				}
 			}
 
@@ -94,7 +98,7 @@ export class Handler {
 				const loaded = Array.from(this.commandEvents.values()).some((events) => events.some((event) => event instanceof Node));
 
 				if (!loaded) {
-					this.loadEvent(new Node(dependencies));
+					this.loadEvent(new Node(dependencies)); // load each event class along with passed dependencies
 				}
 			}
 		});

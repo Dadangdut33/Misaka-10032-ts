@@ -17,7 +17,7 @@ module.exports = class extends Command {
 	commandHandler: Handler;
 	prefix: string;
 	// destructuring commandHandler and prefix from the command class
-	constructor({ commandHandler, prefix }: any) {
+	constructor({ commandHandler, prefix }: handlerLoadOptionsInterface) {
 		super("help", {
 			aliases: ["h"],
 			categories: "info-bot",
