@@ -17,7 +17,7 @@ module.exports = class extends Command {
 		const url = `http://api.qrserver.com/v1/create-qr-code/?data=${args.join("+")}&size=400x400`;
 		const embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setDescription(`Original Text\`\`\`${args.join(" ")}\`\`\``)
+			.setDescription(`**Original Text**\n${args.join(" ")}`)
 			.setTitle(`:arrow_down: QR Code Generated`)
 			.setImage(url);
 

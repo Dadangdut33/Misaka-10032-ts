@@ -1,37 +1,22 @@
-const fetch = require("node-fetch");
+import axios from "axios";
 
 export class Random {
 	async getMeme() {
-		const main = await fetch("https://apis.duncte123.me/meme");
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://apis.duncte123.me/meme");
 
-		if (!mat.success) {
-			return "Error 01: Unable to access the json content of API";
-		}
-
-		let content = {
-			embed: {
-				color: "RANDOM",
-				title: mat.data.title,
-				image: { url: mat.data.image },
-			},
-		};
-
-		return content;
+		return data;
 	}
 
 	async getJoke() {
-		const main = await fetch("https://apis.beta.duncte123.me/joke"); //https://apis.beta.duncte123.me/joke https://apis.duncte123.me/joke
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://apis.beta.duncte123.me/joke"); //https://apis.beta.duncte123.me/joke https://apis.duncte123.me/joke
 
-		return mat;
+		return data;
 	}
 
 	async getKitsune() {
-		const main = await fetch("https://neko-love.xyz/api/v1/kitsune");
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/kitsune");
 
-		if (mat.code !== 200) {
+		if (data.code !== 200) {
 			return "Error 01: Unable to access the json content of API";
 		}
 		const chars: any = { "/": "%2F", ":": "%3A" };
@@ -40,8 +25,8 @@ export class Random {
 			embed: {
 				color: "RANDOM",
 				title: `Gao~`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${mat.url.replace(/[:/]/g, (m: string) => chars[m])})`,
-				image: { url: mat.url },
+				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: string) => chars[m])})`,
+				image: { url: data.url },
 			},
 		};
 
@@ -49,10 +34,9 @@ export class Random {
 	}
 
 	async getNeko() {
-		const main = await fetch("https://neko-love.xyz/api/v1/neko");
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/neko");
 
-		if (mat.code !== 200) {
+		if (data.code !== 200) {
 			return "Error 01: Unable to access the json content of API";
 		}
 
@@ -63,8 +47,8 @@ export class Random {
 			embed: {
 				color: "RANDOM",
 				title: "Nya nya~",
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${mat.url.replace(/[:/]/g, (m: number) => chars[m])})`,
-				image: { url: mat.url },
+				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: number) => chars[m])})`,
+				image: { url: data.url },
 			},
 		};
 
@@ -72,8 +56,7 @@ export class Random {
 	}
 
 	async getNekoGif() {
-		const main = await fetch("https://nekos.life/api/v2/img/ngif");
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://nekos.life/api/v2/img/ngif");
 
 		const chars: any = { "/": "%2F", ":": "%3A" };
 
@@ -81,8 +64,8 @@ export class Random {
 			embed: {
 				color: "RANDOM",
 				title: `Nya nya~`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${mat.url.replace(/[:/]/g, (m: string) => chars[m])})`,
-				image: { url: mat.url },
+				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: string) => chars[m])})`,
+				image: { url: data.url },
 			},
 		};
 
@@ -90,16 +73,15 @@ export class Random {
 	}
 
 	async getNekoV2() {
-		const main = await fetch("https://nekos.life/api/v2/img/neko");
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://nekos.life/api/v2/img/neko");
 
 		const chars: any = { "/": "%2F", ":": "%3A" };
 		let content = {
 			embed: {
 				color: "RANDOM",
 				title: `Nya nya~`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${mat.url.replace(/[:/]/g, (m: string) => chars[m])})`,
-				image: { url: mat.url },
+				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: string) => chars[m])})`,
+				image: { url: data.url },
 			},
 		};
 
@@ -107,8 +89,7 @@ export class Random {
 	}
 
 	async getWallpaper() {
-		const main = await fetch("https://nekos.life/api/v2/img/wallpaper");
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://nekos.life/api/v2/img/wallpaper");
 
 		const chars: any = { "/": "%2F", ":": "%3A" };
 		let content = {
@@ -116,8 +97,8 @@ export class Random {
 				color: "RANDOM",
 				title: `Via Nekos.life`,
 				url: `https://nekos.life/`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${mat.url.replace(/[:/]/g, (m: string) => chars[m])})`,
-				image: { url: mat.url },
+				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: string) => chars[m])})`,
+				image: { url: data.url },
 			},
 		};
 
@@ -131,10 +112,9 @@ export class Random {
 			return "Unknown Action name, options of action are - " + array.join(", ");
 		}
 
-		const main = await fetch("https://neko-love.xyz/api/v1/" + action.toLowerCase());
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/" + action.toLowerCase());
 
-		return mat.url;
+		return data.url;
 	}
 
 	async getAnimeImgURLV2(action: "pat" | "hug" | "tickle" | "kiss" | "slap" | "poke" | "cuddle") {
@@ -144,25 +124,20 @@ export class Random {
 			return "Unknown Action name, options of action are - " + array.join(", ");
 		}
 
-		const main = await fetch("https://nekos.life/api/v2/img/" + action.toLowerCase());
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://nekos.life/api/v2/img/" + action.toLowerCase());
 
-		return mat.url;
+		return data.url;
 	}
 
 	async getAdvice() {
-		const fetchApi = await fetch("https://api.adviceslip.com/advice");
-		const get: any = await fetchApi.json();
+		const { data }: any = await axios.get("https://api.adviceslip.com/advice");
 
-		return get.slip ? get.slip.advice : false;
+		return data.slip ? data.slip.advice : false;
 	}
 
 	async getShip(chara1: string, chara2: string) {
-		const main = await fetch("https://apis.beta.duncte123.me/love/" + chara1 + `/` + chara2);
-		const mat: any = await main.json();
+		const { data }: any = await axios.get("https://apis.beta.duncte123.me/love/" + chara1 + `/` + chara2);
 
-		console.log(mat);
-
-		return mat;
+		return data;
 	}
 }

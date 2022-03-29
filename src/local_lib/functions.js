@@ -1,5 +1,5 @@
 const { DiscordAPIError, MessageEmbed } = require("discord.js");
-const fetch = require("node-fetch");
+const axios = require("axios");
 const mongoose = require("mongoose");
 
 module.exports = {
@@ -83,9 +83,9 @@ module.exports = {
 
 	randomPuppy: async function (random) {
 		//Perform a GET request
-		const data = await fetch(`https://www.reddit.com/r/${random}.json?limit=150`, {
+		const { data } = await axios.get(`https://www.reddit.com/r/${random}.json?limit=150`, {
 			headers: {
-				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
+				"Content-Type": "application/json",
 			},
 		});
 		const { children } = data.data;
