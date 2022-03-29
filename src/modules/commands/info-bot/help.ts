@@ -1,5 +1,5 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command, Handler } from "../../../handler";
+import { Command, Handler, handlerLoadOptionsInterface } from "../../../handler";
 import { build, Repo_Link } from "../../../config.json";
 
 const mapCommands = (source: Map<string, Command>, categories: string) => {
@@ -16,6 +16,7 @@ const countACategory = (source: Map<string, Command>, categories: string) => {
 module.exports = class extends Command {
 	commandHandler: Handler;
 	prefix: string;
+	// destructuring commandHandler and prefix from the command class
 	constructor({ commandHandler, prefix }: any) {
 		super("help", {
 			aliases: ["h"],
@@ -24,7 +25,6 @@ module.exports = class extends Command {
 			usage: `\`${prefix}help [command] or ${prefix}alias [command]\``,
 			guildOnly: true,
 		});
-
 		this.commandHandler = commandHandler;
 		this.prefix = prefix;
 	}

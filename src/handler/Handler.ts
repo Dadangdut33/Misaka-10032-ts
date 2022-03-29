@@ -5,6 +5,12 @@ import { BotEvent } from "./BotEvent";
 import { Utils } from "./Utils";
 import { prefix } from "../config.json";
 
+export interface handlerLoadOptionsInterface {
+	client: Client;
+	commandHandler: Handler;
+	prefix: string;
+}
+
 export class Handler {
 	client: Client;
 	prefix: string;
@@ -59,9 +65,9 @@ export class Handler {
 	/**
 	 * @description Load all command/event modules from a directory
 	 * @param {string} directory - The directory of the modules
-	 * @param {object} dependencies - The dependencies of the modules
+	 * @param {handlerLoadOptionsInterface} dependencies - The dependencies of the modules
 	 */
-	load(directory: string, dependencies: object) {
+	load(directory: string, dependencies: handlerLoadOptionsInterface) {
 		// Find and require all JavaScript files
 		const nodes = Utils.readdirSyncRecursive(directory)
 			.filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"))

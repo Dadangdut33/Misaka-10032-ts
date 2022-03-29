@@ -25,7 +25,7 @@ const client = new Client({ disableMentions: "none", partials: ["MESSAGE", "CHAN
 import { prefix } from "./config.json";
 const handler = new Handler(client);
 handler.load(path.join(__dirname, "./modules"), {
-	client,
+	client: client,
 	commandHandler: handler,
 	prefix: prefix,
 });
