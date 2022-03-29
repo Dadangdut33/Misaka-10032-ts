@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("punch", {
 			categories: "action",
 			aliases: ["punches"],
-			info: "Punches others. Images are fetched from [Neko love API](https://nekos.life/)",
+			info: "Punches others. Images are fetched from [Neko love API](https://neko-love.xyz/)",
 			usage: `${prefix}command [tag] [message]`,
 			guildOnly: true,
 		});

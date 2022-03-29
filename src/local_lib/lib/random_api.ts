@@ -55,48 +55,19 @@ export class Random {
 		return content;
 	}
 
-	async getNekoGif() {
-		const { data }: any = await axios.get("https://nekos.life/api/v2/img/ngif");
-
-		const chars: any = { "/": "%2F", ":": "%3A" };
-
-		let content = {
-			embed: {
-				color: "RANDOM",
-				title: `Nya nya~`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: string) => chars[m])})`,
-				image: { url: data.url },
-			},
-		};
-
-		return content;
-	}
-
-	async getNekoV2() {
-		const { data }: any = await axios.get("https://nekos.life/api/v2/img/neko");
-
-		const chars: any = { "/": "%2F", ":": "%3A" };
-		let content = {
-			embed: {
-				color: "RANDOM",
-				title: `Nya nya~`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: string) => chars[m])})`,
-				image: { url: data.url },
-			},
-		};
-
-		return content;
-	}
-
 	async getWallpaper() {
-		const { data }: any = await axios.get("https://nekos.life/api/v2/img/wallpaper");
+		const { data }: any = await axios.get("http://api.nekos.fun:8080/api/wallpapers", {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
 		const chars: any = { "/": "%2F", ":": "%3A" };
 		let content = {
 			embed: {
 				color: "RANDOM",
-				title: `Via Nekos.life`,
-				url: `https://nekos.life/`,
+				title: `Via Nekos.fun`,
+				url: `https://nekos.fun/`,
 				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: string) => chars[m])})`,
 				image: { url: data.url },
 			},
@@ -105,28 +76,24 @@ export class Random {
 		return content;
 	}
 
-	async getAnimeImgURL(action: "pat" | "hug" | "waifu" | "cry" | "kiss" | "slap" | "smug" | "punch") {
-		let array = ["pat", "hug", "waifu", "cry", "kiss", "slap", "smug", "punch"];
-
-		if (!array.find((x) => x === action.toLowerCase())) {
-			return "Unknown Action name, options of action are - " + array.join(", ");
-		}
-
-		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/" + action.toLowerCase());
+	async getAnimeImgURL(action: "neko" | "kitsune" | "pat" | "hug" | "waifu" | "cry" | "kiss" | "slap" | "smug" | "punch") {
+		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/" + action.toLowerCase(), {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
 		return data.url;
 	}
 
-	async getAnimeImgURLV2(action: "pat" | "hug" | "tickle" | "kiss" | "slap" | "poke" | "cuddle") {
-		let array = ["pat", "hug", "tickle", "kiss", "slap", "poke", "cuddle"];
+	async getAnimeImgURLV2(action: "kiss" | "lick" | "hug" | "baka" | "cry" | "poke" | "smug" | "slap" | "tickle" | "pat" | "laugh" | "feed" | "cuddle") {
+		const { data }: any = await axios.get("http://api.nekos.fun:8080/api/" + action.toLowerCase(), {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
-		if (!array.find((x) => x === action.toLowerCase())) {
-			return "Unknown Action name, options of action are - " + array.join(", ");
-		}
-
-		const { data }: any = await axios.get("https://nekos.life/api/v2/img/" + action.toLowerCase());
-
-		return data.url;
+		return data.image;
 	}
 
 	async getAdvice() {

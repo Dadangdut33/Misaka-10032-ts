@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("cuddle", {
 			categories: "action",
 			aliases: ["cuddles"],
-			info: "**Cuddles**. Images are fetched from [Nekos.life API](https://nekos.life/)",
+			info: "**Cuddles**. Images are fetched from [Neko fun API](https://www.nekos.fun/apidoc.html)",
 			usage: `${prefix}command [tag] [message]`,
 			guildOnly: true,
 		});
