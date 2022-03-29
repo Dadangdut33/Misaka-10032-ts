@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("baka", {
 			categories: "action",
 			info: "**B-ba-baakaa**. Images are fetched from [Neko fun API](https://www.nekos.fun/apidoc.html)",
-			usage: `${prefix}command [tag] [message]`,
+			usage: `\`${prefix}command [tag] [message]\``,
 			guildOnly: true,
 		});
 	}
@@ -16,10 +16,11 @@ module.exports = class extends Command {
 		let data: string = await new Random().getAnimeImgURLV2("baka");
 		// check if valid link or not
 		if (!data.includes("http")) return message.channel.send(data ? data : "Something went wrong");
+		message.delete();
 
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setDescription(`**B-ba-baakaa** ${args.join(" ")}`)
+			.setDescription(`${message.author.username} **B-ba-baakaa** ${args.join(" ")}`)
 			.setImage(data);
 
 		return message.channel.send(embed);

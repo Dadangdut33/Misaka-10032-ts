@@ -8,7 +8,7 @@ module.exports = class extends Command {
 			categories: "action",
 			aliases: ["cries"],
 			info: "**Cries** like a lil bitch. Images are fetched from [Neko fun API](https://www.nekos.fun/apidoc.html)",
-			usage: `${prefix}command [tag] [message]`,
+			usage: `\`${prefix}command [tag] [message]\``,
 			guildOnly: true,
 		});
 	}
@@ -17,6 +17,7 @@ module.exports = class extends Command {
 		let data: string = await new Random().getAnimeImgURLV2("cry");
 		// check if valid link or not
 		if (!data.includes("http")) return message.channel.send(data ? data : "Something went wrong");
+		message.delete();
 
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")

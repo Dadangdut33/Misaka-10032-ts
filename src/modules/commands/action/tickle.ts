@@ -8,7 +8,7 @@ module.exports = class extends Command {
 			categories: "action",
 			aliases: ["tickles"],
 			info: "Tickles people lol. Images are fetched [Neko fun API](https://www.nekos.fun/apidoc.html)",
-			usage: `${prefix}command [tag] [message]`,
+			usage: `\`${prefix}command [tag] [message]\``,
 			guildOnly: true,
 		});
 	}
@@ -16,6 +16,7 @@ module.exports = class extends Command {
 		let data: string = await new Random().getAnimeImgURLV2("tickle");
 		// check if there is http or not
 		if (!data.includes("http")) return message.channel.send(data ? data : "Something went wrong");
+		message.delete();
 
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
