@@ -2,5 +2,28 @@
   "prefix": "!!",
   "build": "4.0",
   "repo_link": "https://github.com/Dadangdut33/Misaka-10032-ts",
-  "Genshin_Ver": "1.5"
+  "Genshin_Ver": "1.5",
+  "private_Events_Info": {
+    "personalServer": {
+      "id": "640790707082231834",
+      "channel_text": "",
+      "channel_vc": "798031042954919957",
+      "channel_highlight": "935898723735728148",
+      "multiChannelToWatch": [""]
+    },
+    "oleServer": {
+      "id": "913987561922396190",
+      "channel_text": "",
+      "channel_vc": "",
+      "channel_highlight": "955133343094165594",
+      "multiChannelToWatch": ["921456103722721303", "955132878939897976"]
+    },
+    "testServer": {
+      "id": "651015913080094721",
+      "channel_text": "652437311660883989",
+      "channel_vc": "",
+      "channel_highlight": "935869276064194630",
+      "multiChannelToWatch": ["652437311660883989"]
+    }
+  }
 }

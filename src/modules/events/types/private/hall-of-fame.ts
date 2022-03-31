@@ -1,6 +1,7 @@
 import { Client, MessageEmbed, TextChannel } from "discord.js";
 import { BotEvent } from "../../../../handler";
 import { find_DB_Return, insert_DB_One } from "../../../../local_lib/functions";
+import { private_Events_Info } from "../../../../config.json";
 
 module.exports = class extends BotEvent {
 	constructor() {
@@ -8,16 +9,15 @@ module.exports = class extends BotEvent {
 	}
 
 	run(client: Client) {
-		const guild_ID = "913987561922396190",
-			channelToWatch = ["921456103722721303", "955132878939897976"],
-			hallOfFame = "955133343094165594";
+		const guild_ID = private_Events_Info.oleServer.id,
+			channelToWatch = private_Events_Info.oleServer.multiChannelToWatch,
+			hallOfFame = private_Events_Info.oleServer.channel_highlight;
 
 		const guild = client.guilds.cache.get(guild_ID);
 		if (!guild) return console.log("Invalid guild for message spotlight");
 
 		// get channel by id
 		const channel = guild.channels.cache.get(hallOfFame) as TextChannel;
-
 		if (!channel) return console.log("Invalid channel for message spotlight");
 
 		// listener for a channel message

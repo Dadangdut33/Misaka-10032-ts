@@ -9,7 +9,6 @@ const listenToMessage = require("./types/public/msgListener");
 const membercount = require("./types/private/member-count");
 const Auditlog = require("./types/private/audit");
 const serverInfo = require("./types/private/server-info");
-const messageSpotlight = require("./types/private/message-spotlight");
 
 // const dailyMessage = require('./types/private/daily-message');
 const welcomeMsg = require("./types/private/welcome-message");
@@ -55,7 +54,6 @@ module.exports = class extends BotEvent {
 		// events
 		const personalGuildID = "640790707082231834",
 			vc_label_id = "798031042954919957",
-			channel_Spotlight_id = "935898723735728148",
 			oleGuildID = "913987561922396190",
 			ole_welcome_msg = "913987561922396193";
 
@@ -78,7 +76,6 @@ module.exports = class extends BotEvent {
 
 		// Message Listener
 		listenToMessage(client); // meme react, haiku, anime, manga, crosspost news
-		messageSpotlight(client, personalGuildID, channel_Spotlight_id); // message spotlight
 
 		// Membercount
 		membercount(client, personalGuildID, vc_label_id); // update member count
