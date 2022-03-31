@@ -10,7 +10,6 @@ const membercount = require("./types/private/member-count");
 const Auditlog = require("./types/private/audit");
 const serverInfo = require("./types/private/server-info");
 const messageSpotlight = require("./types/private/message-spotlight");
-const hallOfFame = require("./types/private/hall-of-fame");
 
 // const dailyMessage = require('./types/private/daily-message');
 const welcomeMsg = require("./types/private/welcome-message");
@@ -58,8 +57,6 @@ module.exports = class extends BotEvent {
 			vc_label_id = "798031042954919957",
 			channel_Spotlight_id = "935898723735728148",
 			oleGuildID = "913987561922396190",
-			ole_meme_channel_id = ["921456103722721303", "955132878939897976"],
-			ole_hall_of_fame = "955133343094165594",
 			ole_welcome_msg = "913987561922396193";
 
 		// Some Auditlog
@@ -82,7 +79,6 @@ module.exports = class extends BotEvent {
 		// Message Listener
 		listenToMessage(client); // meme react, haiku, anime, manga, crosspost news
 		messageSpotlight(client, personalGuildID, channel_Spotlight_id); // message spotlight
-		hallOfFame(client, oleGuildID, ole_meme_channel_id, ole_hall_of_fame);
 
 		// Membercount
 		membercount(client, personalGuildID, vc_label_id); // update member count
