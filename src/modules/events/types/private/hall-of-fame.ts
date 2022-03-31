@@ -40,6 +40,7 @@ module.exports = class extends BotEvent {
 					message.react("👎");
 				}
 			} catch (e) {
+				console.log(`[${new Date().toLocaleString()}]`);
 				console.log(e);
 			}
 		});
@@ -114,6 +115,7 @@ module.exports = class extends BotEvent {
 				// if a video but embedded because it is a link 🚀
 				if (msg.embeds.length > 0) if (msg.embeds[0].type === "video") channel.send(msg.embeds[0].url!);
 			} catch (e) {
+				console.log(`[${new Date().toLocaleString()}]`);
 				console.log(e);
 				channel.send(`**Error**\n${e}`);
 			}

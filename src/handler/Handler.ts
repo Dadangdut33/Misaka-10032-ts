@@ -228,6 +228,8 @@ export class Handler {
 			try {
 				await cmd.run(message, args, this.client); // await because the command that runs is async
 			} catch (err) {
+				// log time
+				console.log(`[${new Date().toLocaleString()}]`);
 				console.error(err);
 				let embed = new MessageEmbed().setTitle(`Error └[∵┌]└[ ∵ ]┘[┐∵]┘`).setDescription(`**Error Details**\n\`\`\`js\n${err}\`\`\``).setColor("#000000");
 
