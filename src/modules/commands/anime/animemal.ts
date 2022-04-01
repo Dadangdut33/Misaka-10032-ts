@@ -1,12 +1,9 @@
-const { MessageEmbed } = require("discord.js");
-const { Command } = require("../../../../handler");
-const { prefix } = require("../../../../config");
-const malScraper = require("mal-scraper");
-const Kitsu = require("kitsu.js");
-const kitsu = new Kitsu();
+import { Message, MessageEmbed } from "discord.js";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
+import malScraper, { AnimeEpisodesDataModel } from "mal-scraper";
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("animemal", {
 			categories: "anime",
 			aliases: ["am"],
@@ -16,50 +13,41 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message, args) {
+	checkIfStaff(toBeCheck: string) {
+		if (["Director", "Original Creator", "Producer", "Music", "Sound Director", "Series Composition"].includes(toBeCheck)) return true;
+		else return false;
+	}
+
+	async run(message: Message, args: string[]) {
 		//checking args
-		if (!args[0]) {
-			return message.channel.send("Please input correctly!!");
-		}
+		if (!args[0]) return message.channel.send("Please input correctly!!");
+
 		const msg = await message.channel.send(`Searching for \`${args.join(" ")}\`...`);
 
 		//main part
-		var name = args.join(" ");
 		malScraper
-			.getInfoFromName(name)
+			.getInfoFromName(args.join(" "))
 			.then((data) => {
-				if (!data) {
-					return message.channel.send(`No results found for **${name}**!`);
-				}
+				if (!data) return message.channel.send(`No results found for **${name}**!`);
 
-				var animeChar = [],
+				let animeChar = [],
 					animeStaff = [];
 
-				if (data.staff) {
-					for (var i = 0; i < data.staff.length; i++) {
-						animeStaff[i] = `• ${data.staff[i].name} - ${data.staff[i].role ? data.staff[i].role : `-`}`;
-					}
-				} else {
-					animeStaff = [`No staff for this anime have been added to this title.`];
-				}
+				if (data.staff) for (let i = 0; i < data.staff.length; i++) animeStaff[i] = `• ${data.staff[i].name} - ${data.staff[i].role ? data.staff[i].role : `-`}`;
+				else animeStaff = [`No staff for this anime have been added to this title.`];
 
-				if (data.characters) {
-					for (var i = 0; i < data.characters.length; i++) {
+				if (data.characters)
+					for (let i = 0; i < data.characters.length; i++)
 						animeChar[i] = `• ${data.characters[i].name} (${data.characters[i].role}) VA: ${data.characters[i].seiyuu.name ? data.characters[i].seiyuu.name : `-`}`;
-					}
-				} else {
-					animeChar = ["No characters or voice actors have been added to this title."];
-				}
+				else animeChar = ["No characters or voice actors have been added to this title."];
 
-				if (data.characters[0].name === data.staff[0].name && (data.staff[0].role === "Main" || data.staff[0].role === "Supporting") && animeStaff.length === 1) {
-					// No Staff, sometimes the char is the staff
+				// No Staff, sometimes the char is the staff
+				if (data.characters![0].name === data.staff![0].name && (data.staff![0].role === "Main" || data.staff![0].role === "Supporting") && animeStaff.length === 1)
 					animeStaff = [`No staff for this anime have been added to this title.`];
-				}
 
-				if (data.characters[0].name === data.staff[0].name && checkIfStaff(data.staff[0].role) && animeChar.length === 1) {
-					// No Character, sometimes the staff is the char
+				// No Character, sometimes the staff is the char
+				if (data.characters![0].name === data.staff![0].name && this.checkIfStaff(data.staff![0].role!) && animeChar.length === 1)
 					animeChar = [`No characters or voice actors have been added to this title.`];
-				}
 
 				msg.edit(`**Anime Found!**`);
 
@@ -67,9 +55,9 @@ module.exports = class extends Command {
 					.setColor("2E51A2")
 					.setAuthor(`${data.englishTitle ? data.englishTitle : data.title} | ${data.type ? data.type : "N/A"}`, data.picture, data.url)
 					.setDescription(data.synopsis ? data.synopsis : "No synopsis available.")
-					.addField("Japanese Name", `${data.japaneseTitle ? `${data.japaneseTitle} (${data.title})` : data.title}`, false)
+					.addField("Japanese Name", `${(data as AnimeEpisodesDataModel).japaneseTitle ? `${(data as AnimeEpisodesDataModel).japaneseTitle} (${data.title})` : data.title}`, false)
 					.addField("Synonyms", `${data.synonyms[0] === "" ? "N/A" : data.synonyms.join(" ")}`, false)
-					.addField(`Genres`, `${data.genres[0] === "" ? "N/A" : data.genres.join(", ")}`, false)
+					.addField(`Genres`, `${data.genres!.length > 0 ? data.genres!.join(", ") : "N/A"}`, false)
 					.addField(`Age Rating`, `${data.rating ? data.rating : "N/A"}`, true)
 					.addField(`Source`, ` ${data.source ? data.source : "N/A"}`, true)
 					.addField(`Status`, `${data.status ? data.status : "N/A"}`, true)
@@ -78,8 +66,8 @@ module.exports = class extends Command {
 					.addField(`Rating Rank/Popularity Rank`, `${data.ranked ? data.ranked : "N/A"}/${data.popularity ? data.popularity : "N/A"}`, true)
 					.addField(`Episodes/Duration`, `${data.episodes ? data.episodes : "N/A"}/${data.duration ? data.duration : "N/A"}`, true)
 					.addField(`Broadcast Date`, `${data.aired ? data.aired : "N/A"}`, true)
-					.addField(`Studios`, `${data.studios[0] === "" ? "N/A" : data.studios.join(", ")}`, true)
-					.addField(`Producers`, `${data.producers[0] === "" ? "N/A" : data.producers.join(", ")}`, true)
+					.addField(`Studios`, `${data.studios!.length > 0 ? data.studios!.join(", ") : "N/A"}`, true)
+					.addField(`Producers`, `${data.producers!.length > 0 ? data.producers!.join(", ") : "N/A"}`, true)
 					.addField(`Staff`, `${animeStaff.join("\n")}`, false)
 					.addField(`Characters`, `${animeChar.join("\n")}`, false)
 					.addFields(
@@ -102,11 +90,7 @@ module.exports = class extends Command {
 					)
 					.setFooter(`Data Fetched From Myanimelist.net`)
 					.setTimestamp()
-					.setThumbnail(data.picture, 100, 200);
-
-				// getIMG(data.title).then(function(imgGet) {
-				//   return message.channel.send(embed.setImage(imgGet.IMG));  //Only problem is that the db of kitsu and mal is different so chances are that the image sent could be wrong
-				// })
+					.setThumbnail(data.picture ? data.picture : ``);
 
 				return message.channel.send({ embed });
 			})
@@ -114,37 +98,5 @@ module.exports = class extends Command {
 				console.log(err);
 				return message.channel.send(`**Error!** \n\n${err}`);
 			});
-
-		function getIMG(title) {
-			return kitsu
-				.searchAnime(title)
-				.then((result) => {
-					if (result[0].coverImage.original) {
-						return {
-							IMG: result[0].coverImage.original,
-						};
-					} else {
-						return {
-							IMG: "",
-						};
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-
-					return null;
-				});
-		}
-
-		function checkIfStaff(toBeCheck) {
-			var listCheck = ["Director", "Original Creator", "Producer", "Music", "Sound Director", "Series Composition"];
-
-			for (var i = 0; i < listCheck.length; i++) {
-				if (toBeCheck.includes(listCheck[i])) {
-					return true;
-				}
-			}
-			return false;
-		}
 	}
 };
