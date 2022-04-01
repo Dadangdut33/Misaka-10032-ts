@@ -8,7 +8,7 @@ module.exports = class extends Command {
 			categories: "anime",
 			aliases: ["am"],
 			info: "Get information of any anime from [myanimelist.net](https://myanimelist.net/) using [mal-scraper](https://www.npmjs.com/package/mal-scraper)",
-			usage: `${prefix}command/alias <title>`,
+			usage: `\`${prefix}command/alias <title>\``,
 			guildOnly: true,
 		});
 	}

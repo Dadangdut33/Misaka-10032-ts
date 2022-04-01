@@ -1,55 +1,80 @@
-const { MessageEmbed } = require("discord.js");
-const Kitsu = require("kitsu.js");
-const kitsu = new Kitsu();
-const { Command } = require("../../../../handler");
-const { prefix } = require("../../../../config");
-const malScraper = require("mal-scraper");
-const { promptMessage } = require("../../../../local_lib/functions.js");
+import { Message, MessageEmbed } from "discord.js";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
+import { promptMessage } from "../../../local_lib/functions";
 const chooseArr = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
+import malScraper from "mal-scraper";
+import { Kitsu as KitsuInterface, Anime } from "kitsu.js";
+const Kitsu = require("kitsu.js");
+const kitsu: KitsuInterface = new Kitsu();
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("animekitsu", {
 			categories: "anime",
 			aliases: ["ak"],
 			info: "Get information of any anime from [kitsu.io](https://kitsu.io/explore/anime) using kitsu.js npm",
-			usage: `${prefix}command/alias <title> [[kitsu]]\`\`\`**Notes**\`\`\`Optionally, you can search using old kitsu method by including [kitsu] in the arguments. *Notice the -> []`,
+			usage: `\`${prefix}command/alias <title> [[kitsu]]\**Notes: ** Optionally, you can search using old kitsu method by including [kitsu] in the arguments. *Notice the -> []`,
 			guildOnly: true,
 		});
 	}
-	async run(message, args) {
-		//checking args
-		if (!args[0]) {
-			return message.channel.send("Please input the correct anime!");
+
+	getURL(title: string) {
+		return malScraper
+			.getInfoFromName(title)
+			.then((data) => {
+				return {
+					URL: data.url,
+					name: data.title,
+				};
+			})
+			.catch((err) => {
+				console.log(err);
+
+				return null;
+			});
+	}
+
+	// Below is the function to get the results of the reaction
+	chooseResult(me: string) {
+		// Pass let as me
+		switch (me) {
+			case "1️⃣":
+				return 0;
+			case "2️⃣":
+				return 1;
+			case "3️⃣":
+				return 2;
+			case "4️⃣":
+				return 3;
+			case "5️⃣":
+				return 4;
 		}
+	}
+
+	async run(message: Message, args: string[]) {
+		//checking args
+		if (!args[0]) return message.channel.send("Please input the correct anime!");
+
 		const msg = await message.channel.send(`Searching for \`${args.join(" ")}\`...`);
 
-		var regex = /\[(.*?)\]/g;
-		var search2 = [];
-		search2 = args.join(" ").match(regex); // If regex match then old method
-
+		let search2 = args.join(" ").match(/\[(.*?)\]/g); // If regex match then old method
 		// OLD METHOD USING KITSU TO SEARCH
 		if (search2) {
-			search2[0] = search2[0].replace(/[\[\]]/g, "");
-
-			if (search2[0].toLowerCase() == "kitsu") {
+			if (search2[0].toLowerCase().includes("kitsu")) {
 				// Check if it's correct option or not
 				kitsu
-					.searchAnime(args.join(" ").replace(/\[kitsu\]/i, ""))
+					.searchAnime(args.join(" ").replace(/\[kitsu\]/i, ""), 0)
 					.then(async (result) => {
 						if (result.length === 0) {
 							return message.channel.send(`No results found for **${search2}**!`);
 						}
 						msg.edit(`**Anime Found!**`);
-						var options = [];
-						var limit = result.length;
-						if (result.length >= 5) {
-							limit = 5;
-						}
+						let options = [];
+						let limit = result.length;
+						if (result.length >= 5) limit = 5;
 
-						for (var i = 0; i < limit; i++) {
+						for (let i = 0; i < limit; i++)
 							options[i] = `${i + 1}. ${result[i].titles ? `${result[i].titles.english ? result[i].titles.english : result[i].slug}` : result[i].slug}`;
-						}
 
 						const embed = new MessageEmbed()
 							.setColor("F75136")
@@ -59,36 +84,32 @@ module.exports = class extends Command {
 
 						const optionsToChoose = await message.channel.send(embed); // Await the embed
 						const reacted = await promptMessage(optionsToChoose, message.author, 50, chooseArr); // Await reaction
-						const reaction = await getResult(reacted); // Get Result from reaction
+						const reaction = this.chooseResult(reacted)!; // Get Result from reaction
 						await optionsToChoose.reactions.removeAll();
 
-						if (reaction == undefined) {
+						if (reaction === null) {
 							// If no reaction
 							msg.delete();
-							embed.setAuthor("Search aborted!").setTitle("").setDescription(`Search for **${search}** aborted because of no reaction from ${message.author}!`);
-
-							optionsToChoose.edit(embed);
-							return;
+							optionsToChoose.delete();
+							return message.channel.send(`Search for **${args.join(" ").replace(/\[kitsu\]/i, "")}** Aborted because of no reaction from ${message.author}!`);
 						}
 
 						if (reaction + 1 > limit) {
 							// +1 because the original is from 0 to access the array
 							msg.delete();
-							embed.setAuthor("Invalid options chosen!").setTitle("").setDescription("Please choose the correct available options!");
-
-							optionsToChoose.edit(embed);
-							return;
+							optionsToChoose.delete();
+							return message.channel.send(`Invalid options chosen! Please choose the correct available options!`);
 						}
 
-						var anime = result[reaction];
-
+						let anime = result[reaction];
 						// Results to be shown
 						embed
 							.setTitle("")
 							.setColor("F75136")
+							// @ts-ignore
 							.setAuthor(`${anime.titles.english ? anime.titles.english : search2} | ${anime.showType}`, anime.posterImage.original, `https://kitsu.io/anime/${anime.id}`)
 							.setDescription(anime.synopsis)
-							.addField("Japanese Name", `${anime.titles.romaji ? anime.titles.romaji : "-"}`, false)
+							.addField("Japanese Name", `${anime.titles.japanese ? anime.titles.japanese + " | " : "-"}${anime.titles.romaji ? anime.titles.romaji : `-`}`, false)
 							.addField(`Age Rating`, `${anime.ageRating}`, true)
 							.addField(`NSFW`, ` ${anime.nsfw ? "Yes" : "No"}`, true)
 							.addField(`User Count/Favorite`, `${anime.userCount}/${anime.favoritesCount}`, true)
@@ -102,7 +123,7 @@ module.exports = class extends Command {
 								{
 									name: "❯\u2000Search Online",
 									// prettier-ignore
-									value: `•\u2000\[Gogoanime](https://www1.gogoanime.pe//search.html?keyword=${data.title.replace(/ /g, "%20")})\n•\u2000\[AnimixPlay](https://animixplay.to/?q=${data.title.replace(/ /g,"%20")})`,
+									value: `•\u2000\[Gogoanime](https://www1.gogoanime.pe//search.html?keyword=${anime.titles.english.replace(/ /g, "%20")})\n•\u2000\[AnimixPlay](https://animixplay.to/?q=${anime.titles.english.replace(/ /g,"%20")})`,
 									inline: true,
 								},
 								{
@@ -118,18 +139,18 @@ module.exports = class extends Command {
 							)
 							.setFooter(`Data Fetched From Kitsu.io`)
 							.setTimestamp()
-							.setThumbnail(anime.posterImage.original, 100, 200);
+							// @ts-ignore
+							.setThumbnail(anime.posterImage.original);
 
-						if (anime.coverImage) {
-							embed.setImage(anime.coverImage.original);
-						}
+						// @ts-ignore
+						if (anime.coverImage) embed.setImage(anime.coverImage.original);
 
 						msg.delete();
 						optionsToChoose.edit(embed);
 					})
 					.catch((err) => {
 						console.log(err); //cathing err
-						return message.channel.send(`No results found for **${search}**!`);
+						return message.channel.send(`No results found for **${args.join(" ").replace(/\[kitsu\]/i, "")}**!`);
 					});
 			} else {
 				// If regex fail to find [kitsu]
@@ -144,32 +165,21 @@ module.exports = class extends Command {
 		} else {
 			// Modern ver, using mal scrapper to get the anime name lol
 			//main part
-			var search = message.content.split(/\s+/g).slice(1).join(" ");
-			getURL(search).then(function (malscrap) {
-				var malSearch;
-				if (malscrap.URL == null) {
-					malSearch = search;
-				} else {
-					malSearch = malscrap.URL;
-				}
-
+			let search = message.content.split(/\s+/g).slice(1).join(" ");
+			this.getURL(search).then((malscrap) => {
 				kitsu
-					.searchAnime(malscrap.name)
+					.searchAnime(malscrap!.name, 0)
 					.then(async (result) => {
-						if (result.length === 0) {
-							return message.channel.send(`No results found for **${malscrap.name}**!`);
-						}
+						if (result.length === 0) return message.channel.send(`No results found for **${malscrap!.name}**!`);
+
 						msg.edit(`**Anime Found!**`);
 
-						var options = [];
-						var limit = result.length;
-						if (result.length >= 5) {
-							limit = 5;
-						}
+						let options = [];
+						let limit = result.length;
+						if (result.length >= 5) limit = 5;
 
-						for (var i = 0; i < limit; i++) {
+						for (let i = 0; i < limit; i++)
 							options[i] = `${i + 1}. ${result[i].titles ? `${result[i].titles.english ? result[i].titles.english : result[i].slug}` : result[i].slug}`;
-						}
 
 						const embed = new MessageEmbed()
 							.setColor("RANDOM")
@@ -179,10 +189,10 @@ module.exports = class extends Command {
 
 						const optionsToChoose = await message.channel.send(embed); // Await the embed
 						const reacted = await promptMessage(optionsToChoose, message.author, 50, chooseArr); // Await reaction
-						const reaction = await getResult(reacted); // Get Result from reaction
+						const reaction = this.chooseResult(reacted)!; // Get Result from reaction
 						await optionsToChoose.reactions.removeAll();
 
-						if (reaction == undefined) {
+						if (reaction === null) {
 							// If no reaction
 							msg.delete();
 							optionsToChoose.delete();
@@ -196,16 +206,15 @@ module.exports = class extends Command {
 							return message.channel.send(`Invalid options chosen! Please choose the correct available options!`);
 						}
 
-						var anime = result[reaction];
-
-						// console.log(anime);
+						let anime = result[reaction];
 						// Results to be shown
 						embed
 							.setTitle("")
 							.setColor("F75136")
+							// @ts-ignore
 							.setAuthor(`${anime.titles.english ? anime.titles.english : search} | ${anime.showType}`, anime.posterImage.original, `https://kitsu.io/anime/${anime.id}`)
 							.setDescription(anime.synopsis)
-							.addField("Japanese Name", `${anime.titles.romaji ? anime.titles.romaji : "-"}`, false)
+							.addField("Japanese Name", `${anime.titles.japanese ? anime.titles.japanese + " | " : "-"}${anime.titles.romaji ? anime.titles.romaji : `-`}`, false)
 							.addField(`Age Rating`, `${anime.ageRating}`, true)
 							.addField(`NSFW`, ` ${anime.nsfw ? "Yes" : "No"}`, true)
 							.addField(`User Count/Favorite`, `${anime.userCount}/${anime.favoritesCount}`, true)
@@ -230,17 +239,17 @@ module.exports = class extends Command {
 								},
 								{
 									name: "❯\u2000MAL Link",
-									value: `•\u2000\[MyAnimeList](${malSearch})`,
+									value: `•\u2000\[MyAnimeList](${malscrap?.URL})`,
 									inline: true,
 								}
 							)
 							.setFooter(`Data Fetched From Kitsu.io`)
 							.setTimestamp()
-							.setThumbnail(anime.posterImage.original, 100, 200);
+							// @ts-ignore
+							.setThumbnail(anime.posterImage.original);
 
-						if (anime.coverImage) {
-							embed.setImage(anime.coverImage.original);
-						}
+						// @ts-ignore
+						if (anime.coverImage) embed.setImage(anime.coverImage.original);
 
 						msg.delete();
 						optionsToChoose.edit(embed);
@@ -250,39 +259,6 @@ module.exports = class extends Command {
 						return message.channel.send(`No results found for **${search}**!`);
 					});
 			});
-		}
-
-		function getURL(title) {
-			return malScraper
-				.getInfoFromName(title)
-				.then((data) => {
-					return {
-						URL: data.url,
-						name: data.title,
-					};
-				})
-				.catch((err) => {
-					console.log(err);
-
-					return null;
-				});
-		}
-
-		// Below is the function to get the results of the reaction
-		function getResult(me) {
-			// Pass var as me
-			switch (me) {
-				case "1️⃣":
-					return 0;
-				case "2️⃣":
-					return 1;
-				case "3️⃣":
-					return 2;
-				case "4️⃣":
-					return 3;
-				case "5️⃣":
-					return 4;
-			}
 		}
 	}
 };
