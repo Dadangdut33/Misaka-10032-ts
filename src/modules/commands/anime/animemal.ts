@@ -28,7 +28,7 @@ module.exports = class extends Command {
 		malScraper
 			.getInfoFromName(args.join(" "))
 			.then((data) => {
-				if (!data) return message.channel.send(`No results found for **${name}**!`);
+				if (!data) return message.channel.send(`No results found for **${args.join(" ")}**!`);
 
 				let animeChar = [],
 					animeStaff = [];
