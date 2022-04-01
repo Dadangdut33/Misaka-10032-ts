@@ -9,9 +9,8 @@ module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("airing", {
 			categories: "anime",
-			aliases: [],
-			info: "Get current season's airing information using the [currently-airing-anime npm](https://github.com/ricklancee/currently-airing-anime)",
-			usage: `${prefix}command`,
+			info: "Get current season's airing information using [currently-airing-anime](https://github.com/ricklancee/currently-airing-anime)",
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 	}
