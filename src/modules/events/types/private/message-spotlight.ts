@@ -26,14 +26,13 @@ module.exports = class extends BotEvent {
 				// make sure it is in guild
 				if (!reaction.message.guild) return;
 
+				// make sure it is in the same guild
 				if (reaction.message.guild.id !== guild.id) return;
 
 				let count = 0;
 				const msg = await reaction.message.channel.messages.fetch(reaction.message.id);
 				// make sure user is not bot
 				if (user.bot || msg.author.bot) return;
-
-				// make sure it is in the same guild
 
 				// make sure reaction is not in news channel or dm also make sure raction is not in same channel as highlightChannel
 				if (reaction.message.channel.type === "news" || reaction.message.channel.type === "dm" || reaction.message.channel === channel) return;

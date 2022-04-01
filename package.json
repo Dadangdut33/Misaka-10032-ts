@@ -38,6 +38,7 @@
     "mangadex-full-api": "^5.8.0",
     "moment-timezone": "^0.5.32",
     "mongoose": "^5.12.5",
+    "node-fetch": "^2.6.1",
     "normalize-strings": "^1.1.1",
     "number-to-words": "^1.2.4",
     "owoify-js": "^1.0.7",
