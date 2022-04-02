@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("kitsune", {
 			categories: "anime-misc",
 			info: "Post random kitsune girl image using [Neko-love API](https://neko-love.xyz/)",
-			usage: `${prefix}command`,
+			usage: `\`${prefix}command\``,
 			guildOnly: false,
 		});
 	}

@@ -1,6 +1,7 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { paginationEmbed } from "../../../local_lib/functions.js";
+import axios from "axios";
 
 module.exports = class extends Command {
 	prefix;
@@ -33,11 +34,10 @@ module.exports = class extends Command {
 			return message.channel.send(this.invalid_args());
 		}
 
-		const API = await fetch(`https://api.quran.sutanlab.id/surah/${args[0]}/${args[1]}`);
-		const parsedData = await API.json();
+		const { data } = await axios.get(`https://api.quran.sutanlab.id/surah/${args[0]}/${args[1]}`);
 
-		if (parsedData.code !== 200) {
-			let embed = new MessageEmbed().setTitle("Error").addField(`Status`, parsedData.status, true).addField(`Message`, parsedData.message, true);
+		if (data.code !== 200) {
+			let embed = new MessageEmbed().setTitle("Error").addField(`Status`, data.status, true).addField(`Message`, data.message, true);
 
 			return message.channel.send(embed);
 		}
@@ -45,26 +45,26 @@ module.exports = class extends Command {
 		let pages = [];
 
 		let infoPage = new MessageEmbed()
-			.setTitle(`Q.S. ${parsedData.data.surah.name.transliteration.id}:${parsedData.data.surah.number} (${parsedData.data.number.inSurah}) ${parsedData.data.surah.name.short}`)
-			.setDescription(`${parsedData.data.surah.tafsir.id}`)
-			.addField(`Juz`, parsedData.data.meta.juz, true)
-			.addField(`Jenis Surat`, parsedData.data.surah.revelation.id, true)
-			.addField(`Arti Surat`, parsedData.data.surah.name.translation.id, true)
-			.addField(`Ayat sajdah (Disarankan)`, `${parsedData.data.meta.sajda.recommended ? "Iya" : parsedData.data.meta.sajda.obligatory ? "Diwajibkan" : "Tidak"}`, true)
-			.addField(`Ayat sajdah (Wajib Sujud)`, `${parsedData.data.meta.sajda.obligatory ? "Iya" : "Tidak"}`, true)
-			.addField(`Audio Download`, `[Download](${parsedData.data.audio.primary})`, true);
+			.setTitle(`Q.S. ${data.data.surah.name.transliteration.id}:${data.data.surah.number} (${data.data.number.inSurah}) ${data.data.surah.name.short}`)
+			.setDescription(`${data.data.surah.tafsir.id}`)
+			.addField(`Juz`, data.data.meta.juz, true)
+			.addField(`Jenis Surat`, data.data.surah.revelation.id, true)
+			.addField(`Arti Surat`, data.data.surah.name.translation.id, true)
+			.addField(`Ayat sajdah (Disarankan)`, `${data.data.meta.sajda.recommended ? "Iya" : data.data.meta.sajda.obligatory ? "Diwajibkan" : "Tidak"}`, true)
+			.addField(`Ayat sajdah (Wajib Sujud)`, `${data.data.meta.sajda.obligatory ? "Iya" : "Tidak"}`, true)
+			.addField(`Audio Download`, `[Download](${data.data.audio.primary})`, true);
 
 		let theAyat = new MessageEmbed()
-			.setTitle(`Q.S. ${parsedData.data.surah.name.transliteration.id}:${parsedData.data.surah.number} (${parsedData.data.number.inSurah}) ${parsedData.data.surah.name.short}`)
-			.setDescription(`${parsedData.data.text.arab}\n\n**Terjemahan:**\n${parsedData.data.translation.id}`);
+			.setTitle(`Q.S. ${data.data.surah.name.transliteration.id}:${data.data.surah.number} (${data.data.number.inSurah}) ${data.data.surah.name.short}`)
+			.setDescription(`${data.data.text.arab}\n\n**Terjemahan:**\n${data.data.translation.id}`);
 
 		pages.push(infoPage);
 		pages.push(theAyat);
 
 		let start = 0,
 			end = 2048; // Cut it to 2048
-		for (let i = 0; i < parsedData.data.tafsir.id.long.length / 2048; i++) {
-			pages.push(this.descEmbed(parsedData, parsedData.data.tafsir.id.long.slice(start, end)));
+		for (let i = 0; i < data.data.tafsir.id.long.length / 2048; i++) {
+			pages.push(this.descEmbed(data, data.data.tafsir.id.long.slice(start, end)));
 			start += 2048;
 			end += 2048;
 		}

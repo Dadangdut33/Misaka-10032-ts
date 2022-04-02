@@ -3,6 +3,7 @@ import { BotEvent } from "../../../../handler";
 import { private_Events_Info } from "../../../../config.json";
 import moment from "moment-timezone";
 import adhan from "adhan";
+import axios from "axios";
 const cron = require("cron");
 
 module.exports = class extends BotEvent {
@@ -25,26 +26,25 @@ module.exports = class extends BotEvent {
 			let scheduledMessage = new cron.CronJob(
 				"30 07 * * *",
 				async () => {
-					// This runs every day at 07:00:00, you can do anything you want
-					const data = await fetch(`https://api.banghasan.com/quran/format/json/acak`);
-					const dataParsed = await data.json();
+					// This runs every day at 07:30:00, you can do anything you want
+					const { data } = await axios.get(`https://api.banghasan.com/quran/format/json/acak`);
 
 					let embedAyat = new MessageEmbed()
 						.setAuthor(`Random Ayat of the day`)
-						.setTitle(`Q.S. ${dataParsed.surat.nama}: ${dataParsed.surat.nomor} ${dataParsed.surat.asma} (${dataParsed.acak.id.ayat})`)
-						.setDescription(`${dataParsed.acak.ar.teks}\n\n**Terjemahan**: \n${dataParsed.acak.id.teks}`)
+						.setTitle(`Q.S. ${data.surat.nama}: ${data.surat.nomor} ${data.surat.asma} (${data.acak.id.ayat})`)
+						.setDescription(`${data.acak.ar.teks}\n\n**Terjemahan**: \n${data.acak.id.teks}`)
 						.addField(
 							`Read Full Surah`,
-							`[[Kalam.sindonews]](https://kalam.sindonews.com/surah/${dataParsed.surat.nomor}#ayat-${dataParsed.acak.id.ayat}) | [[quran.kemenag]](https://quran.kemenag.go.id/sura/${dataParsed.surat.nomor})`,
+							`[[Kalam.sindonews]](https://kalam.sindonews.com/surah/${data.surat.nomor}#ayat-${data.acak.id.ayat}) | [[quran.kemenag]](https://quran.kemenag.go.id/sura/${data.surat.nomor})`,
 							true
 						)
-						.addField(`Ayat Interpretation (Tafsir)`, `[[Kalam.sindonews]](https://kalam.sindonews.com/ayat/${dataParsed.acak.id.ayat}/${dataParsed.surat.nomor})`, true)
+						.addField(`Ayat Interpretation (Tafsir)`, `[[Kalam.sindonews]](https://kalam.sindonews.com/ayat/${data.acak.id.ayat}/${data.surat.nomor})`, true)
 						.setColor("RANDOM");
 
 					let apiError = false;
-					if (dataParsed.status == "error") {
+					if (data.status == "error") {
 						apiError = true;
-						console.log(`[${moment().tz("Asia/Jakrta").format("DD/MM/YYYY HH:mm:ss")}] [ERROR] [daily-surah] API error:\n${dataParsed.pesan}`);
+						console.log(`[${moment().tz("Asia/Jakrta").format("DD/MM/YYYY HH:mm:ss")}] [ERROR] [daily-surah] API error:\n${data.pesan}`);
 					}
 
 					// Default for local time

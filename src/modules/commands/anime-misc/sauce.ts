@@ -1,9 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import axios from "axios";
-// import cheerio from "cheerio";
 import { load } from "cheerio";
-// const cheerio = require("cheerio");
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -11,7 +9,7 @@ module.exports = class extends Command {
 			categories: "anime-misc",
 			aliases: ["source"],
 			info: "Get an image source by using [saucenao](https://saucenao.com/)",
-			usage: `${prefix}command/alias [url/image]\`\`\`**Or You can reply to a message that has an image with**\`\`\`${prefix}command/alias`,
+			usage: `\`${prefix}command/alias [url/image]\`\n**Or You can reply to a message that has an image with** \`${prefix}command/alias\``,
 			guildOnly: true,
 		});
 	}

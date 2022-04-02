@@ -19,7 +19,7 @@ interface optionsInterface {
 		| "manga"
 		| "text"
 		| "tool";
-	usage: string;
+	usage: string; // "commmand" and "alias" is a reserved word in usage that will replace with the command name and alias
 	info: string;
 	guildOnly: boolean;
 	permission?:
@@ -61,12 +61,17 @@ export class Command extends Toggleable implements optionsInterface {
 		this.name = name;
 		this.categories = options.categories;
 		this.info = options.info;
-		this.usage = options.usage;
 		this.guildOnly = options.guildOnly;
 
 		// alias set
 		if (options.aliases) this.aliases = options.aliases;
 		else this.aliases = [];
+
+		// map options usage with this:
+		options.usage = options.usage.replace(/command/g, this.name);
+		options.usage = options.usage.replace(/alias/g, this.aliases.join("/"));
+
+		this.usage = options.usage;
 
 		// permission set
 		if (options.permission) {

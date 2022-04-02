@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("cute", {
 			categories: "anime-misc",
 			info: "Sends cute anime girls from reddit",
-			usage: `${prefix}cute`,
+			usage: `\`${prefix}cute\``,
 			guildOnly: false,
 		});
 	}

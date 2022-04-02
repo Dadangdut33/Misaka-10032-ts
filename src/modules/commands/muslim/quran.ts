@@ -2,6 +2,7 @@ import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { paginationEmbed } from "../../../local_lib/functions.js";
 const { htmlToText } = require("html-to-text");
+import axios from "axios";
 
 module.exports = class extends Command {
 	prefix;
@@ -31,18 +32,17 @@ module.exports = class extends Command {
 		}
 
 		if (args[0].toLowerCase() == "list") {
-			const list = await fetch("https://api.banghasan.com/quran/format/json/surat"); // API for surat lists
-			const quranToList = await list.json();
+			const { data } = await axios.get("https://api.banghasan.com/quran/format/json/surat"); // API for surat lists
 
-			if (quranToList.status == "error") {
-				let embed = new MessageEmbed().setTitle("Error!").setDescription(quranToList.pesan);
+			if (data.status == "error") {
+				let embed = new MessageEmbed().setTitle("Error!").setDescription(data.pesan);
 
 				return message.channel.send(embed);
 			}
 
 			let quranListed = [];
-			for (let i = 0; i < quranToList.hasil.length; i++) {
-				quranListed.push(`[${quranToList.hasil[i].nomor}] ${quranToList.hasil[i].nama} ${quranToList.hasil[i].asma} (Ayat: ${quranToList.hasil[i].ayat})`);
+			for (let i = 0; i < data.hasil.length; i++) {
+				quranListed.push(`[${data.hasil[i].nomor}] ${data.hasil[i].nama} ${data.hasil[i].asma} (Ayat: ${data.hasil[i].ayat})`);
 			}
 
 			let page1List = new MessageEmbed().setTitle(`Quran List`).setDescription(quranListed.slice(0, 50).join("\n"));
@@ -62,11 +62,10 @@ module.exports = class extends Command {
 		) {
 			args.shift(); // Remove first element
 			// Now surat is on args[0], ayat is on args[1]
-			const data = await fetch(`https://api.banghasan.com/quran/format/json/surat/${args[0]}/ayat/${args[1]}`);
-			const dataParsed = await data.json();
+			const { data } = await axios.get(`https://api.banghasan.com/quran/format/json/surat/${args[0]}/ayat/${args[1]}`);
 
-			if (dataParsed.status == "error") {
-				let embed = new MessageEmbed().setTitle("Error!").setDescription(dataParsed.pesan);
+			if (data.status == "error") {
+				let embed = new MessageEmbed().setTitle("Error!").setDescription(data.pesan);
 
 				return message.channel.send(embed);
 			} else {
@@ -83,33 +82,33 @@ module.exports = class extends Command {
 					return message.channel.send(embed);
 				}
 
-				if (dataParsed.status === "error") {
-					let embed = new MessageEmbed().setTitle("Error!").setDescription(dataParsed.pesan);
+				if (data.status === "error") {
+					let embed = new MessageEmbed().setTitle("Error!").setDescription(data.pesan);
 
 					return message.channel.send(embed);
 				}
 
-				if (dataParsed.ayat.error) {
+				if (data.ayat.error) {
 					let embed = new MessageEmbed().setTitle("Error!").setDescription("Ayat Invalid!\n*Ayat tidak ditemukan");
 
 					return message.channel.send(embed);
 				}
 
-				for (let i = 0; i < dataParsed.ayat.data.ar.length; i++) {
-					ayatNLatin.push(`${dataParsed.ayat.data.ar[i].ayat}\n${dataParsed.ayat.data.ar[i].teks}\n\n${htmlToText(dataParsed.ayat.data.idt[i].teks)}\n`);
-					terjemahan.push(`${dataParsed.ayat.data.ar[i].ayat}. ${dataParsed.ayat.data.id[i].teks}`);
+				for (let i = 0; i < data.ayat.data.ar.length; i++) {
+					ayatNLatin.push(`${data.ayat.data.ar[i].ayat}\n${data.ayat.data.ar[i].teks}\n\n${htmlToText(data.ayat.data.idt[i].teks)}\n`);
+					terjemahan.push(`${data.ayat.data.ar[i].ayat}. ${data.ayat.data.id[i].teks}`);
 				}
 
 				let start = 0,
 					end = 2;
 				for (let i = 0; i < ayatNLatin.length / 2; i++) {
 					let embedAyat = new MessageEmbed()
-						.setAuthor(`Q.S. ${dataParsed.surat.nama}:${dataParsed.surat.nomor} (${dataParsed.query.ayat})`)
+						.setAuthor(`Q.S. ${data.surat.nama}:${data.surat.nomor} (${data.query.ayat})`)
 						.setTitle("Ayat ke-")
 						.setDescription(ayatNLatin.slice(start, end).join("\n"));
 
 					let embedTerjemahan = new MessageEmbed()
-						.setAuthor(`Q.S. ${dataParsed.surat.nama}:${dataParsed.surat.nomor} (${dataParsed.query.ayat})`)
+						.setAuthor(`Q.S. ${data.surat.nama}:${data.surat.nomor} (${data.query.ayat})`)
 						.setTitle("Arti ayat ke-")
 						.setDescription(terjemahan.slice(start, end).join("\n"));
 
@@ -122,18 +121,17 @@ module.exports = class extends Command {
 				paginationEmbed(message, pages, [], 600000); // 10 Menit
 			}
 		} else if (args[0].toLowerCase() == "random" || args[0].toLowerCase() == "acak") {
-			const data = await fetch(`https://api.banghasan.com/quran/format/json/acak`);
-			const dataParsed = await data.json();
+			const { data } = await axios.get(`https://api.banghasan.com/quran/format/json/acak`);
 
-			if (dataParsed.status == "error") {
-				let embed = new MessageEmbed().setTitle("Error!").setDescription(dataParsed.pesan);
+			if (data.status == "error") {
+				let embed = new MessageEmbed().setTitle("Error!").setDescription(data.pesan);
 
 				return message.channel.send(embed);
 			}
 
 			let embed = new MessageEmbed()
-				.setAuthor(`Q.S. ${dataParsed.surat.nama}: ${dataParsed.surat.nomor} ${dataParsed.surat.asma} (${dataParsed.acak.id.ayat})`)
-				.setDescription(`${dataParsed.acak.ar.teks}\n\n**Terjemahan**: \n${dataParsed.acak.id.teks}`);
+				.setAuthor(`Q.S. ${data.surat.nama}: ${data.surat.nomor} ${data.surat.asma} (${data.acak.id.ayat})`)
+				.setDescription(`${data.acak.ar.teks}\n\n**Terjemahan**: \n${data.acak.id.teks}`);
 
 			return message.channel.send(embed);
 		} else {

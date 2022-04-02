@@ -8,7 +8,7 @@ module.exports = class extends Command {
 			categories: "anime-misc",
 			aliases: ["aq"],
 			info: "Get random quote from anime. ",
-			usage: `${prefix}command or ${prefix}alias`,
+			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
 	}
