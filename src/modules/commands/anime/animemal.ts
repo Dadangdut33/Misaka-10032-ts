@@ -57,7 +57,8 @@ module.exports = class extends Command {
 					.setDescription(data.synopsis ? data.synopsis : "No synopsis available.")
 					.addField("Japanese Name", `${(data as AnimeEpisodesDataModel).japaneseTitle ? `${(data as AnimeEpisodesDataModel).japaneseTitle} (${data.title})` : data.title}`, false)
 					.addField("Synonyms", `${data.synonyms[0] === "" ? "N/A" : data.synonyms.join(" ")}`, false)
-					.addField(`Genres`, `${data.genres!.length > 0 ? data.genres!.join(", ") : "N/A"}`, false)
+					// @ts-ignore -> genres empty
+					.addField(`Genres`, `${data.genres ? (data.genres![0] !== "" ? data.genres.join(", ") : "N/A") : "N/A"}`, false)
 					.addField(`Age Rating`, `${data.rating ? data.rating : "N/A"}`, true)
 					.addField(`Source`, ` ${data.source ? data.source : "N/A"}`, true)
 					.addField(`Status`, `${data.status ? data.status : "N/A"}`, true)
@@ -96,7 +97,7 @@ module.exports = class extends Command {
 			})
 			.catch((err) => {
 				console.log(err);
-				return message.channel.send(`**Error!** \n\n${err}`);
+				return message.channel.send(`**Error!** \n\n\`\`\`js${err}\`\`\``);
 			});
 	}
 };
