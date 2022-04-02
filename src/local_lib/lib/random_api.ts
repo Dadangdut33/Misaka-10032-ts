@@ -2,57 +2,43 @@ import axios from "axios";
 
 export class Random {
 	async getMeme() {
-		const { data }: any = await axios.get("https://apis.duncte123.me/meme");
+		const { data }: any = await axios.get("https://apis.duncte123.me/meme", {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
 
 		return data;
 	}
 
 	async getJoke() {
-		const { data }: any = await axios.get("https://apis.beta.duncte123.me/joke"); //https://apis.beta.duncte123.me/joke https://apis.duncte123.me/joke
+		const { data }: any = await axios.get("https://apis.beta.duncte123.me/joke", {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}); //https://apis.beta.duncte123.me/joke https://apis.duncte123.me/joke
 
 		return data;
 	}
 
 	async getKitsune() {
-		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/kitsune");
-
-		if (data.code !== 200) {
-			return "Error 01: Unable to access the json content of API";
-		}
-		const chars: any = { "/": "%2F", ":": "%3A" };
-
-		let content = {
-			embed: {
-				color: "RANDOM",
-				title: `Gao~`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: string) => chars[m])})`,
-				image: { url: data.url },
+		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/kitsune", {
+			headers: {
+				"Content-Type": "application/json",
 			},
-		};
+		});
 
-		return content;
+		return data;
 	}
 
 	async getNeko() {
-		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/neko");
-
-		if (data.code !== 200) {
-			return "Error 01: Unable to access the json content of API";
-		}
-
-		//REPLACE the chars for sauceNAO
-		const chars: any = { "/": "%2F", ":": "%3A" };
-
-		let content = {
-			embed: {
-				color: "RANDOM",
-				title: "Nya nya~",
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: number) => chars[m])})`,
-				image: { url: data.url },
+		const { data }: any = await axios.get("https://neko-love.xyz/api/v1/neko", {
+			headers: {
+				"Content-Type": "application/json",
 			},
-		};
+		});
 
-		return content;
+		return data;
 	}
 
 	async getWallpaper() {
