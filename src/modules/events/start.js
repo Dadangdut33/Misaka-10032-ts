@@ -10,7 +10,6 @@ const membercount = require("./types/private/member-count");
 const Auditlog = require("./types/private/audit");
 const serverInfo = require("./types/private/server-info");
 
-// const dailyMessage = require('./types/private/daily-message');
 const welcomeMsg = require("./types/private/welcome-message");
 
 // slashes
