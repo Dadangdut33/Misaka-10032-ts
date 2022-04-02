@@ -62,18 +62,7 @@ export class Random {
 			},
 		});
 
-		const replaceChars: any = { "/": "%2F", ":": "%3A" };
-		let content = {
-			embed: {
-				color: "RANDOM",
-				title: `Via Nekos.fun`,
-				url: `https://nekos.fun/`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.image.replace(/[:/]/g, (m: string) => replaceChars[m])})`,
-				image: { url: data.image },
-			},
-		};
-
-		return content;
+		return data;
 	}
 
 	async getAnimeImgURL(action: "neko" | "kitsune" | "pat" | "hug" | "waifu" | "cry" | "kiss" | "slap" | "smug" | "punch") {
