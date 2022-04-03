@@ -2,7 +2,7 @@ import { Client, MessageEmbed, Message } from "discord.js";
 import { Feature } from "./Feature";
 import { Command } from "./Command";
 import { BotEvent } from "./BotEvent";
-import { Utils } from "./Utils";
+import { Utils } from "./FileUtils";
 import { prefix } from "../config.json";
 
 export interface handlerLoadOptionsInterface {
