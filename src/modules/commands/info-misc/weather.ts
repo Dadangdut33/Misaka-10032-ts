@@ -1,29 +1,24 @@
+import { MessageEmbed, Message } from "discord.js";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
+import moment from "moment-timezone";
 const weather = require("weather-js");
-const { MessageEmbed } = require("discord.js");
-const { Command } = require("../../../../handler");
-const { prefix } = require("../../../../config");
-const Moment = require("moment-timezone");
 
 module.exports = class extends Command {
-	constructor() {
+	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("weather", {
-			aliases: [],
 			categories: "info-misc",
 			info: "Gives weather information of given location",
-			usage: `${prefix}weather <location>`,
+			usage: `\`${prefix}command <location>\``,
 			guildOnly: false,
 		});
 	}
 
-	async run(message, args) {
-		if (!args.length) {
-			return message.channel.send("Please enter location that you want to observe");
-		}
+	async run(message: Message, args: string[]) {
+		if (!args.length) return message.channel.send("Please enter location that you want to observe");
 
-		weather.find({ search: args.join(" "), degreeType: "C" }, function (err, result) {
+		weather.find({ search: args.join(" "), degreeType: "C" }, function (err: any, result: any) {
 			try {
-				// console.log(result[0]);
-				var time = Moment.tz("Asia/Jakarta").format("dddd, YYYY-MM-D (HH:mm:ss)");
+				let time = moment.tz("Asia/Jakarta").format("dddd, YYYY-MM-D (HH:mm:ss)");
 
 				let embed = new MessageEmbed()
 					.setTitle(`Showing Weather Condition of ${result[0].location.name} (${result[0].current.date})`)
@@ -38,10 +33,10 @@ module.exports = class extends Command {
 					.addField("Wind", result[0].current.winddisplay, true)
 					.addField("Observation Time", result[0].current.observationtime, true)
 					.addField("Observation Point", result[0].current.observationpoint, true)
-					// .addField(`Below are 5 days forecast`, `\`\`\`css\n    Current Date & Time: ${time}\`\`\``, false)
 					.addField(`\`\`\`Current Date & Time: ${time}\`\`\``, `**5 days forecast**`, false)
 					.setThumbnail(result[0].current.imageUrl);
-				for (var i = 0; i < result[0].forecast.length; i++) {
+
+				for (let i = 0; i < result[0].forecast.length; i++) {
 					embed.addField(
 						`${result[0].forecast[i].day}`,
 						`Date: ${result[0].forecast[i].date}\nLow: ${result[0].forecast[i].low}\nHigh: ${result[0].forecast[i].low}\nSky: ${result[0].forecast[i].skytextday}\nPrecip: ${
@@ -56,7 +51,7 @@ module.exports = class extends Command {
 				message.channel.send(embed);
 			} catch (err) {
 				console.log(err);
-				return message.channel.send("Unable to get data of the given location");
+				return message.channel.send(`Unable to get data of the given location\n\n**Details:** ${err}`);
 			}
 		});
 	}

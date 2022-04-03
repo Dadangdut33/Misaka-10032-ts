@@ -24,7 +24,6 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0]) return message.channel.send(`Please enter a correct word to search!`);
 
-		let pages = [];
 		const thumbnail = "https://i.imgur.com/4wHZP6c.png";
 		const link = "https://www.lexico.com/en/definition/" + args.join(`_`);
 
@@ -53,11 +52,7 @@ module.exports = class extends Command {
 						.setURL(link);
 				});
 
-			for (let i = 0; i < display.length; i++) {
-				pages.push(display[i]);
-			}
-
-			paginationEmbed(message, pages, [], 300000);
+			paginationEmbed(message, display, [], 300000);
 		} catch (error) {
 			message.channel.send(`Couldn't find the word you're looking for!`);
 		}

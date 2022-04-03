@@ -9,7 +9,7 @@ module.exports = class extends Command {
 		super("kbbi", {
 			categories: "info-misc",
 			info: "Mencari definisi kata dari [KBBI](https://kbbi.web.id/)",
-			usage: `${prefix}command/alias <...>`,
+			usage: `\`${prefix}command/alias <...>\``,
 			guildOnly: false,
 		});
 	}

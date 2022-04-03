@@ -8,7 +8,7 @@ module.exports = class extends Command {
 			aliases: ["sw"],
 			categories: "info-misc",
 			info: "Search for stuff using duckduckgo and return the results as link",
-			usage: `${prefix}command/alias <...>`,
+			usage: `\`${prefix}command/alias <...>\``,
 			guildOnly: false,
 		});
 	}

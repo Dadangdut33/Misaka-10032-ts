@@ -205,6 +205,7 @@ module.exports = {
 			});
 			return curPage;
 		} catch (e) {
+			console.log(e);
 			// Catch error
 			if (e instanceof DiscordAPIError) {
 				let embed = new MessageEmbed().setTitle("Error").setDescription(`Data is too long to be returned as embed!`).addField(`Details`, e).setColor("#000");
