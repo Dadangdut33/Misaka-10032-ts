@@ -29,8 +29,8 @@ module.exports = class extends Command {
 				.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
 				.setColor("RANDOM")
 				.setTitle(`Shortlink Created!`)
-				.addField(`Original Link`, args[0], false)
-				.addField(`Shorten Link`, url, false);
+				.addField(`Original Link`, args[0], true)
+				.addField(`Shorten Link`, url, true);
 
 			return message.channel.send(embed);
 		});
