@@ -48,6 +48,8 @@ module.exports = class extends Command {
 				return 3;
 			case "5️⃣":
 				return 4;
+			default:
+				return null;
 		}
 	}
 
@@ -89,21 +91,17 @@ module.exports = class extends Command {
 
 		const optionsToChoose = await message.channel.send(embed); // Await the embed
 		const reacted = await promptMessage(optionsToChoose, message.author, 50, chooseArr); // Await reaction
-		const reaction = this.chooseResult(reacted)!; // Get Result from reaction
+		const reaction = this.chooseResult(reacted); // Get Result from reaction
 		await optionsToChoose.reactions.removeAll();
 
-		// If no reaction
+		// If no reaction / invalid reaction
 		if (reaction === null) {
+			// If no reaction after timeout
 			msg.delete();
-			optionsToChoose.delete();
-			return message.channel.send(`Search for **${args.join(" ").replace(/\[kitsu\]/i, "")}** Aborted because of no reaction from ${message.author}!`);
-		}
+			embed.setAuthor("Search aborted!").setTitle("").setDescription(`Search for **${query}** aborted because of no reaction from ${message.author}!`);
 
-		// added it's own emoji reaction +1 because the original is from 0 to access the array
-		if (reaction + 1 > limit) {
-			msg.delete();
-			optionsToChoose.delete();
-			return message.channel.send(`Invalid options chosen! Please choose the correct available options!`);
+			optionsToChoose.edit(embed);
+			return;
 		}
 
 		let anime = kitsuSearch[reaction];
