@@ -12,7 +12,7 @@ module.exports = class extends Command {
 			categories: "manga",
 			aliases: ["mk"],
 			info: "Get information of any manga from [kitsu.io](https://kitsu.io/explore/manga)",
-			usage: `${prefix}command/alias <title>`,
+			usage: `\`${prefix}command/alias <title>\``,
 			guildOnly: true,
 		});
 	}
