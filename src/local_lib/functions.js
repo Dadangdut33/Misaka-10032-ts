@@ -131,7 +131,7 @@ module.exports = {
 	},
 
 	// Paginator scrapped from https://github.com/saanuregh/discord.js-pagination. Modified by me personally
-	paginationEmbed: async function (msg, pages, emojiList = ["⏪", "⏩", "❌"], timeout = 120000, customFooter = false) {
+	paginationEmbed: async function (msg, pages, emojiList = ["⏪", "⏩", "❌"], timeout = 300000, customFooter = false) {
 		try {
 			// Try
 			if (!msg && !msg.channel) throw new Error("Channel is inaccessible.");
