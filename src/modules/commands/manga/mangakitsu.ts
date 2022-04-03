@@ -48,7 +48,7 @@ module.exports = class extends Command {
 		//checking args`
 		if (!args[0]) return message.channel.send("Please input the correct manga!");
 
-		const query = args.join(" ");
+		const query = args.join(" ").trim();
 		const msg = await message.channel.send(`Searching for \`${query}\`...`);
 
 		const kitsuSearch = await kitsu.searchManga(query, 0);
@@ -101,7 +101,7 @@ module.exports = class extends Command {
 			.setTitle("")
 			.setColor("F75136")
 			.setAuthor(
-				`${manga.titles.english ? manga.titles.english : this.capitalizeTheFirstLetterOfEachWord(args.join(" "))} | ${manga.mangaType}`,
+				`${manga.titles.english ? manga.titles.english : this.capitalizeTheFirstLetterOfEachWord(query)} | ${manga.mangaType}`,
 				// @ts-ignore -> .original not shown in the data model
 				manga.posterImage.original,
 				`https://kitsu.io/manga/${manga.id}`

@@ -57,7 +57,7 @@ module.exports = class extends Command {
 		if (args.length < 2) return message.channel.send(this.invalidArgs());
 
 		let chapterNum = parseInt(args[0]),
-			q = args.slice(1).join(" ");
+			q = args.slice(1).join(" ").trim();
 
 		// verify that the chapter is a number
 		if (isNaN(chapterNum) || chapterNum < 1) return message.channel.send(this.notACorrectNumber());

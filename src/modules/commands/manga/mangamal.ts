@@ -41,7 +41,7 @@ module.exports = class extends Command {
 		if (!args[0]) {
 			return message.channel.send("Please input the correct manga!");
 		}
-		const query = args.join(" ");
+		const query = args.join(" ").trim();
 		const msg = await message.channel.send(`Searching for \`${query}\`...`);
 		const data = (await malSearcher.search("manga", { maxResults: 5, query: query })) as MangaSearchModel[];
 

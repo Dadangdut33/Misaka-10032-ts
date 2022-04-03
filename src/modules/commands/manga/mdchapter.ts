@@ -39,7 +39,7 @@ module.exports = class extends Command {
 
 		if (!args) return message.channel.send(this.invalidArgs());
 
-		const q = args.join(" "),
+		const q = args.join(" ").trim(),
 			msg = await message.channel.send(`Searching for \`${q}\` please wait...`);
 
 		// login first
