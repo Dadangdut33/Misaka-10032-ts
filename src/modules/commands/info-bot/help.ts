@@ -1,17 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, Handler, handlerLoadOptionsInterface } from "../../../handler";
 
-const mapCommands = (source: Map<string, Command>, categories: string) => {
-	return `${Array.from(source)
-		.filter(([, command]) => command.categories === categories)
-		.map(([, command]) => `\`${command.name}\``)
-		.join(` `)}`;
-};
-
-const countACategory = (source: Map<string, Command>, categories: string) => {
-	return Array.from(source).filter(([, command]) => command.categories === categories).length;
-};
-
 module.exports = class extends Command {
 	commandHandler;
 	prefix;
@@ -33,13 +22,29 @@ module.exports = class extends Command {
 		this.repo_link = repo_link;
 	}
 
+	mapCommands = (source: Map<string, Command>, categories: string) => {
+		return `${Array.from(source)
+			.filter(([, command]) => command.categories === categories)
+			.map(([, command]) => `\`${command.name}\``)
+			.join(` `)}`;
+	};
+
+	countACategory = (source: Map<string, Command>, categories: string) => {
+		return Array.from(source).filter(([, command]) => command.categories === categories).length;
+	};
+
+	capitalizeFirstLetter(text: string) {
+		return text.charAt(0).toUpperCase() + text.slice(1);
+	}
+
 	async run(message: Message, args: string[]) {
 		if (args.length === 0) {
 			// total all commands
-			let totalCommands = this.commandHandler.commands.size;
-			// categories
-			let allCategories = Array.from(this.commandHandler.commands.values()).map((command) => command.categories);
-			allCategories = [...new Set(allCategories)]; // remove dupe
+			let totalCommands = this.commandHandler.commands.size,
+				allCategories = Array.from(this.commandHandler.commands.values()).map((command) => command.categories); // categories
+
+			// remove dupe categories
+			allCategories = [...new Set(allCategories)];
 
 			const embed = new MessageEmbed()
 				.setTitle("Showing Full Command List!")
@@ -59,7 +64,10 @@ module.exports = class extends Command {
 
 			// loop the categories
 			for (let category of allCategories) {
-				embed.addField(`${category} [${countACategory(this.commandHandler.commands, category)}]`, mapCommands(this.commandHandler.commands, category));
+				embed.addField(
+					`${this.capitalizeFirstLetter(category)} [${this.countACategory(this.commandHandler.commands, category)}]`,
+					this.mapCommands(this.commandHandler.commands, category)
+				);
 			}
 
 			// last info
@@ -107,7 +115,7 @@ module.exports = class extends Command {
 				.setThumbnail("https://cdn.discordapp.com/attachments/653206818759376916/740451618344009800/unknown.png")
 				.addField(`Command Name`, `${command.name}`, true)
 				.addField(`Aliases`, `${command.aliases.length > 0 ? command.aliases.join(", ") : "-"}`, true)
-				.addField(`Category`, `${command.categories}`, true)
+				.addField(`Category`, `${this.capitalizeFirstLetter(command.categories)}`, true)
 				.addField(`Guild Only`, `${command.guildOnly}`, false)
 				.addField(`Description`, `${command.info}`)
 				.addField(`Usage`, `${command.usage}`)
