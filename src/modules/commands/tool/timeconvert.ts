@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import moment from "moment";
+import moment from "moment-timezone";
 
 module.exports = class extends Command {
 	prefix;

@@ -24,10 +24,10 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0]) return message.channel.send(`Please enter a correct word to search!`);
 
-		const query = args.join(`%20`);
-		const url = "https://www.urbandictionary.com/define.php?term=";
-		const thumbnail = "https://naeye.net/wp-content/uploads/2018/05/Urban-Dictionary-logo-475x300.png";
-		const link = url + query;
+		const query = args.join(`%20`),
+			url = "https://www.urbandictionary.com/define.php?term=",
+			thumbnail = "https://naeye.net/wp-content/uploads/2018/05/Urban-Dictionary-logo-475x300.png",
+			link = url + query;
 
 		try {
 			const { data } = await axios.get(link);
@@ -35,12 +35,12 @@ module.exports = class extends Command {
 
 			let display: MessageEmbed[] = [];
 			$(".definition").each((i, el) => {
-				const author = $(el).find(".ribbon").text();
-				const title = this.toTitleCase($(el).find(".word").text());
-				const meaning = $(el).find(".meaning").text();
-				const contributor = $(el).find(".contributor").children("a").text();
-				const examples = $(el).find(".example").text();
-				const description = [`${meaning}`, `\n**Examples:**\n${examples}`, `\n**Author:** ${contributor}`].join("\n");
+				const author = $(el).find(".ribbon").text(),
+					title = this.toTitleCase($(el).find(".word").text()),
+					meaning = $(el).find(".meaning").text(),
+					contributor = $(el).find(".contributor").children("a").text(),
+					examples = $(el).find(".example").text(),
+					description = [`${meaning}`, `\n**Examples:**\n${examples}`, `\n**Author:** ${contributor}`].join("\n");
 
 				// prettier-ignore
 				display[i] = new MessageEmbed()
