@@ -6,14 +6,8 @@ const debugmode = false;
 
 interface optionsInterface {
 	[key: string]: {
-		auditlog: string;
-		auditmsg: string;
+		logChannel: string;
 	};
-}
-
-interface sendOptionsInterface {
-	auditlog: string | boolean | undefined;
-	auditmsg: string | boolean | undefined;
 }
 
 function AuditLog(client: Client, options: optionsInterface) {
@@ -23,40 +17,32 @@ function AuditLog(client: Client, options: optionsInterface) {
 		version: "2.0.0",
 	};
 
-	const eventtype: any = {
-		guildMemberUpdate: "auditlog",
-		usernameChangedMsg: "auditlog",
-		discriminatorChangedMsg: "auditlog",
-		avatarChangedMsg: "auditlog",
-		messageDelete: "auditmsg",
-	};
-
 	console.log(`Module: ${description.name} | Loaded version ${description.version} from ("${description.filename}")`);
 
 	// Deleted image
 	// Only if the message contains image
 	client.on("messageDelete", (message) => {
-		if (message.author) if (message.author.client) return;
+		if (message.author) if (message.author.bot) return;
 		if (message.channel.type !== "text") return;
-		if (message.attachments.map((x) => x.proxyURL).length == 0) return;
+		if (message.attachments.size === 0) return;
 		if (debugmode) console.log(`Module: ${description.name} | messageDelete triggered`);
 
-		let embed = {
+		let embed: MessageEmbedOptions = {
 			description: `
 **Author : ** <@${message.author!.id}> - *${message.author!.tag}*
 **Date : ** ${message.createdAt}
 **Channel : ** <#${message.channel.id}> - *${message.channel.name}*
 
 **Deleted Image : **
-${message.attachments.map((x) => x.proxyURL)}
+${message.attachments.map((x) => x.url)}
 `,
 			image: {
-				url: message.attachments.map((x) => x.proxyURL)[0],
+				url: message.attachments.map((x) => x.url)[0],
 			},
-			color: "#000",
+			color: 0x000,
 			timestamp: new Date(),
 			footer: {
-				text: `Deleted `,
+				text: `Deleted`,
 			},
 			author: {
 				name: `IMAGE DELETED `,
@@ -65,7 +51,7 @@ ${message.attachments.map((x) => x.proxyURL)}
 		};
 
 		if (message && message.member && typeof message.member.guild === "object") {
-			send(client, message.member.guild, options, embed, "messageDelete");
+			send(client, message.member.guild, options, embed);
 		} else {
 			console.error(`Module: ${description.name} | messageDelete - ERROR - member guild id couldn't be retrieved`);
 			console.error("author", message.author);
@@ -78,10 +64,10 @@ ${message.attachments.map((x) => x.proxyURL)}
 	client.on("guildMemberUpdate", (oldMember, newMember) => {
 		if (debugmode) console.log(`Module: ${description.name} | guildMemberUpdate:nickname triggered`);
 		if (oldMember.nickname !== newMember.nickname) {
-			let embed = {
+			let embed: MessageEmbedOptions = {
 				description: `<@${newMember.user.id}> - *${newMember.user.id}*`,
 				url: newMember.user.displayAvatarURL({ format: "png", size: 2048 }),
-				color: "#000",
+				color: 0x000,
 				timestamp: new Date(),
 				footer: {
 					text: `${newMember.nickname || newMember.user.username}`,
@@ -106,7 +92,7 @@ ${message.attachments.map((x) => x.proxyURL)}
 					},
 				],
 			};
-			send(client, newMember.guild, options, embed, "guildMemberUpdate");
+			send(client, newMember.guild, options, embed);
 		}
 	});
 
@@ -131,7 +117,7 @@ ${message.attachments.map((x) => x.proxyURL)}
 							description: `<@${newUser.id}> - *${newUser.id}*`,
 							url: newUser.displayAvatarURL({ format: "png", size: 2048 }),
 							color: 0x000,
-							timestamp: new Date().getTime(),
+							timestamp: new Date(),
 							footer: {
 								text: `${member.nickname || member.user.username}`,
 							},
@@ -165,7 +151,7 @@ ${message.attachments.map((x) => x.proxyURL)}
 							description: `<@${newUser.id}> - *${newUser.id}*`,
 							url: newUser.displayAvatarURL({ format: "png", size: 2048 }),
 							color: 0x000,
-							timestamp: new Date().getTime(),
+							timestamp: new Date(),
 							footer: {
 								text: `${member.nickname || member.user.username}`,
 							},
@@ -199,7 +185,7 @@ ${message.attachments.map((x) => x.proxyURL)}
 							description: `<@${newUser.id}> - *${newUser.id}*\n\n**Old Avatar** :arrow_down:`,
 							url: newUser.displayAvatarURL({ format: "png", size: 2048 }),
 							color: 0x000,
-							timestamp: new Date().getTime(),
+							timestamp: new Date(),
 							footer: {
 								text: `Old avatar might not show up sometimes`,
 							},
@@ -216,43 +202,29 @@ ${message.attachments.map((x) => x.proxyURL)}
 						};
 					}
 
-					if (usernameChangedMsg) send(client, guild, options, usernameChangedMsg, "usernameChangedMsg");
-					if (discriminatorChangedMsg) send(client, guild, options, discriminatorChangedMsg, "discriminatorChangedMsg");
-					if (avatarChangedMsg) send(client, guild, options, avatarChangedMsg, "avatarChangedMsg");
+					if (usernameChangedMsg) send(client, guild, options, usernameChangedMsg);
+					if (discriminatorChangedMsg) send(client, guild, options, discriminatorChangedMsg);
+					if (avatarChangedMsg) send(client, guild, options, avatarChangedMsg);
 				}
 			});
 		});
 	});
 
 	// SEND FUNCTION
-	function send(client: Client, guild: Guild, options: optionsInterface, msg: MessageEmbedOptions, movement: string) {
-		let embed,
-			theOptions: sendOptionsInterface = {
-				auditlog: "",
-				auditmsg: "",
-			};
+	function send(client: Client, guild: Guild, options: any, msg: MessageEmbedOptions) {
+		let embed;
 
 		// debug
-		if (debugmode) console.log(`Module: ${description.name} | send - configured options:`, options);
+		if (debugmode) console.log(`Module: ${description.name} | before send - configured options:`, options);
 
-		if (!options)
-			theOptions = {
-				auditlog: undefined,
-				auditmsg: undefined,
-			}; // Initialize option if empty
-		if (options[guild.id]) theOptions = options[guild.id]; // Initialize if options are multi-server
+		if (!options) options = {};
+		// Initialize if options are multi-server
+		if (options[guild.id]) options = options[guild.id];
 
 		// debug
-		if (debugmode) console.log(`Module: ${description.name} | send - specifics options:`, options);
+		if (debugmode) console.log(`Module: ${description.name} | configuration get options:`, options);
 
-		// Add default channel
-		if (typeof theOptions.auditlog === "undefined") theOptions.auditlog = false;
-		if (typeof theOptions.auditmsg === "undefined") theOptions.auditmsg = false;
-
-		if (debugmode) console.log(`Module: ${description.name} | send - computed options:`, options);
-
-		// get channelname
-		const channelname = options[eventtype[movement]] as unknown as string;
+		const channelname = options.logChannel;
 		if (channelname) {
 			// define channel object
 			const channel = guild.channels.cache.find((val) => val.name === channelname) || guild.channels.cache.find((val) => val.id === channelname);
@@ -261,6 +233,7 @@ ${message.attachments.map((x) => x.proxyURL)}
 					if (typeof msg === "object") {
 						// Embed
 						if (channel.permissionsFor(client.user!)!.has("EMBED_LINKS")) {
+							if (debugmode) console.log(`Module: ${description.name} | send - sending embed to ${channel.name}`);
 							embed = msg;
 							(channel as TextChannel).send({ embed }).catch(console.error);
 						} else {
@@ -269,6 +242,7 @@ ${message.attachments.map((x) => x.proxyURL)}
 							);
 						}
 					} else {
+						if (debugmode) console.log(`Module: ${description.name} | send - sending embed to ${channel.name}`);
 						// Send the Message
 						(channel as TextChannel).send(msg).catch(console.error);
 					}
@@ -280,6 +254,8 @@ ${message.attachments.map((x) => x.proxyURL)}
 			} else {
 				console.log(`${description.name} -> The channel "${channelname}" do not exist on server "${guild.name}" (${guild.id})`);
 			}
+		} else {
+			if (debugmode) console.log(`Module: ${description.name} | send - no channel configured`);
 		}
 	}
 }
@@ -295,13 +271,15 @@ module.exports = class extends BotEvent {
 		AuditLog(client, {
 			"640790707082231834": {
 				//ppw
-				auditlog: "mod-log",
-				auditmsg: "mod-log",
+				logChannel: "mod-log",
 			},
 			"913987561922396190": {
 				// ole
-				auditlog: "moderator-only",
-				auditmsg: "moderator-only",
+				logChannel: "moderator-only",
+			},
+			"651015913080094721": {
+				// test
+				logChannel: "test-bot-2",
 			},
 		});
 	}
