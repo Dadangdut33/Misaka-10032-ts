@@ -17,12 +17,12 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0]) {
 			//Get data
-			var memberList: string[] = getMember();
+			let memberList: string[] = getMember();
 
 			//Sort it and reverse it
 			memberList.sort().reverse();
 
-			for (var i = 0; i < (memberList.length > 25 ? 25 : memberList.length); i++) {
+			for (let i = 0; i < (memberList.length > 25 ? 25 : memberList.length); i++) {
 				memberList[i] = memberList[i].replace(/[0-9]+\s,,/g, `[${i + 1}]`);
 			}
 
@@ -38,8 +38,8 @@ module.exports = class extends Command {
 
 		function getMember() {
 			return message.guild!.members.cache.map((GuildMember) => {
-				var today = moment().tz("Asia/Jakarta");
-				var age = today.valueOf() - GuildMember.joinedAt!.getTime();
+				let today = moment().tz("Asia/Jakarta");
+				let age = today.valueOf() - GuildMember.joinedAt!.getTime();
 
 				return `${GuildMember.joinedTimestamp} ,, ${moment(GuildMember.joinedAt).tz("Asia/Jakarta").format("DD/MM/YYYY HH:mm:ss")} - <@${GuildMember.id}> (${prettyMilliseconds(
 					age
