@@ -5,9 +5,6 @@ const Moment = require("moment-timezone");
 const activityRand = require("./types/public/bot-activity");
 const listenToMessage = require("./types/public/msgListener");
 
-// personal private server
-const Auditlog = require("./private/audit");
-
 // slashes
 const slashCommands = require("./types/slash-commands/slasher");
 
@@ -45,26 +42,6 @@ module.exports = class extends BotEvent {
 
 		// register slash commands
 		slashCommands(client);
-
-		// events
-		const personalGuildID = "640790707082231834",
-			vc_label_id = "798031042954919957",
-			oleGuildID = "913987561922396190",
-			ole_welcome_msg = "913987561922396193";
-
-		// Some Auditlog
-		Auditlog(client, {
-			"640790707082231834": {
-				//ppw
-				auditlog: "mod-log",
-				auditmsg: "mod-log",
-			},
-			"913987561922396190": {
-				// ole
-				auditlog: "moderator-only",
-				auditmsg: "moderator-only",
-			},
-		});
 
 		// Message Listener
 		listenToMessage(client); // meme react, haiku, anime, manga, crosspost news
