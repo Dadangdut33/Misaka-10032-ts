@@ -74,7 +74,21 @@ export class Handler {
 	 * @param {handlerLoadOptionsInterface} dependencies - The dependencies of the modules
 	 */
 	load(directory: string, dependencies: handlerLoadOptionsInterface) {
-		// Find and require all JavaScript files
+		/**
+		 * What this does is the same as require / importing a module
+		 * Ex: const fs = require("fs"); // the same as that
+		 *
+		 * Each of the files path is the "module" and we "require" it
+		 * After that we get the "prototype" of the module to check which class it belongs to
+		 * And then we create a new instance of the module
+		 *
+		 * That's why we use "new" on the class and pass the dependencies
+		 * We can also access each dependencies that we pass by destructuring it in super()
+		 *
+		 * After that We store the instances as a map of each module
+		 */
+
+		// Find and require all JavaScript/Typescript files
 		const nodes = Utils.readdirSyncRecursive(directory)
 			.filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"))
 			.map(require);
