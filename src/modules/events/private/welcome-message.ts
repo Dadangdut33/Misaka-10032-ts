@@ -1,3 +1,7 @@
+import { Client, GuildMember, TextChannel } from "discord.js";
+import { BotEvent } from "../../../handler";
+import { private_Events_Info } from "../../../config.json";
+
 const responseImg_ole = [
 	"https://media.discordapp.net/attachments/641142856094056471/942304942239125544/youre-welcome-the-rock.gif",
 	"https://media.discordapp.net/attachments/641142856094056471/942304972941455430/HardDarkIlladopsis-max-1mb.gif",
@@ -25,32 +29,42 @@ const responseTxt_ole = [
 	"😂👆",
 ];
 
-module.exports = (client, guildID, channelID) => {
-	const personalGuild = client.guilds.cache.get(guildID);
-	if (!personalGuild) return console.log("Invalid guild for welcome message");
-	try {
-		const theID = channelID;
-		const sendWelcomeMessage = (member) => {
-			try {
-				const guild = member.guild;
-				const tagUser = `<@${member.user.id}>`;
+module.exports = class extends BotEvent {
+	constructor() {
+		super("ready");
+		// this.disable();
+	}
 
-				const channel = guild.channels.cache.get(theID);
-				const randomImg = responseImg_ole[Math.floor(Math.random() * responseImg_ole.length)];
-				const randomTxt = responseTxt_ole[Math.floor(Math.random() * responseTxt_ole.length)];
-				if (channel) channel.send({ files: [randomImg], content: tagUser + " " + randomTxt });
-			} catch (error) {
-				console.log(error);
-			}
-		};
+	run(client: Client) {
+		const guildID = private_Events_Info.oleServer.id,
+			channelID = private_Events_Info.oleServer.channel_general;
 
-		client.on("guildMemberAdd", (member) => {
-			// check if the guild is the personal guild
-			if (member.guild === personalGuild) sendWelcomeMessage(member);
-		});
+		const personalGuild = client.guilds.cache.get(guildID);
+		if (!personalGuild) return console.log("Invalid guild for welcome message");
+		try {
+			const theID = channelID;
+			const sendWelcomeMessage = (member: GuildMember) => {
+				try {
+					const guild = member.guild;
+					const tagUser = `<@${member.user.id}>`;
 
-		console.log(`Module: Welcome-message Loaded | Loaded from local module | For guild ${personalGuild.name}`);
-	} catch (e) {
-		console.log(e);
+					const channel = guild.channels.cache.get(theID) as TextChannel;
+					const randomImg = responseImg_ole[Math.floor(Math.random() * responseImg_ole.length)];
+					const randomTxt = responseTxt_ole[Math.floor(Math.random() * responseTxt_ole.length)];
+					if (channel) channel.send({ files: [randomImg], content: tagUser + " " + randomTxt });
+				} catch (error) {
+					console.log(error);
+				}
+			};
+
+			client.on("guildMemberAdd", (member) => {
+				// check if the guild is the personal guild
+				if (member.guild === personalGuild) sendWelcomeMessage(member);
+			});
+
+			console.log(`Module: Welcome-message Loaded | Loaded from local module | For guild ${personalGuild.name}`);
+		} catch (e) {
+			console.log(e);
+		}
 	}
 };

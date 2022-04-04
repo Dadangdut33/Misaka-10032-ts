@@ -1,6 +1,6 @@
 import { Client, MessageEmbed, TextChannel } from "discord.js";
-import { BotEvent } from "../../../../handler";
-import { private_Events_Info } from "../../../../config.json";
+import { BotEvent } from "../../../handler";
+import { private_Events_Info } from "../../../config.json";
 import moment from "moment-timezone";
 import adhan from "adhan";
 import axios from "axios";

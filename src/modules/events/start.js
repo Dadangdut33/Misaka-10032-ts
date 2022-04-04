@@ -6,11 +6,7 @@ const activityRand = require("./types/public/bot-activity");
 const listenToMessage = require("./types/public/msgListener");
 
 // personal private server
-const membercount = require("./types/private/member-count");
-const Auditlog = require("./types/private/audit");
-const serverInfo = require("./types/private/server-info");
-
-const welcomeMsg = require("./types/private/welcome-message");
+const Auditlog = require("./private/audit");
 
 // slashes
 const slashCommands = require("./types/slash-commands/slasher");
@@ -70,30 +66,7 @@ module.exports = class extends BotEvent {
 			},
 		});
 
-		// welcome message
-		welcomeMsg(client, oleGuildID, ole_welcome_msg);
-
 		// Message Listener
 		listenToMessage(client); // meme react, haiku, anime, manga, crosspost news
-
-		// Membercount
-		membercount(client, personalGuildID, vc_label_id); // update member count
-
-		// Serverinfo
-		serverInfo(
-			client,
-			personalGuildID,
-			"820964768067878922", // channelID
-			"640825665310031882", // rulesChannelID
-			"645494894613233665", // modRolesID
-			"820964895767265280", // serverInfoID
-			"821170444509380639", // emojisInfoID1
-			"821170482945458196", // emojisInfoID2
-			"821205412795383871", // memberInfoID
-			"821206531730571274", // jumpChannelID
-			"640790708155842575", // jumpToGeneral
-			"640790708155842587", // vcGeneral
-			"827086299051196426" // publicStage
-		); // Updated every 15 minutes
 	}
 };
