@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Random_Api } from "../../../utils";
+import { RandomApi } from "../../../utils";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
@@ -15,7 +15,7 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[]) {
 		const msg = await message.channel.send(`Loading...`);
-		let data = await new Random_Api().getAdvice();
+		let data = await new RandomApi().getAdvice();
 
 		if (!data) {
 			msg.edit(`Can't reached API, try again later!`);

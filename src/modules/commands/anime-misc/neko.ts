@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { Random_Api } from "../../../utils";
+import { RandomApi } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -14,7 +14,7 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[]) {
 		const msg = await message.channel.send(`Loading...`);
-		const data = await new Random_Api().getNeko();
+		const data = await new RandomApi().getNeko();
 
 		if (data.code !== 200) {
 			return "Error 01: Unable to access the json content of API";
