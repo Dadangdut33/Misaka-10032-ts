@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export class Random {
+export class Random_Api {
 	async getMeme() {
 		const { data }: any = await axios.get("https://apis.duncte123.me/meme", {
 			headers: {

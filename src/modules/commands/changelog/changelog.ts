@@ -2,7 +2,7 @@ import { MessageEmbed, Message } from "discord.js";
 import { readFileSync } from "fs";
 import path from "path";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../utils/functions.js";
+import { paginationEmbed } from "../../../utils";
 
 module.exports = class extends Command {
 	build;

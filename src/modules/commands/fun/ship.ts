@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { Random } from "../../../utils/lib/random_api";
+import { Random_Api } from "../../../utils";
 
 module.exports = class extends Command {
 	prefix;
@@ -32,7 +32,7 @@ module.exports = class extends Command {
 			chara1 = args.slice(0, index).join(" "),
 			chara2 = args.slice(index + 1).join(" ");
 
-		const { data } = await new Random().getShip(chara1, chara2).catch((e) => {
+		const { data } = await new Random_Api().getShip(chara1, chara2).catch((e) => {
 			console.log(e);
 			msg.edit(`Can't reached API, try again later!`);
 			success = false;

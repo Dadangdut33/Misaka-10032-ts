@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../utils/functions.js";
+import { paginationEmbed } from "../../../utils";
 const { htmlToText } = require("html-to-text");
 import axios from "axios";
 

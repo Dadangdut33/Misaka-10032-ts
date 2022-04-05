@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 import currentlyAiringAnime from "currently-airing-anime";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../utils/functions";
+import { paginationEmbed } from "../../../utils";
 const fetch = require("node-fetch");
 global.fetch = fetch;
 

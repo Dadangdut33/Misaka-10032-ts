@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { Random } from "../../../utils/lib/random_api";
+import { Random_Api } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -13,7 +13,7 @@ module.exports = class extends Command {
 	}
 
 	async run(message: Message, args: string[]) {
-		let data = await new Random().getWallpaper();
+		let data = await new Random_Api().getWallpaper();
 		// check if valid link or not
 		if (!data.image.includes("http")) return message.channel.send(data ? data : "Something went wrong");
 

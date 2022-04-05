@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../utils/functions";
+import { paginationEmbed } from "../../../utils";
 const Chance = require("chance");
 const chance = new Chance();
 

@@ -5,7 +5,7 @@ import { BotEvent } from "../../../handler";
 import { resGeh } from "./random-response/meme-response";
 import { detect, format } from "./detect-haiku/detect-haiku";
 import { prefix } from "../../../config.json";
-import { capitalizeFirstLetter, hasNumber } from "../../../utils/functions";
+import { capitalizeFirstLetter, hasNumber } from "../../../utils";
 
 module.exports = class extends BotEvent {
 	constructor() {

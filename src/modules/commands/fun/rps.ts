@@ -1,9 +1,9 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { promptMessage } from "../../../utils/functions";
+import { promptMessage } from "../../../utils";
 const chooseArr = ["🗻", "✂", "📰"];
 
-function getResult(me: string, clientChosen: string) {
+function getResult(me: any, clientChosen: string) {
 	if ((me === "🗻" && clientChosen === "✂") || (me === "📰" && clientChosen === "🗻") || (me === "✂" && clientChosen === "📰")) {
 		return "You won!";
 	} else if (me === clientChosen) {

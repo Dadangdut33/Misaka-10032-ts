@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { promptMessage } from "../../../utils/functions";
+import { promptMessage } from "../../../utils";
 const chooseArr = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 import malScraper from "mal-scraper";
 import { Kitsu as KitsuInterface } from "kitsu.js";
@@ -35,7 +35,7 @@ module.exports = class extends Command {
 	}
 
 	// Below is the function to get the results of the reaction
-	chooseResult(me: string) {
+	chooseResult(me: any) {
 		// Pass let as me
 		switch (me) {
 			case "1️⃣":
