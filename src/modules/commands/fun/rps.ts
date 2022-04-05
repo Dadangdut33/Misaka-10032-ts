@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { promptMessage } from "../../../local_lib/functions";
+import { promptMessage } from "../../../utils/functions";
 const chooseArr = ["🗻", "✂", "📰"];
 
 function getResult(me: string, clientChosen: string) {

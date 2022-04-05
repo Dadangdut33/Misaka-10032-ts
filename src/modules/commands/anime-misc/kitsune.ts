@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { Random } from "../../../local_lib/lib/random_api";
+import { Random } from "../../../utils/lib/random_api";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {

@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../local_lib/functions";
+import { paginationEmbed } from "../../../utils/functions";
 import axios from "axios";
 import { load } from "cheerio";
 

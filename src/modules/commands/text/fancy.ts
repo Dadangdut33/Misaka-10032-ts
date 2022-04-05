@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { fancy } from "../../../local_lib/lib/fancyfies";
+import { fancy } from "../../../utils/lib/fancyfies";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {

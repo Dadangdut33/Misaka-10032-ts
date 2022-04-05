@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../local_lib/functions.js";
+import { paginationEmbed } from "../../../utils/functions.js";
 import { Manga, login, resolveArray } from "mangadex-full-api";
 import moment from "moment-timezone";
 

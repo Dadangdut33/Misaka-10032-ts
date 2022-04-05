@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { randomPuppy } from "../../../local_lib/functions";
+import { randomPuppy } from "../../../utils/functions";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {

@@ -1,6 +1,6 @@
 import { Client, MessageEmbed, TextChannel } from "discord.js";
 import { BotEvent } from "../../../handler";
-import { find_DB_Return, insert_DB_One } from "../../../local_lib/functions";
+import { find_DB_Return, insert_DB_One } from "../../../utils/functions";
 import { private_Events_Info } from "../../../config.json";
 
 module.exports = class extends BotEvent {

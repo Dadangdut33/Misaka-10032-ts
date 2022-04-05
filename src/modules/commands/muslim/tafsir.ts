@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../local_lib/functions.js";
+import { paginationEmbed } from "../../../utils/functions.js";
 import axios from "axios";
 
 module.exports = class extends Command {

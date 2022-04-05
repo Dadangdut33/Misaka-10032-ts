@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed, find_DB_Return, capitalizeFirstLetter } from "../../../local_lib/functions";
+import { paginationEmbed, find_DB_Return, capitalizeFirstLetter } from "../../../utils/functions";
 import { Genshin_Ver } from "../../../config.json";
 
 module.exports = class extends Command {

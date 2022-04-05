@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { promptMessage } from "../../../local_lib/functions";
+import { promptMessage } from "../../../utils/functions";
 const chooseArr = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 import malScraper from "mal-scraper";
 import { Kitsu as KitsuInterface } from "kitsu.js";
