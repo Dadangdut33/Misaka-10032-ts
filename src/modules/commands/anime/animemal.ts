@@ -28,25 +28,34 @@ module.exports = class extends Command {
 
 		if (!data) return message.channel.send(`No results found for **${args.join(" ")}**!`);
 
+		// -----------------------------
+		// get chars and staff
 		let animeChar = [],
 			animeStaff = [];
 
-		if (data.staff) for (let i = 0; i < data.staff.length; i++) animeStaff[i] = `• ${data.staff[i].name} - ${data.staff[i].role ? data.staff[i].role : `-`}`;
+		if (data.staff)
+			if (data.staff.length > 0) for (let i = 0; i < data.staff.length; i++) animeStaff[i] = `• ${data.staff[i].name} - ${data.staff[i].role ? data.staff[i].role : `-`}`;
+			else animeStaff = [`No staff for this anime have been added to this title.`];
 		else animeStaff = [`No staff for this anime have been added to this title.`];
 
 		if (data.characters)
-			for (let i = 0; i < data.characters.length; i++)
-				animeChar[i] = `• ${data.characters[i].name} (${data.characters[i].role}) VA: ${data.characters[i].seiyuu.name ? data.characters[i].seiyuu.name : `-`}`;
+			if (data.characters.length > 0)
+				for (let i = 0; i < data.characters.length; i++)
+					animeChar[i] = `• ${data.characters[i].name} (${data.characters[i].role}) VA: ${data.characters[i].seiyuu.name ? data.characters[i].seiyuu.name : `-`}`;
+			else animeChar = ["No characters or voice actors have been added to this title."];
 		else animeChar = ["No characters or voice actors have been added to this title."];
 
 		// No Staff, sometimes the char is the staff
-		if (data.characters![0].name === data.staff![0].name && (data.staff![0].role === "Main" || data.staff![0].role === "Supporting") && animeStaff.length === 1)
-			animeStaff = [`No staff for this anime have been added to this title.`];
+		if (data.characters && data.characters[0] && data.staff && data.staff[0]) {
+			if (data.characters[0].name === data.staff[0].name && (data.staff[0].role === "Main" || data.staff![0].role === "Supporting") && animeStaff.length === 1)
+				animeStaff = [`No staff for this anime have been added to this title.`];
 
-		// No Character, sometimes the staff is the char
-		if (data.characters![0].name === data.staff![0].name && this.checkIfStaff(data.staff![0].role!) && animeChar.length === 1)
-			animeChar = [`No characters or voice actors have been added to this title.`];
+			// No Character, sometimes the staff is the char
+			if (data.characters[0].name === data.staff[0].name && this.checkIfStaff(data.staff[0].role!) && animeChar.length === 1)
+				animeChar = [`No characters or voice actors have been added to this title.`];
+		}
 
+		// -----------------------------
 		msg.edit(`**Anime Found!**`);
 
 		let embed = new MessageEmbed()
