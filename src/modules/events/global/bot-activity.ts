@@ -1,11 +1,16 @@
-const { prefix, build } = require("../../../../config.json");
+import { ActivityType } from "discord.js";
+import { prefix, build } from "../../../config.json";
 
-//Type PLAYING WATCHING LISTENING STREAMING
-("use strict");
-var activity = [
+interface activityInterface {
+	type: ActivityType;
+	desc: string;
+}
+
+//Type PLAYING WATCHING LISTENING STREAMING COMPETING CUSTOM_STATUS
+export const activity: activityInterface[] = [
 	{
 		type: "PLAYING",
-		desc: "JavaScript",
+		desc: "Typescript",
 	},
 	{
 		type: "PLAYING",
@@ -29,7 +34,7 @@ var activity = [
 	},
 	{
 		type: "WATCHING",
-		desc: "Funny shitpost videos on youtube",
+		desc: "shitpost videos on youtube",
 	},
 	{
 		type: "LISTENING",
@@ -60,16 +65,8 @@ var activity = [
 		desc: "Pirated anime lol",
 	},
 	{
-		type: "LISTENING",
-		desc: "Unravel",
-	},
-	{
 		type: "PLAYING",
 		desc: "Watashi wa ghoul",
-	},
-	{
-		type: "LISTENING",
-		desc: "Oshiete oshiete o",
 	},
 	{
 		type: "LISTENING",
@@ -89,10 +86,6 @@ var activity = [
 	},
 	{
 		type: "PLAYING",
-		desc: "Rem > Emillia",
-	},
-	{
-		type: "PLAYING",
 		desc: "Ararararagi san",
 	},
 	{
@@ -104,28 +97,8 @@ var activity = [
 		desc: "Tenshi ni fureta yo",
 	},
 	{
-		type: "LISTENING",
-		desc: "Tsubasa wo kudasai",
-	},
-	{
 		type: "PLAYING",
 		desc: "In the rain..",
-	},
-	{
-		type: "LISTENING",
-		desc: "God knows..",
-	},
-	{
-		type: "PLAYING",
-		desc: "I wish we could live a stress free life",
-	},
-	{
-		type: "PLAYING",
-		desc: "Life is just an illusion",
-	},
-	{
-		type: "PLAYING",
-		desc: "What is even our purpose here?",
 	},
 	{
 		type: "PLAYING",
@@ -137,15 +110,11 @@ var activity = [
 	},
 	{
 		type: "PLAYING",
-		desc: "Playing with life",
-	},
-	{
-		type: "PLAYING",
 		desc: "An illusion is not real",
 	},
 	{
 		type: "PLAYING",
-		desc: "CSGO",
+		desc: "CS:GO",
 	},
 	{
 		type: "PLAYING",
@@ -177,23 +146,7 @@ var activity = [
 	},
 	{
 		type: "PLAYING",
-		desc: "Fuck bad guys, all my homies hate bad guys",
-	},
-	{
-		type: "PLAYING",
 		desc: "Cringe",
-	},
-	{
-		type: "PLAYING",
-		desc: "Help just help",
-	},
-	{
-		type: "PLAYING",
-		desc: "When will it end?",
-	},
-	{
-		type: "PLAYING",
-		desc: "If only we could log out",
 	},
 	{
 		type: "PLAYING",
@@ -218,10 +171,6 @@ var activity = [
 	{
 		type: "LISTENING",
 		desc: "Again and again",
-	},
-	{
-		type: "LISTENING",
-		desc: "Sukinanode",
 	},
 	{
 		type: "PLAYING",
@@ -289,10 +238,6 @@ var activity = [
 	},
 	{
 		type: "PLAYING",
-		desc: `Check out -> ${prefix}ship`,
-	},
-	{
-		type: "PLAYING",
 		desc: `Check out -> ${prefix}kitsune`,
 	},
 	{
@@ -301,7 +246,7 @@ var activity = [
 	},
 	{
 		type: "PLAYING",
-		desc: `Running on 100% pure js`,
+		desc: `Coded on typescript`,
 	},
 	{
 		type: "PLAYING",
@@ -313,19 +258,7 @@ var activity = [
 	},
 	{
 		type: "PLAYING",
-		desc: `Reports bugs using ${prefix}reportbug`,
-	},
-	{
-		type: "PLAYING",
-		desc: `Contact me using for problem using ${prefix}reportbug`,
-	},
-	{
-		type: "PLAYING",
 		desc: `Secretly spying the outside world...`,
-	},
-	{
-		type: "PLAYING",
-		desc: `Misaka should just be with touma already, what took them so long`,
 	},
 	{
 		type: "PLAYING",
@@ -339,13 +272,40 @@ var activity = [
 		type: "PLAYING",
 		desc: `Current Version is ${build}`,
 	},
+	{
+		type: "PLAYING",
+		desc: `Typescript is awesome`,
+	},
+	{
+		type: "PLAYING",
+		desc: `I want to learn c#`,
+	},
+	{
+		type: "PLAYING",
+		desc: `Subcribe to TheOleKid on yt`,
+	},
+	{
+		type: "PLAYING",
+		desc: `Follow me on github @Dadangdut33`,
+	},
+	{
+		type: "PLAYING",
+		desc: `Star this bot's repo on github`,
+	},
+	{
+		type: "PLAYING",
+		desc: `You can find the bot's source code on github`,
+	},
+	{
+		type: "PLAYING",
+		desc: `Buy me a Ko-Fi @Dadangdut33`,
+	},
+	{
+		type: "PLAYING",
+		desc: `You can help and contribute to this bot on github`,
+	},
+	{
+		type: "PLAYING",
+		desc: `Feel free to make a pull request on this bot's repo`,
+	},
 ];
-
-const len = activity.length;
-
-module.exports = function activityRand(x) {
-	return {
-		activity: activity[x],
-		actLen: len,
-	};
-};
