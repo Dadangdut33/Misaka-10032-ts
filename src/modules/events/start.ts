@@ -28,8 +28,8 @@ module.exports = class extends BotEvent {
 		//Bot Activity
 		setInterval(() => {
 			client.user!.setActivity({
-				type: activity[Math.random() * activity.length].type,
-				name: `${prefix}help | ${activity[Math.random() * activity.length].desc}`,
+				type: activity[Math.floor(Math.random() * activity.length)].type,
+				name: `${prefix}help | ${activity[Math.floor(Math.random() * activity.length)].desc}`,
 			});
 		}, 900000); //900000 -> every 15 minutes
 		console.log(`Activity will change every 15 minutes with ${activity.length} varieties`);
