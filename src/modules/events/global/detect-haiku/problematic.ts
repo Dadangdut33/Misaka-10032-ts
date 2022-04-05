@@ -1,4 +1,8 @@
-var problematic = {
+interface problematicInterface {
+	[key: string]: number;
+}
+
+export const problematic: problematicInterface = {
 	abalone: 4,
 	abare: 3,
 	abbruzzese: 4,
@@ -59,8 +63,4 @@ var problematic = {
 	wednesday: 2,
 	yosemite: 4,
 	zoe: 2,
-};
-
-module.exports = {
-	problematic: problematic,
 };

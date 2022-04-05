@@ -3,7 +3,7 @@ import malScraper, { AnimeEpisodesDataModel } from "mal-scraper";
 import moment from "moment-timezone";
 import { BotEvent } from "../../../handler";
 import { resGeh } from "./random-response/meme-response";
-import { detect, format } from "../types/public/detect-haiku/detect-haiku";
+import { detect, format } from "./detect-haiku/detect-haiku";
 import { prefix } from "../../../config.json";
 import { capitalizeFirstLetter, hasNumber } from "../../../local_lib/functions";
 

@@ -2,13 +2,13 @@
 // modified to fit needs
 const pluralize = require("pluralize");
 const normalize = require("normalize-strings");
-const { problematic } = require("./problematic.js");
+import { problematic } from "./problematic";
 
-var own = {}.hasOwnProperty;
+let own = {}.hasOwnProperty;
 
 // Two expressions of occurrences which normally would be counted as two
 // syllables, but should be counted as one.
-var EXPRESSION_MONOSYLLABIC_ONE = new RegExp(
+let EXPRESSION_MONOSYLLABIC_ONE = new RegExp(
 	[
 		"awe($|d|so)",
 		"cia(?:l|$)",
@@ -33,11 +33,14 @@ var EXPRESSION_MONOSYLLABIC_ONE = new RegExp(
 	"g"
 );
 
-var EXPRESSION_MONOSYLLABIC_TWO = new RegExp("[aeiouy](?:" + ["[bcdfgklmnprstvyz]", "ch", "dg", "g[hn]", "l[lv]", "mm", "n[cgns]", "r[cnsv]", "squ", "s[cklst]", "th"].join("|") + ")e$", "g");
+let EXPRESSION_MONOSYLLABIC_TWO = new RegExp(
+	"[aeiouy](?:" + ["[bcdfgklmnprstvyz]", "ch", "dg", "g[hn]", "l[lv]", "mm", "n[cgns]", "r[cnsv]", "squ", "s[cklst]", "th"].join("|") + ")e$",
+	"g"
+);
 
 // Four expression of occurrences which normally would be counted as one
 // syllable, but should be counted as two.
-var EXPRESSION_DOUBLE_SYLLABIC_ONE = new RegExp(
+let EXPRESSION_DOUBLE_SYLLABIC_ONE = new RegExp(
 	"(?:" +
 		[
 			"([^aeiouy])\\1l",
@@ -64,14 +67,17 @@ var EXPRESSION_DOUBLE_SYLLABIC_ONE = new RegExp(
 	"g"
 );
 
-var EXPRESSION_DOUBLE_SYLLABIC_TWO = new RegExp(["creat(?!u)", "[^gq]ua[^auieo]", "[aeiou]{3}", "^(?:ia|mc|coa[dglx].)", "^re(app|es|im|us)", "(th|d)eist"].join("|"), "g");
+let EXPRESSION_DOUBLE_SYLLABIC_TWO = new RegExp(["creat(?!u)", "[^gq]ua[^auieo]", "[aeiou]{3}", "^(?:ia|mc|coa[dglx].)", "^re(app|es|im|us)", "(th|d)eist"].join("|"), "g");
 
-var EXPRESSION_DOUBLE_SYLLABIC_THREE = new RegExp(["[^aeiou]y[ae]", "[^l]lien", "riet", "dien", "iu", "io", "ii", "uen", "[aeilotu]real", "real[aeilotu]", "iell", "eo[^aeiou]", "[aeiou]y[aeiou]"].join("|"), "g");
+let EXPRESSION_DOUBLE_SYLLABIC_THREE = new RegExp(
+	["[^aeiou]y[ae]", "[^l]lien", "riet", "dien", "iu", "io", "ii", "uen", "[aeilotu]real", "real[aeilotu]", "iell", "eo[^aeiou]", "[aeiou]y[aeiou]"].join("|"),
+	"g"
+);
 
-var EXPRESSION_DOUBLE_SYLLABIC_FOUR = /[^s]ia/;
+let EXPRESSION_DOUBLE_SYLLABIC_FOUR = /[^s]ia/;
 
 // Expression to match single syllable pre- and suffixes.
-var EXPRESSION_SINGLE = new RegExp(
+let EXPRESSION_SINGLE = new RegExp(
 	[
 		"^(?:" + ["un", "fore", "ware", "none?", "out", "post", "sub", "pre", "pro", "dis", "side", "some"].join("|") + ")",
 		"(?:" + ["ly", "less", "some", "ful", "ers?", "ness", "cians?", "ments?", "ettes?", "villes?", "ships?", "sides?", "ports?", "shires?", "[gnst]ion(?:ed|s)?"].join("|") + ")$",
@@ -80,13 +86,35 @@ var EXPRESSION_SINGLE = new RegExp(
 );
 
 // Expression to match double syllable pre- and suffixes.
-var EXPRESSION_DOUBLE = new RegExp(
+let EXPRESSION_DOUBLE = new RegExp(
 	[
 		"^" +
 			"(?:" +
-			["above", "anti", "ante", "counter", "hyper", "afore", "agri", "infra", "intra", "inter", "over", "semi", "ultra", "under", "extra", "dia", "micro", "mega", "kilo", "pico", "nano", "macro", "somer"].join(
-				"|"
-			) +
+			[
+				"above",
+				"anti",
+				"ante",
+				"counter",
+				"hyper",
+				"afore",
+				"agri",
+				"infra",
+				"intra",
+				"inter",
+				"over",
+				"semi",
+				"ultra",
+				"under",
+				"extra",
+				"dia",
+				"micro",
+				"mega",
+				"kilo",
+				"pico",
+				"nano",
+				"macro",
+				"somer",
+			].join("|") +
 			")",
 		"(?:fully|berry|woman|women|edly|union|((?:[bcdfghjklmnpqrstvwxz])|[aeiou])ye?ing)$",
 	].join("|"),
@@ -94,7 +122,7 @@ var EXPRESSION_DOUBLE = new RegExp(
 );
 
 // Expression to match triple syllable suffixes.
-var EXPRESSION_TRIPLE = /(creations?|ology|ologist|onomy|onomist)$/g;
+let EXPRESSION_TRIPLE = /(creations?|ology|ologist|onomy|onomist)$/g;
 
 // Wrapper to support multiple word-parts (GH-11).
 /**
@@ -103,15 +131,15 @@ var EXPRESSION_TRIPLE = /(creations?|ology|ologist|onomy|onomist)$/g;
  * @param {string} value
  * @returns {number}
  */
-function syllable(value) {
-	var values = normalize(String(value))
+export function syllable(value: string) {
+	let values = normalize(String(value))
 		.toLowerCase()
 		// Remove apostrophes.
 		.replace(/['’]/g, "")
 		// Split on word boundaries.
 		.split(/\b/g);
-	var index = -1;
-	var sum = 0;
+	let index = -1;
+	let sum = 0;
 
 	while (++index < values.length) {
 		// Remove non-alphabetic characters from a given value.
@@ -127,18 +155,18 @@ function syllable(value) {
  * @param {string} value
  * @returns {number}
  */
-function one(value) {
-	var count = 0;
+function one(value: string) {
+	let count = 0;
 	/** @type {number} */
-	var index;
+	let index;
 	/** @type {string} */
-	var singular;
+	let singular;
 	/** @type {Array.<string>} */
-	var parts;
+	let parts;
 	/** @type {ReturnType.<returnFactory>} */
-	var addOne;
+	let addOne;
 	/** @type {ReturnType.<returnFactory>} */
-	var subtractOne;
+	let subtractOne;
 
 	if (value.length === 0) {
 		return count;
@@ -183,7 +211,11 @@ function one(value) {
 
 	// Add one for occurrences which should be counted as two (but are counted as
 	// one).
-	value.replace(EXPRESSION_DOUBLE_SYLLABIC_ONE, addOne).replace(EXPRESSION_DOUBLE_SYLLABIC_TWO, addOne).replace(EXPRESSION_DOUBLE_SYLLABIC_THREE, addOne).replace(EXPRESSION_DOUBLE_SYLLABIC_FOUR, addOne);
+	value
+		.replace(EXPRESSION_DOUBLE_SYLLABIC_ONE, addOne)
+		.replace(EXPRESSION_DOUBLE_SYLLABIC_TWO, addOne)
+		.replace(EXPRESSION_DOUBLE_SYLLABIC_THREE, addOne)
+		.replace(EXPRESSION_DOUBLE_SYLLABIC_FOUR, addOne);
 
 	// Make sure at least on is returned.
 	return count || 1;
@@ -194,7 +226,7 @@ function one(value) {
 	 *
 	 * @param {number} addition
 	 */
-	function countFactory(addition) {
+	function countFactory(addition: number) {
 		return counter;
 		/**
 		 * @returns {string}
@@ -210,20 +242,15 @@ function one(value) {
 	 *
 	 * @param {number} addition
 	 */
-	function returnFactory(addition) {
+	function returnFactory(addition: number) {
 		return returner;
 		/**
 		 * @param {string} $0
 		 * @returns {string}
 		 */
-		function returner($0) {
+		function returner($0: string) {
 			count += addition;
 			return $0;
 		}
 	}
 }
-
-// export syllable
-module.exports = {
-	syllable: syllable,
-};

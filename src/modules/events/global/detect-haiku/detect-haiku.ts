@@ -1,11 +1,11 @@
-let { syllable } = require("./syllable");
-let ntw = require("number-to-words");
+import { syllable } from "./syllable";
+const ntw = require("number-to-words");
 
-const detect = (msg) => {
+export const detect = (msg: string) => {
 	return format(msg).length === 3;
 };
 
-const format = (msg) => {
+export const format = (msg: string) => {
 	if (msg.length > 250) {
 		// Bail out to avoid wrecking the CPU with syllable; I'm happy to bump this number if there's reason
 		// Longest 1 syllable word is 12, (12 + 1)*(5+7+5) = 221; 17 longest words spaced out + 30 characters
@@ -19,21 +19,16 @@ const format = (msg) => {
 	}
 
 	let syllable_count = syllable(msg);
+	if (syllable_count > 19 || syllable_count < 17) return [];
 
-	// console.log(syllable_count)
-	if (syllable_count > 19 || syllable_count < 17) {
-		// console.log("Syllable count != 17; not a haiku")
-		return [];
-	}
-	let msg_match = msg.match(/([\w-']+[^\w-']*)/g);
-	//console.log(util.inspect(msg_match));
-
-	let first_part = 0,
+	let msg_match = msg.match(/([\w-']+[^\w-']*)/g)!,
+		first_part = 0,
 		second_part = 0,
 		third_part = 0,
 		first_part_string = "",
 		second_part_string = "",
 		third_part_string = "";
+
 	msg_match.forEach((word) => {
 		if (first_part < 5) {
 			first_part += syllable(word);
@@ -47,6 +42,7 @@ const format = (msg) => {
 		}
 	});
 
+	// results
 	if (first_part === 5 && second_part === 7 && third_part === 5) {
 		return [first_part_string, second_part_string, third_part_string];
 	} else if (first_part === 5 && first_part + second_part + third_part === syllable_count) {
@@ -54,9 +50,4 @@ const format = (msg) => {
 	} else {
 		return [];
 	}
-};
-
-module.exports = {
-	detect: detect,
-	format: format,
 };
