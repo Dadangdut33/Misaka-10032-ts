@@ -17,7 +17,7 @@ module.exports = class extends Command {
 		if (!args[0])
 			return message.channel.send({
 				embed: {
-					description: "Please enter the text that you want to" + ` "*stutterifys*"`,
+					description: "Pl-Pl-Please enter the te-text th-that you wa-want to st-stutterifys",
 				},
 			});
 
