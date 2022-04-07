@@ -16,9 +16,11 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					description: "Pl-Pl-Please enter the te-text th-that you wa-want to st-stutterifys",
-				},
+				embeds: [
+					{
+						description: "Pl-Pl-Please enter the te-text th-that you wa-want to st-stutterifys",
+					},
+				],
 			});
 
 		return message.channel.send(stutterify(args.join(" ")));

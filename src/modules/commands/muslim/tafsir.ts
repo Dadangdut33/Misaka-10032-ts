@@ -20,7 +20,7 @@ module.exports = class extends Command {
 		return new MessageEmbed()
 			.setTitle("Invalid Arguments")
 			.setDescription(`**Usage should be like this:** \n\`${this.prefix}command/alias <nomor surat> <ayat>\``)
-			.setFooter("For more info check using help commands!");
+			.setFooter({ text: "For more info check using help commands!" });
 	}
 
 	descEmbed(parsedData: any, tafsir: string) {
@@ -30,16 +30,14 @@ module.exports = class extends Command {
 	}
 
 	async run(message: Message, args: string[]) {
-		if (!args[0] || isNaN(parseInt(args[0])) || isNaN(parseInt(args[1]))) {
-			return message.channel.send(this.invalid_args());
-		}
+		if (!args[0] || isNaN(parseInt(args[0])) || isNaN(parseInt(args[1]))) return message.channel.send({ embeds: [this.invalid_args()] });
 
 		const { data } = await axios.get(`https://api.quran.sutanlab.id/surah/${args[0]}/${args[1]}`);
 
 		if (data.code !== 200) {
 			let embed = new MessageEmbed().setTitle("Error").addField(`Status`, data.status, true).addField(`Message`, data.message, true);
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		}
 
 		let pages = [];

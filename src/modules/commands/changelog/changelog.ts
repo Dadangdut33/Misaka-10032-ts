@@ -25,16 +25,13 @@ module.exports = class extends Command {
 		for (let i = 0; i < 4; i++) {
 			let content = readFileSync(path.join(__dirname, `../../../local_lib/changelog/changelog${i + 1}.md`), "utf-8");
 			let page = new MessageEmbed()
-				.setAuthor(`${message.client.user?.username} Ver. ${this.build}`, `${message.client.user?.displayAvatarURL()}`, this.repo_link)
+				.setAuthor({ name: `${message.client.user?.username} Ver. ${this.build}`, iconURL: message.client.user?.displayAvatarURL(), url: this.repo_link })
 				.setTitle(`Changelog`)
 				.setDescription(content)
 				.setTimestamp();
 			pages.push(page);
 		}
 
-		paginationEmbed(message, pages, [], 300000); // 5 Minutes
+		paginationEmbed(message, pages); // 5 Minutes
 	}
 };
-function Repo_Link(arg0: string, arg1: string, Repo_Link: any) {
-	throw new Error("Function not implemented.");
-}

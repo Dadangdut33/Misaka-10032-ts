@@ -54,13 +54,13 @@ module.exports = class extends Command {
 		// check guild, only allow if in 640790707082231834 or 651015913080094721
 		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
 
-		if (args.length < 2) return message.channel.send(this.invalidArgs());
+		if (args.length < 2) return message.channel.send({ embeds: [this.invalidArgs()] });
 
 		let chapterNum = parseInt(args[0]),
 			q = args.slice(1).join(" ").trim();
 
 		// verify that the chapter is a number
-		if (isNaN(chapterNum) || chapterNum < 1) return message.channel.send(this.notACorrectNumber());
+		if (isNaN(chapterNum) || chapterNum < 1) return message.channel.send({ embeds: [this.notACorrectNumber()] });
 
 		// regex for word that contains [RAW]
 		const rawRegex = /\[RAW\]/gi;
@@ -84,7 +84,7 @@ module.exports = class extends Command {
 			// if manga is not found, return
 			if (!manga) {
 				msg.delete();
-				return message.channel.send(this.noMangaFound(q));
+				return message.channel.send({ embeds: [this.noMangaFound(q)] });
 			}
 
 			msg.edit(`Found manga titled: \`${manga.title}\`\n\nRetrieving chapter ${chapterNum} **please wait...**`);
@@ -101,12 +101,12 @@ module.exports = class extends Command {
 				chapters = await manga.getFeed({ translatedLanguage: ["en"], order: { chapter: "asc", volume: "asc", createdAt: "asc", updatedAt: "asc", publishAt: "asc" } }, true);
 
 			// check is there any chapter or not
-			if (chapters.length === 0) return message.channel.send(this.noChapterFound(q));
+			if (chapters.length === 0) return message.channel.send({ embeds: [this.noChapterFound(q)] });
 
 			// verify that search chapter is not out of bound
 			if (chapterNum > chapters.length) {
 				msg.delete();
-				return message.channel.send(this.chapterOutOfBound(chapterNum, chapters.length, title));
+				return message.channel.send({ embeds: [this.chapterOutOfBound(chapterNum, chapters.length, title)] });
 			}
 
 			// Get the chapter's pages:
@@ -134,11 +134,11 @@ module.exports = class extends Command {
 				for (let i = 0; i < pages.length; i++) {
 					embedChaptersReader[i] = new MessageEmbed()
 						.setColor("#e6613e")
-						.setAuthor(
-							`${title} - Chapter ${chapter.chapter} | ${originLang} - en`,
-							`https://media.discordapp.net/attachments/799595012005822484/936142797994590288/xbt_jW78_400x400.png`,
-							`https://mangadex.org/chapter/${chapter.id}/${i + 1}`
-						)
+						.setAuthor({
+							name: `${title} - Chapter ${chapter.chapter} | ${originLang} - en`,
+							iconURL: `https://media.discordapp.net/attachments/799595012005822484/936142797994590288/xbt_jW78_400x400.png`,
+							url: `https://mangadex.org/chapter/${chapter.id}/`,
+						})
 						.setImage(pages[i])
 						.setThumbnail(cover)
 						.setDescription(`[Click to look at the manga page on Mangadex](${link})\n**Manga Information**`)
@@ -153,12 +153,12 @@ module.exports = class extends Command {
 							`[MAL](https://myanimelist.net/manga.php?q=${title.replace(/ /g, "%20")}&cat=manga) | [MangaNato](https://manganato.com/search/story/${title.replace(/ /g, "_")}) | [MangaKakalot](https://mangakakalot.com/search/story/${title.replace(/ /g, "_")})`,
 							true
 						)
-						.setFooter(`Page ${i + 1}/${pages.length}\nUploaded by ${uploader.username} | Scanlated by ${groupNames} | Via Mangadex.org`);
+						.setFooter({ text: `Page ${i + 1}/${pages.length}\nUploaded by ${uploader.username} | Scanlated by ${groupNames} | Via Mangadex.org` });
 				}
 
 				// delete message
 				msg.edit(`**Loading finished!**`);
-				msg.delete({ timeout: 5000 });
+				setTimeout(() => msg.delete(), 3000);
 
 				// send embed
 				paginationEmbed(message, embedChaptersReader, [], 1500000, true); // 25 minutes
@@ -169,17 +169,17 @@ module.exports = class extends Command {
 
 				let embed = new MessageEmbed()
 					.setColor("#e6613e")
-					.setAuthor(
-						`${title} - Chapter ${chapter.chapter} | ${originLang} - en`,
-						`https://media.discordapp.net/attachments/799595012005822484/936142797994590288/xbt_jW78_400x400.png`,
-						`https://mangadex.org/chapter/${chapter.id}/`
-					)
+					.setAuthor({
+						name: `${title} - Chapter ${chapter.chapter} | ${originLang} - en`,
+						iconURL: `https://media.discordapp.net/attachments/799595012005822484/936142797994590288/xbt_jW78_400x400.png`,
+						url: `https://mangadex.org/chapter/${chapter.id}/`,
+					})
 					.setThumbnail(cover)
 					.setDescription(`[Click to look at the manga page on Mangadex](${link})\n**Manga Information**`)
 					.addField("Artist", artist, true)
 					.addField("Author", author, true)
 					.addField(`Chapter`, `${chapter.chapter} ${chapter.title ? `- ${chapter.title}` : ``}`, true)
-					.addField(`Total Pages`, pages.length, true)
+					.addField(`Total Pages`, pages.length.toString(), true)
 					.addField(`Uploaded At (GMT+7)`, moment(chapter.publishAt).tz("Asia/Jakarta").format("DD-MM-YY (HH:MM:SS)"), true)
 					.addField(
 						`Search on`,
@@ -187,9 +187,9 @@ module.exports = class extends Command {
 						`[MAL](https://myanimelist.net/manga.php?q=${title.replace(/ /g, "%20")}&cat=manga) | [MangaNato](https://manganato.com/search/story/${title.replace(/ /g, "_")}) | [MangaKakalot](https://mangakakalot.com/search/story/${title.replace(/ /g, "_")})`,
 						true
 					)
-					.setFooter(`RAW Mode | Uploaded by ${uploader.username} | Scanlated by ${groupNames} | Via Mangadex.org`);
+					.setFooter({ text: `RAW Mode | Uploaded by ${uploader.username} | Scanlated by ${groupNames} | Via Mangadex.org` });
 
-				message.channel.send(embed);
+				message.channel.send({ embeds: [embed] });
 
 				// send raw
 				// max image in 1 message is 10, so get how much loop first
@@ -202,12 +202,12 @@ module.exports = class extends Command {
 					.setColor("#e6613e")
 					.setDescription(`[Click Here To Go To Top](https://discordapp.com/channels/${message.guild!.id}/${message.channel.id}/${msg.id})`);
 
-				msg.delete({ timeout: 5000 });
-				message.channel.send(embedGoToTop);
+				setTimeout(() => msg.delete(), 3000);
+				message.channel.send({ embeds: [embedGoToTop] });
 			}
 		} catch (err: any) {
 			// check if error contains no results
-			if (err.toString().includes("no results")) return message.channel.send(this.noMangaFound(q));
+			if (err.toString().includes("no results")) return message.channel.send({ embeds: [this.noMangaFound(q)] });
 
 			console.log(err);
 			message.channel.send(err);

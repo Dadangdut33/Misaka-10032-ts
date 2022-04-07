@@ -47,7 +47,9 @@ module.exports = class extends Command {
 				const pages: MessageEmbed[] = [];
 
 				for (let i = 0; i < shows.length; i += 25) {
-					let pageAdd = new MessageEmbed().setAuthor(`Click For Web View`, ``, `https://ricklancee.github.io/currently-airing-anime/`).setTitle(`Current Season's Anime`);
+					let pageAdd = new MessageEmbed()
+						.setAuthor({ name: `Click For Web View`, url: `https://ricklancee.github.io/currently-airing-anime/` })
+						.setTitle(`Current Season's Anime`);
 
 					for (let j = 0; j < 25; j++) {
 						try {
@@ -72,7 +74,7 @@ module.exports = class extends Command {
 				if (!next) {
 					// add footer to each embed pages
 					pages.forEach((page, index) => {
-						page.setFooter(`Page ${index + 1} / ${pages.length}\nStatus:\n🟡 = RELEASING | 🔵 = FINISHED | 🔴 = CANCELLED | ⌛ = NOT_YET_RELEASED`);
+						page.setFooter({ text: `Page ${index + 1} / ${pages.length}\nStatus:\n🟡 = RELEASING | 🔵 = FINISHED | 🔴 = CANCELLED | ⌛ = NOT_YET_RELEASED` });
 					});
 					paginationEmbed(message, pages, [], 300000, true); // 5 Minutes
 				} else {
@@ -81,7 +83,7 @@ module.exports = class extends Command {
 						?.then(({ shows }) => {
 							for (let i = 0; i < shows.length; i += 25) {
 								let pageAdd = new MessageEmbed()
-									.setAuthor(`Click For Web View`, ``, `https://ricklancee.github.io/currently-airing-anime/`)
+									.setAuthor({ name: `Click For Web View`, url: `https://ricklancee.github.io/currently-airing-anime/` })
 									.setTitle(`Current Season's Anime`);
 
 								for (let j = 0; j < 25; j++) {
@@ -105,7 +107,7 @@ module.exports = class extends Command {
 
 							// add footer to each embed pages
 							pages.forEach((page, index) => {
-								page.setFooter(`Page ${index + 1} / ${pages.length}\nStatus:\n🟡 = RELEASING | 🔵 = FINISHED | 🔴 = CANCELLED | ⌛ = NOT_YET_RELEASED`);
+								page.setFooter({ text: `Page ${index + 1} / ${pages.length}\nStatus:\n🟡 = RELEASING | 🔵 = FINISHED | 🔴 = CANCELLED | ⌛ = NOT_YET_RELEASED` });
 							});
 							paginationEmbed(message, pages, [], 300000, true);
 						})

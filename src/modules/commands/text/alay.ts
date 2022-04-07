@@ -23,17 +23,21 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					description: `PLEaSe ENTeR tHe Text ThAT yOU WAnt tO alayifYs`,
-				},
+				embeds: [
+					{
+						description: `PLEaSe ENTeR tHe Text ThAT yOU WAnt tO alayifYs`,
+					},
+				],
 			});
 
 		let msg = alayifys(args.join(" "));
 		if (!msg)
 			return message.channel.send({
-				embed: {
-					description: `Invalid text inputted!`,
-				},
+				embeds: [
+					{
+						description: `Invalid text inputted!`,
+					},
+				],
 			});
 
 		return message.channel.send(msg);

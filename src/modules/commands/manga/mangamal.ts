@@ -54,12 +54,16 @@ module.exports = class extends Command {
 		for (let i = 0; i < limit; i++) options[i] = `${i + 1}. ${data[i].title}`;
 
 		const embed = new MessageEmbed()
-			.setColor("2E51A2")
-			.setAuthor("Myanimelist.net", "https://cdn.discordapp.com/attachments/799595012005822484/813811066110083072/MyAnimeList_Logo.png", "https://myanimelist.net/")
+			.setColor("#2E51A2")
+			.setAuthor({
+				name: "Myanimelist.net",
+				iconURL: "https://cdn.discordapp.com/attachments/799595012005822484/813811066110083072/MyAnimeList_Logo.png",
+				url: "https://myanimelist.net/",
+			})
 			.setTitle(`Please Choose The Manga That You Are Searching For Below`)
 			.setDescription(options.join("\n"));
 
-		const optionsToChoose = await message.channel.send(embed); // Await the embed
+		const optionsToChoose = await message.channel.send({ embeds: [embed] }); // Await the embed
 		const reacted = await promptMessage(optionsToChoose, message.author, 50, chooseArr); // Await reaction
 		const reaction = this.getResult(reacted); // Get Result from reaction
 		await optionsToChoose.reactions.removeAll();
@@ -67,16 +71,16 @@ module.exports = class extends Command {
 		// If no reaction
 		if (reaction === null) {
 			msg.delete();
-			embed.setAuthor("Search aborted!").setTitle("").setDescription(`Search for **${query}** aborted because of no reaction from ${message.author}!`);
+			embed.setAuthor({ name: "Search aborted!" }).setTitle("").setDescription(`Search for **${query}** aborted because of no reaction from ${message.author}!`);
 
-			optionsToChoose.edit(embed);
+			optionsToChoose.edit({ embeds: [embed] });
 			return;
 		}
 
 		const manga = data[reaction];
 		embed
-			.setColor("2E51A2")
-			.setAuthor(`${manga.title} | ${manga.type}`, manga.thumbnail, manga.url)
+			.setColor("#2E51A2")
+			.setAuthor({ name: `${manga.title} | ${manga.type}`, iconURL: manga.thumbnail, url: manga.url })
 			.setDescription(manga.shortDescription ? manga.shortDescription : "-")
 			.addField(`Type`, `${manga.type ? manga.type : "-"}`, true)
 			.addField(`Volumes`, `${manga.vols ? manga.vols : "-"}`, true)
@@ -103,11 +107,11 @@ module.exports = class extends Command {
 					inline: true,
 				}
 			)
-			.setFooter(`Data Fetched From Myanimelist.net`)
+			.setFooter({ text: `Data Fetched From Myanimelist.net` })
 			.setTimestamp()
 			.setThumbnail(manga.thumbnail);
 
 		msg.delete();
-		optionsToChoose.edit(embed);
+		optionsToChoose.edit({ embeds: [embed] });
 	}
 };

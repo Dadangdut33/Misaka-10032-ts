@@ -14,14 +14,32 @@ module.exports = class extends Command {
 		});
 	}
 
+	invalidArgs() {
+		let embed = new MessageEmbed().setColor("#000000").setDescription(`Wrong Arguments Provided!`);
+
+		return embed;
+	}
+
+	errorID() {
+		let embed = new MessageEmbed().setColor("#000000").setDescription(`Invalid Message ID provided. Please provide a correct one!`);
+
+		return embed;
+	}
+
+	noReason() {
+		let embed = new MessageEmbed().setColor("#000000").setDescription(`Please provide a reason!`);
+
+		return embed;
+	}
+
 	async run(message: Message, args: string[]) {
 		message.delete();
 
-		if (args.length < 1) return message.channel.send(invalidArgs()).then((msg) => msg.delete({ timeout: 5000 }));
+		if (args.length < 1) return message.channel.send({ embeds: [this.invalidArgs()] }).then((msg) => setTimeout(() => msg.delete(), 5000));
 
-		if (isNaN(parseInt(args[0]))) return message.channel.send(errorID()).then((msg) => msg.delete({ timeout: 5000 }));
+		if (isNaN(parseInt(args[0]))) return message.channel.send({ embeds: [this.errorID()] }).then((msg) => setTimeout(() => msg.delete(), 5000));
 
-		if (!args[1]) return message.channel.send(noReason()).then((msg) => msg.delete({ timeout: 5000 }));
+		if (!args[1]) return message.channel.send({ embeds: [this.noReason()] }).then((msg) => setTimeout(() => msg.delete(), 5000));
 
 		let reason = args.slice(1).join(" ");
 		let author = message.author;
@@ -58,43 +76,23 @@ module.exports = class extends Command {
 						false
 					)
 					.addField(`Message Sent At`, moment(message.createdTimestamp).tz("Asia/Jakarta").format("dddd, D-M-YY (HH:mm:ss)"), true)
-					.addField(`Message Author`, message.author, true)
-					.addField(`Marked by`, author, true)
-					.setFooter(`Format Date: D-M-Y • GMT + 7`)
+					.addField(`Message Author`, message.author.toString(), true)
+					.addField(`Marked by`, author.toString(), true)
+					.setFooter({ text: `Format Date: D-M-Y • GMT + 7` })
 					.setTimestamp();
 
-				return message.channel.send(msgToTheAuthor, {
-					embed: embed,
-				});
+				return message.channel.send({ content: msgToTheAuthor, embeds: [embed] });
 			})
 			.catch((error) => {
 				if (error instanceof DiscordAPIError) {
 					let embed = new MessageEmbed().setColor("#000000").setDescription(`Invalid Message ID provided. Please provide a correct one!`);
 
-					return message.channel.send(embed).then((msg) => msg.delete({ timeout: 5000 }));
+					return message.channel.send({ embeds: [embed] }).then((msg) => setTimeout(() => msg.delete(), 5000));
 				} else {
 					let embed = new MessageEmbed().setColor("#000000").setDescription(`Caught Error: ${error}`);
 
-					return message.channel.send(embed).then((msg) => msg.delete({ timeout: 5000 }));
+					return message.channel.send({ embeds: [embed] }).then((msg) => setTimeout(() => msg.delete(), 5000));
 				}
 			});
-
-		function invalidArgs() {
-			let embed = new MessageEmbed().setColor("#000000").setDescription(`Wrong Arguments Provided!`);
-
-			return embed;
-		}
-
-		function errorID() {
-			let embed = new MessageEmbed().setColor("#000000").setDescription(`Invalid Message ID provided. Please provide a correct one!`);
-
-			return embed;
-		}
-
-		function noReason() {
-			let embed = new MessageEmbed().setColor("#000000").setDescription(`Please provide a reason!`);
-
-			return embed;
-		}
 	}
 };

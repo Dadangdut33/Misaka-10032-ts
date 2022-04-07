@@ -23,13 +23,11 @@ module.exports = class extends Command {
 			.setDescription(
 				`**Usage should be like this:** \n\`${this.prefix}command/alias <list>\` or\n\`${this.prefix}command/alias <random>\` or\n\`${this.prefix}command/alias <cari/search/ayat/read/baca> <nomor surat> <ayat mulai-ayat berhenti>\` or\n\`${this.prefix}command/alias <cari/ayat> <nomor surat> <ayat yang ingin dicari>\`\n\n**Example:**\n\`${this.prefix}quran cari 2 13-23\``
 			)
-			.setFooter("For more info check using help commands!");
+			.setFooter({ text: "For more info check using help commands!" });
 	}
 
 	async run(message: Message, args: string[]) {
-		if (!args[0]) {
-			return message.channel.send(this.invalid_args());
-		}
+		if (!args[0]) return message.channel.send({ embeds: [this.invalid_args()] });
 
 		if (args[0].toLowerCase() == "list") {
 			const { data } = await axios.get("https://api.banghasan.com/quran/format/json/surat"); // API for surat lists
@@ -37,7 +35,7 @@ module.exports = class extends Command {
 			if (data.status == "error") {
 				let embed = new MessageEmbed().setTitle("Error!").setDescription(data.pesan);
 
-				return message.channel.send(embed);
+				return message.channel.send({ embeds: [embed] });
 			}
 
 			let quranListed = [];
@@ -52,7 +50,7 @@ module.exports = class extends Command {
 			// Array of pages
 			const pages = [page1List, page2List, page3List];
 
-			paginationEmbed(message, pages, [], 300000); // 5 Menit
+			paginationEmbed(message, pages); // 5 menit
 		} else if (
 			args[0].toLowerCase() == "cari" ||
 			args[0].toLowerCase() == "search" ||
@@ -67,7 +65,7 @@ module.exports = class extends Command {
 			if (data.status == "error") {
 				let embed = new MessageEmbed().setTitle("Error!").setDescription(data.pesan);
 
-				return message.channel.send(embed);
+				return message.channel.send({ embeds: [embed] });
 			} else {
 				let ayatNLatin = [],
 					terjemahan = [],
@@ -79,19 +77,19 @@ module.exports = class extends Command {
 					// Dia ga ada error messagenya jd buat sendiri
 					let embed = new MessageEmbed().setTitle("Error!").setDescription("Ayat Invalid!\n*Max ayat 10");
 
-					return message.channel.send(embed);
+					return message.channel.send({ embeds: [embed] });
 				}
 
 				if (data.status === "error") {
 					let embed = new MessageEmbed().setTitle("Error!").setDescription(data.pesan);
 
-					return message.channel.send(embed);
+					return message.channel.send({ embeds: [embed] });
 				}
 
 				if (data.ayat.error) {
 					let embed = new MessageEmbed().setTitle("Error!").setDescription("Ayat Invalid!\n*Ayat tidak ditemukan");
 
-					return message.channel.send(embed);
+					return message.channel.send({ embeds: [embed] });
 				}
 
 				for (let i = 0; i < data.ayat.data.ar.length; i++) {
@@ -103,12 +101,12 @@ module.exports = class extends Command {
 					end = 2;
 				for (let i = 0; i < ayatNLatin.length / 2; i++) {
 					let embedAyat = new MessageEmbed()
-						.setAuthor(`Q.S. ${data.surat.nama}:${data.surat.nomor} (${data.query.ayat})`)
+						.setAuthor({ name: `Q.S. ${data.surat.nama}:${data.surat.nomor} (${data.query.ayat})` })
 						.setTitle("Ayat ke-")
 						.setDescription(ayatNLatin.slice(start, end).join("\n"));
 
 					let embedTerjemahan = new MessageEmbed()
-						.setAuthor(`Q.S. ${data.surat.nama}:${data.surat.nomor} (${data.query.ayat})`)
+						.setAuthor({ name: `Q.S. ${data.surat.nama}:${data.surat.nomor} (${data.query.ayat})` })
 						.setTitle("Arti ayat ke-")
 						.setDescription(terjemahan.slice(start, end).join("\n"));
 
@@ -126,16 +124,16 @@ module.exports = class extends Command {
 			if (data.status == "error") {
 				let embed = new MessageEmbed().setTitle("Error!").setDescription(data.pesan);
 
-				return message.channel.send(embed);
+				return message.channel.send({ embeds: [embed] });
 			}
 
 			let embed = new MessageEmbed()
-				.setAuthor(`Q.S. ${data.surat.nama}: ${data.surat.nomor} ${data.surat.asma} (${data.acak.id.ayat})`)
+				.setAuthor({ name: `Q.S. ${data.surat.nama}: ${data.surat.nomor} ${data.surat.asma} (${data.acak.id.ayat})` })
 				.setDescription(`${data.acak.ar.teks}\n\n**Terjemahan**: \n${data.acak.id.teks}`);
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		} else {
-			return message.channel.send(this.invalid_args());
+			return message.channel.send({ embeds: [this.invalid_args()] });
 		}
 	}
 };

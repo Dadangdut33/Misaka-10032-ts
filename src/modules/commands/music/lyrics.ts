@@ -17,11 +17,9 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		let embed = new MessageEmbed().setDescription("Looking For Lyrics ...").setColor("YELLOW");
 
-		if (!args.length) {
-			return message.channel.send("Please Type In The Song Name");
-		}
+		if (!args.length) return message.channel.send("Please Type In The Song Name");
 
-		const msg = await message.channel.send(embed);
+		const msg = await message.channel.send({ embeds: [embed] });
 		try {
 			const Client = new Genius.Client(process.env.Genius_Key);
 			const songs = await Client.songs.search(args.join(" "));
@@ -31,8 +29,7 @@ module.exports = class extends Command {
 				msg.delete();
 				let embed = new MessageEmbed().setTitle(`Something went Wrong!`).setDescription(`Lyrics won't load, please try again!`);
 
-				message.channel.send(embed);
-				return;
+				return message.channel.send({ embeds: [embed] });
 			}
 
 			const edited = new MessageEmbed()
@@ -49,7 +46,7 @@ module.exports = class extends Command {
 				edited.addField(`Released at`, `${dateGet}`, true);
 			}
 
-			msg.edit(edited);
+			msg.edit({ embeds: [edited] });
 			var start = 0,
 				end = 2048;
 			for (let i = 0; i < Math.ceil(lyrics.length / 2048); i++) {
@@ -57,11 +54,11 @@ module.exports = class extends Command {
 
 				start += 2048;
 				end += 2048;
-				message.channel.send(embed);
+				message.channel.send({ embeds: [embed] });
 			}
 		} catch (e) {
 			embed.setDescription("Got err : " + e);
-			msg.edit(embed);
+			msg.edit({ embeds: [embed] });
 			console.log(e);
 		}
 	}

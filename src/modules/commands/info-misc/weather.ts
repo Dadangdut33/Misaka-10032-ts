@@ -46,9 +46,9 @@ module.exports = class extends Command {
 					);
 				}
 				embed.addField(`Source`, `[MSN](https://www.msn.com/)`, true);
-				embed.setFooter(`Date Format: (Year-Month-Day)`);
+				embed.setFooter({ text: `Date Format: (Year-Month-Day)` });
 
-				message.channel.send(embed);
+				return message.channel.send({ embeds: [embed] });
 			} catch (err) {
 				console.log(err);
 				return message.channel.send(`Unable to get data of the given location\n\n**Details:** ${err}`);

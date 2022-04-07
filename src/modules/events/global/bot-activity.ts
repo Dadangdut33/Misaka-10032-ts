@@ -6,7 +6,7 @@ interface activityInterface {
 	desc: string;
 }
 
-//Type PLAYING WATCHING LISTENING STREAMING COMPETING CUSTOM_STATUS
+//Type PLAYING WATCHING LISTENING STREAMING COMPETING
 export const activity: activityInterface[] = [
 	{
 		type: "PLAYING",

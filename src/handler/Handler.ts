@@ -200,40 +200,36 @@ export class Handler {
 		}
 
 		// Handle commands
-		this.client.on("message", async (message: Message) => {
-			if (message.author.bot || !message.content.startsWith(this.prefix)) {
-				return;
-			}
+		this.client.on("messageCreate", async (message: Message) => {
+			if (message.author.bot || !message.content.startsWith(this.prefix)) return;
 
 			// Remove prefix and split message into command and args
 			const [command, ...args] = message.content.slice(this.prefix.length).split(" ");
 
 			let cmd = this.commands.get(command.toLowerCase());
 
-			if (!cmd) {
-				// Get the command by alias
-				cmd = this.aliases.get(command.toLowerCase());
-			}
+			// if not get by name, Get the command by alias
+			if (!cmd) cmd = this.aliases.get(command.toLowerCase());
 
-			if (!cmd || !cmd.isEnabled) {
-				// No command or alias found or command is disabled
+			// No command or alias found
+			if (!cmd) return;
+
+			// command is disabled
+			if (!cmd.isEnabled) {
+				message.reply({ embeds: [{ description: `${cmd.name} is currently disabled temporarily` }] });
 				return;
 			}
 
 			// guild only commands
 			if (cmd.guildOnly && !message.guild) {
-				message.channel.send("This command is only available in guilds");
+				message.reply("This command is only available in guilds");
 				return;
 			}
 
 			// Check if the user has permissions, guild only commands
 			if (cmd.permission && message.guild) {
-				if (!message.member!.hasPermission(cmd.permission)) {
-					message.channel.send("You don't have the required permissions to use this command.").then((msg) =>
-						msg.delete({
-							timeout: 5000,
-						})
-					);
+				if (!message.member!.permissions.has(cmd.permission)) {
+					message.reply("You don't have the required permissions to use this command.").then((msg) => setTimeout(() => msg.delete(), 5000));
 
 					return;
 				}
@@ -247,7 +243,7 @@ export class Handler {
 				console.error(err);
 				let embed = new MessageEmbed().setTitle(`Error └[∵┌]└[ ∵ ]┘[┐∵]┘`).setDescription(`**Error Details**\n\`\`\`js\n${err}\`\`\``).setColor("#000000");
 
-				message.channel.send(embed);
+				message.reply({ embeds: [embed] });
 			}
 		});
 	}

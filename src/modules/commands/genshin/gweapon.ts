@@ -28,7 +28,7 @@ module.exports = class extends Command {
 	dataToEmbed(data: any, message: Message, args: string[]) {
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, `${message.author.displayAvatarURL()}`)
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setTitle(`Some Info On ${args.join(" ")}`)
 			.addField(`Domain to Farm`, data.domain, true)
 			.addField(`Ascension Material`, data.farm_Get, true)
@@ -62,7 +62,7 @@ module.exports = class extends Command {
 
 		pages[0] = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, `${message.author.displayAvatarURL()}`)
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setDescription(`Below are lists of weapons currently in genshin impact Version ${Genshin_Ver}\n\nDomain: \`Cecilia Garden\``)
 			.addField(`❯\u2000${farm_Type_1[0]} [${cecilia_Garden[0].weapons.length}]:`, cecilia_Garden[0].weapons.map((x: any) => `\`${x}\``).join(", "), false)
 			.addField(`❯\u2000${farm_Type_1[1]} [${cecilia_Garden[1].weapons.length}]:`, cecilia_Garden[1].weapons.map((x: any) => `\`${x}\``).join(", "), false)
@@ -79,7 +79,7 @@ module.exports = class extends Command {
 
 		pages[1] = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, `${message.author.displayAvatarURL()}`)
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setDescription(`Below are lists of weapons currently in genshin impact ${Genshin_Ver}\n\nDomain: \`Hidden Palace of Lianshan Formula\``)
 			.addField(`❯\u2000${farm_Type_2[0]} [${hidden_Palace[0].weapons.length}]:`, hidden_Palace[0].weapons.map((x: any) => `\`${x}\``).join(", "), false)
 			.addField(`❯\u2000${farm_Type_2[1]} [${hidden_Palace[1].weapons.length}]:`, hidden_Palace[1].weapons.map((x: any) => `\`${x}\``).join(", "), false)
@@ -98,7 +98,7 @@ module.exports = class extends Command {
 	}
 
 	async run(message: Message, args: string[]) {
-		if (!args[0]) return message.channel.send(this.infoInvalid());
+		if (!args[0]) return message.channel.send({ embeds: [this.infoInvalid()] });
 
 		switch (args.join(" ").toLowerCase()) {
 			case "all":
@@ -109,8 +109,8 @@ module.exports = class extends Command {
 
 			default:
 				const docs = await find_DB_Return("g_Weapon", { weapons: args.join(" ") });
-				if (!docs[0]) return message.channel.send(this.infoInvalid());
-				else return message.channel.send(this.dataToEmbed(docs[0], message, args));
+				if (!docs[0]) return message.channel.send({ embeds: [this.infoInvalid()] });
+				else return message.channel.send({ embeds: [this.dataToEmbed(docs[0], message, args)] });
 		}
 	}
 };

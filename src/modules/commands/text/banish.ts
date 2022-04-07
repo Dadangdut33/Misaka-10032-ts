@@ -13,7 +13,7 @@ module.exports = class extends Command {
 	}
 
 	async run(message: Message, args: string[]) {
-		if (!args[0]) return message.channel.send({ embed: { description: "Please enter the ẑ̴̧̳̯̔̒ā̶̟͖̗̤̙̿̉̎͛͋̆͂͝͝l̶̡̠̞̫̣̪̮̯̤̙͂̀͝͝ͅģ̵̡̨͚͚̤̦̪͕͓̞̖͖̄̏̏́̊̃̆͜o̴̡̧͎̻͈͓̞̮̩̎͆̓̉͒̽̎̿̐̋̊͆̈͠ͅě̷͔̠d̶̡̨̮̮̮̳̙͚̙͕͙̥̔̇̊̍̇ text that you want to normalize" } });
+		if (!args[0]) return message.channel.send({ embeds: [{ description: "Please enter the ẑ̴̧̳̯̔̒ā̶̟͖̗̤̙̿̉̎͛͋̆͂͝͝l̶̡̠̞̫̣̪̮̯̤̙͂̀͝͝ͅģ̵̡̨͚͚̤̦̪͕͓̞̖͖̄̏̏́̊̃̆͜o̴̡̧͎̻͈͓̞̮̩̎͆̓̉͒̽̎̿̐̋̊͆̈͠ͅě̷͔̠d̶̡̨̮̮̮̳̙͚̙͕͙̥̔̇̊̍̇ text that you want to normalize" }] });
 
 		return message.channel.send(banish(args.join(" ")));
 	}

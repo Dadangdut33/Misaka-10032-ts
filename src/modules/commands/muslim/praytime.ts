@@ -145,7 +145,7 @@ module.exports = class extends Command {
 					inline: true,
 				}
 			)
-			.setFooter(`${timezone}`)
+			.setFooter({ text: `${timezone}` })
 			.setTimestamp();
 
 		return embed;
@@ -157,12 +157,12 @@ module.exports = class extends Command {
 			// Default for local time
 			let coordinates = new adhan.Coordinates(-6.175322129297112, 106.82800210012158);
 
-			return message.channel.send(this.getAdhan(coordinates, "Asia/Jakarta"));
+			return message.channel.send({ embeds: [this.getAdhan(coordinates, "Asia/Jakarta")] });
 		} //For User input coordinates
 		else if (args[0] == "coordinates" || args[0] == "coords") {
 			// COORDINATES
 			if (isNaN(parseFloat(args[1])) || isNaN(parseFloat(args[2]))) {
-				return message.channel.send(this.errCoordinate());
+				return message.channel.send({ embeds: [this.errCoordinate()] });
 			}
 
 			//Get coordinates
@@ -175,7 +175,7 @@ module.exports = class extends Command {
 					.setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`)
 					.setTimestamp();
 
-				return message.channel.send(embed);
+				return message.channel.send({ embeds: [embed] });
 			}
 
 			// Timezone
@@ -188,11 +188,11 @@ module.exports = class extends Command {
 				timezone = `+${args[4]}`;
 			}
 
-			message.channel.send(this.getAdhan(coordinates, timezone));
+			message.channel.send({ embeds: [this.getAdhan(coordinates, timezone)] });
 
 			if (!args[3]) {
 				// No custom tz
-				message.channel.send(this.info_tz_coordinates());
+				return message.channel.send({ embeds: [this.info_tz_coordinates()] });
 			}
 		} else if (args[0] == "city") {
 			// CITY
@@ -200,13 +200,13 @@ module.exports = class extends Command {
 			let reg = /(["'])(?:(?=(\\?))\2.)*?\1/;
 			let search = reg.exec(args.join(" "));
 
-			if (search === null) return message.channel.send(this.errorCity());
+			if (search === null) return message.channel.send({ embeds: [this.errorCity()] });
 			let searchClear = search[0].replace(/["']/g, "");
 
 			//Get Coordinates
 			let result = [];
 			result = cities.filter((city: any) => city.name.match(this.capitalizeTheFirstLetterOfEachWord(searchClear)));
-			if (result[0] == undefined) return message.channel.send(this.errorCity());
+			if (result[0] == undefined) return message.channel.send({ embeds: [this.errorCity()] });
 
 			let coord = [];
 			coord = result[0].loc.coordinates;
@@ -231,7 +231,7 @@ module.exports = class extends Command {
 					.setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`)
 					.setTimestamp();
 
-				return message.channel.send(embed);
+				return message.channel.send({ embeds: [embed] });
 			}
 
 			//Get TImezone
@@ -244,17 +244,21 @@ module.exports = class extends Command {
 				timezone = `+${splitted[2]}`;
 			}
 
-			message.channel.send(this.getAdhan(coordinates, timezone));
+			message.channel.send({ embeds: [this.getAdhan(coordinates, timezone)] });
 			if (!splitted[0]) {
-				message.channel.send(this.info_tz_city());
+				return message.channel.send({ embeds: [this.info_tz_coordinates()] });
 			}
 		} else {
-			message.channel.send(
-				new MessageEmbed()
-					.setColor("RANDOM")
-					.setTitle(`Invalid Arguments Provided!`)
-					.setDescription(`For more detailed info please check using the help command. You can enter custom city with custom timezone or custom coordinate with custom timezone`)
-			);
+			message.channel.send({
+				embeds: [
+					new MessageEmbed()
+						.setColor("RANDOM")
+						.setTitle(`Invalid Arguments Provided!`)
+						.setDescription(
+							`For more detailed info please check using the help command. You can enter custom city with custom timezone or custom coordinate with custom timezone`
+						),
+				],
+			});
 		}
 	}
 };

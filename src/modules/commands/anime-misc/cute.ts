@@ -46,8 +46,8 @@ module.exports = class extends Command {
 			.setImage(img)
 			.setTitle(`From /r/${random}`)
 			.setURL(`https://reddit.com/r/${random}`)
-			.setFooter(`Requested by ${message.author.username}`);
+			.setFooter({ text: `Requested by ${message.author.username}` });
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

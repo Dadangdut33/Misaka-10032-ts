@@ -15,10 +15,12 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[]) {
 		return message.channel.send({
-			embed: {
-				description: facts[Math.floor(Math.random() * facts.length)],
-				color: "RANDOM",
-			},
+			embeds: [
+				{
+					description: facts[Math.floor(Math.random() * facts.length)],
+					color: "RANDOM",
+				},
+			],
 		});
 	}
 };

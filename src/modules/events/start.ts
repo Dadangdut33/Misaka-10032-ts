@@ -1,6 +1,6 @@
 import { Client } from "discord.js";
 import { BotEvent } from "../../handler";
-import { prefix } from "../../config.json";
+import { prefix, repo_link } from "../../config.json";
 import { activity } from "./global/bot-activity";
 import moment from "moment-timezone";
 
@@ -17,21 +17,26 @@ module.exports = class extends BotEvent {
 		// Presence at start
 		client.user!.setPresence({
 			status: "online",
-			activity: {
-				name: `${prefix}help | ${moment(client.readyAt).tz("Asia/Jakarta").format("HH:mm:ss")} Booting up... Managing ${client.guilds.cache.size} Guilds, ${
-					client.channels.cache.size
-				} Channels, and ${client.users.cache.size} Members`,
-				type: "PLAYING",
-			},
+			activities: [
+				{
+					name: `${prefix}help | ${moment(client.readyAt).tz("Asia/Jakarta").format("HH:mm:ss")} Booting up... Managing ${client.guilds.cache.size} Guilds, ${
+						client.channels.cache.size
+					} Channels, and ${client.users.cache.size} Members`,
+					type: "PLAYING",
+					url: repo_link,
+				},
+			],
 		});
 
-		//Bot Activity
+		// Bot Activity
 		setInterval(() => {
-			client.user!.setActivity({
-				type: activity[Math.floor(Math.random() * activity.length)].type,
+			client.user?.setActivity({
 				name: `${prefix}help | ${activity[Math.floor(Math.random() * activity.length)].desc}`,
+				type: activity[Math.floor(Math.random() * activity.length)].type as any,
+				url: repo_link,
 			});
 		}, 900000); //900000 -> every 15 minutes
+
 		console.log(`Activity will change every 15 minutes with ${activity.length} varieties`);
 	}
 };

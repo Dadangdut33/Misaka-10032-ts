@@ -15,15 +15,10 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (args.length < 1) return;
 
-		// get all tagged roles
-		const taggedRoles = message.mentions.roles.array();
+		// get all tagged roles and convert to array
+		const taggedRoles = message.mentions.roles.map((r) => r);
 
-		if (taggedRoles.length < 1)
-			return message.channel.send("You need to tag at least one role!").then((msg) =>
-				msg.delete({
-					timeout: 5000,
-				})
-			);
+		if (taggedRoles.length < 1) return message.channel.send("You need to tag at least one role!").then((msg) => setTimeout(() => msg.delete(), 5000));
 
 		// get the guild
 		const guild = message.guild!;

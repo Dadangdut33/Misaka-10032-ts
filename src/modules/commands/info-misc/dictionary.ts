@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../utils";
+import { paginationEmbed, toTitleCase } from "../../../utils";
 import { load } from "cheerio";
 import axios from "axios";
 
@@ -15,12 +15,6 @@ module.exports = class extends Command {
 		});
 	}
 
-	toTitleCase(str: string) {
-		return str.replace(/\w\S*/g, function (txt) {
-			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-		});
-	}
-
 	async run(message: Message, args: string[]) {
 		if (!args[0]) return message.channel.send(`Please enter a correct word to search!`);
 
@@ -30,7 +24,7 @@ module.exports = class extends Command {
 		try {
 			const { data } = await axios.get(link);
 			const $ = load(data);
-			const title = this.toTitleCase($(".entryWrapper").find(".hw").data("headword-id") as string);
+			const title = toTitleCase($(".entryWrapper").find(".hw").data("headword-id") as string);
 
 			let display: MessageEmbed[] = [];
 			$(".entryWrapper")
@@ -38,13 +32,13 @@ module.exports = class extends Command {
 				.each((i, el) => {
 					const examples = `**Examples:**\n${$(el).find(".ex").first().text()}`;
 					const meaning = $(el).find(".ind").text();
-					const type = this.toTitleCase($(el).find(".pos").children(".pos").text());
+					const type = toTitleCase($(el).find(".pos").children(".pos").text());
 
 					const description = [`\n\n**${type}:**`, `${meaning.replace(/\./g, `.\n\n`)}`, `${examples}`].join("\n");
 
 					// prettier-ignore
 					display[i] = new MessageEmbed()
-						.setAuthor("Lexico (Powered By Oxford)")
+						.setAuthor({name: "Lexico (Powered By Oxford)"})
 						.setColor("RANDOM")
 						.setTitle(title)
 						.setDescription(description)
@@ -52,7 +46,7 @@ module.exports = class extends Command {
 						.setURL(link);
 				});
 
-			paginationEmbed(message, display, [], 300000);
+			paginationEmbed(message, display);
 		} catch (error) {
 			message.channel.send(`Couldn't find the word you're looking for!`);
 		}

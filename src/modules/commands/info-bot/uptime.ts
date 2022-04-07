@@ -20,8 +20,8 @@ module.exports = class extends Command {
 		let embed = new MessageEmbed()
 			.addField("Booted up on", `${moment(message.client.readyAt).tz("Asia/Jakarta").format("dddd DD MMMM YYYY HH:mm:ss")}`, false)
 			.addField("Total Uptime", prettyMilliseconds(message.client.uptime!), false)
-			.setFooter("Version " + this.build + " | TZ +7");
+			.setFooter({ text: "Version " + this.build + " | TZ +7" });
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

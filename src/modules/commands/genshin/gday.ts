@@ -45,7 +45,7 @@ module.exports = class extends Command {
 
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, `${message.author.displayAvatarURL()}`)
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setTitle(`\`${data[0].fields.farmDay}\` Farm Guide`)
 			.setDescription(`**Data are based on game v${Genshin_Ver}**\nBelow are list of characters or weapons that can get materials on the specified days`)
 			.addField(`❯\u2000\Forsaken Rift (${farm_Type_1[0]}) [${forsaken_Rift.length}]:`, forsaken_Rift.join(`, `), false)
@@ -74,7 +74,7 @@ module.exports = class extends Command {
 
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, `${message.author.displayAvatarURL()}`)
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setTitle(`\`${data[0].farm_Day}\` Farm Guide`)
 			.setDescription(`**Data are based on game v${Genshin_Ver}**\nBelow are list of characters or weapons that can get materials on the specified days`)
 			.addField(`❯\u2000\Cecilia Garden (${farm_Type_1[0]}) [${cecilia_Garden[0].weapons.length}]:`, cecilia_Garden[0].weapons.map((x: any) => `\`${x}\``).join(", "), false)
@@ -97,7 +97,7 @@ module.exports = class extends Command {
 	sunday(message: Message) {
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, `${message.author.displayAvatarURL()}`)
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setTitle("Sunday Farm Guide")
 			.setDescription("You can farm for every material on sunday!")
 			.setTimestamp();
@@ -111,20 +111,20 @@ module.exports = class extends Command {
 			isToday = false,
 			today = date.isoWeekday();
 
-		if (!args[0]) return message.channel.send(this.infoInvalid());
+		if (!args[0]) return message.channel.send({ embeds: [this.infoInvalid()] });
 
-		if (["sunday", "sun", "minggu", "7"].includes(args.join(" ").toLowerCase())) return message.channel.send(this.sunday(message));
+		if (["sunday", "sun", "minggu", "7"].includes(args.join(" ").toLowerCase())) return message.channel.send({ embeds: [this.sunday(message)] });
 
 		if (args[0].toLowerCase() === "today") {
 			isToday = true;
-			if (today === 7) return message.channel.send(this.sunday(message));
+			if (today === 7) return message.channel.send({ embeds: [this.sunday(message)] });
 		}
 
 		const dataCharToday = await find_DB_Return("g_Char", { farm_Index: isToday ? today.toString() : capitalizeFirstLetter(args.join(" ").toLowerCase()) });
-		if (dataCharToday.length === 0) return message.channel.send(this.infoInvalid());
+		if (dataCharToday.length === 0) return message.channel.send({ embeds: [this.infoInvalid()] });
 
 		const dataWeaponToday = await find_DB_Return("g_Weapon", { farm_Index: isToday ? today.toString() : capitalizeFirstLetter(args.join(" ").toLowerCase()) });
-		if (dataWeaponToday.length === 0) return message.channel.send(this.infoInvalid());
+		if (dataWeaponToday.length === 0) return message.channel.send({ embeds: [this.infoInvalid()] });
 
 		pages.push(this.dataCharsToEmbed(dataCharToday, message));
 		pages.push(this.dataWeaponsToEmbed(dataWeaponToday, message));

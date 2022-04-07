@@ -28,12 +28,13 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[]) {
 		message.delete();
-		if (args.length < 1) return message.reply("Nothing to say?").then((msg) => msg.delete({ timeout: 5000 }));
+		if (args.length < 1) return message.reply("Nothing to say?").then((msg) => setTimeout(() => msg.delete(), 5000));
 
 		let regex = /(["])(?:(?=(\\?))\2.)*?\1/g,
 			msg = args.join(" ").match(regex);
 
-		if (!msg) return message.channel.send(`**Invalid Arguments Provided!** Please check the help commands if unsure ${message.author}`).then((msg) => msg.delete({ timeout: 5000 }));
+		if (!msg)
+			return message.channel.send(`**Invalid Arguments Provided!** Please check the help commands if unsure ${message.author}`).then((msg) => setTimeout(() => msg.delete(), 5000));
 
 		for (let i = 0; i < msg.length; i++) {
 			msg[i] = msg[i].replace(/"/g, "");
@@ -41,7 +42,7 @@ module.exports = class extends Command {
 
 		// Creating and sending embed...
 		let embed = new MessageEmbed()
-			.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
+			.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ format: "jpg", size: 2048 }) })
 			.setTitle(msg[0])
 			.setColor("#000")
 			.setDescription(msg[1]);
@@ -60,8 +61,8 @@ module.exports = class extends Command {
 		}
 
 		//Send embed
-		message.channel.send(embed).catch((err) => {
-			return message.channel.send("Invalid form").then((msg) => msg.delete({ timeout: 10000 }));
+		message.channel.send({ embeds: [embed] }).catch(async (err) => {
+			return message.channel.send("Invalid form").then((msg) => setTimeout(() => msg.delete(), 5000));
 		});
 	}
 };

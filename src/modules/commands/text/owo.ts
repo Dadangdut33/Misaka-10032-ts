@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import owoify from "owoify-js";
+const owoify = require("owoify-js").default;
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -16,9 +16,11 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					description: "Please enter the text that you want to" + ` "*owoifys*"`,
-				},
+				embeds: [
+					{
+						description: "Please enter the text that you want to" + ` "*owoifys*"`,
+					},
+				],
 			});
 
 		return message.channel.send(owoify(args.join(" ")));

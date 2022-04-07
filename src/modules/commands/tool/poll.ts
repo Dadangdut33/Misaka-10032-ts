@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-const pollEmbed = require("discord.js-poll-embed");
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -10,6 +9,8 @@ module.exports = class extends Command {
 			usage: `\`${prefix}command <timeout> <[title]> <[options 1]> <[options 2]> ... <[options x]>\`\n**Notes:**\n Notice the -> [].\nIf you want the poll to have infinite time, input 0 in timeout`,
 			guildOnly: true,
 		});
+
+		this.disable();
 	}
 
 	async run(message: Message, args: string[]) {
@@ -19,26 +20,32 @@ module.exports = class extends Command {
 		// If number invalid
 		if (parseInt(args[0]) > 2147483647 || isNaN(parseInt(args[0])))
 			return message.channel.send({
-				embed: {
-					color: 0xff0000,
-					description: "Invalid timeout duration, please enter a valid number",
-				},
+				embeds: [
+					{
+						color: 0xff0000,
+						description: "Invalid timeout duration, please enter a valid number",
+					},
+				],
 			});
 
 		if (!options[1])
 			return message.channel.send({
-				embed: {
-					color: 0xff0000,
-					description: "Please enter at least 2 options",
-				},
+				embeds: [
+					{
+						color: 0xff0000,
+						description: "Please enter at least 2 options",
+					},
+				],
 			});
 
 		if (options.length > 10)
 			return message.channel.send({
-				embed: {
-					color: 0xff0000,
-					description: "Poll limit is 10 options",
-				},
+				embeds: [
+					{
+						color: 0xff0000,
+						description: "Poll limit is 10 options",
+					},
+				],
 			});
 
 		// Remove the [] surrounding the options
@@ -72,17 +79,19 @@ module.exports = class extends Command {
 		const forceEndPollEmoji = "\u2705"; // This is check mark emoji
 
 		// Call the pollembed function
-		pollEmbed(message, title, options, timeout, emojiList, forceEndPollEmoji).catch((error: any) => {
-			// Catch error if there is any error
-			console.log(error);
+		// pollEmbed(message, title, options, timeout, emojiList, forceEndPollEmoji).catch((error: any) => {
+		// 	// Catch error if there is any error
+		// 	console.log(error);
 
-			return message.channel.send({
-				embed: {
-					color: 0xff0000,
-					title: "An error occured",
-					description: error,
-				},
-			});
-		});
+		// 	return message.channel.send({
+		// 		embeds: [
+		// 			{
+		// 				color: 0xff0000,
+		// 				title: "An error occured",
+		// 				description: error,
+		// 			},
+		// 		],
+		// 	});
+		// });
 	}
 };

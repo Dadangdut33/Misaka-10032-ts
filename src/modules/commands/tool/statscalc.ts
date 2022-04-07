@@ -16,13 +16,15 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[]) {
 		if (!args[0])
-			return message.channel.send(
-				new MessageEmbed()
-					.setColor("RANDOM")
-					.setTitle(`Please Enter The Correct Arguments`)
-					.setDescription(`For more detailed info please check using the help command. Usage example :arrow_down:\`\`\`css\n${this.prefix}command/alias 23 21 11 33 22 1\`\`\``)
-					.setTimestamp()
-			);
+			return message.channel.send({
+				embeds: [
+					new MessageEmbed()
+						.setColor("RANDOM")
+						.setTitle(`Please Enter The Correct Arguments`)
+						.setDescription(`For more detailed info please check using the help command. Usage example :arrow_down:\`\`\`css\n${this.prefix}command/alias 23 21 11 33 22 1\`\`\``)
+						.setTimestamp(),
+				],
+			});
 
 		// remove new line from args
 		args = args.map((arg) => arg.replace(/\n/g, " "));
@@ -36,13 +38,15 @@ module.exports = class extends Command {
 		// Map the numbers
 		let numbersToCalculate = numbers(parsedArgs);
 		if (numbersToCalculate.length === 0)
-			return message.channel.send(
-				new MessageEmbed()
-					.setColor("RANDOM")
-					.setTitle(`Please Enter The Correct Arguments`)
-					.setDescription(`For more detailed info please check using the help command. Usage example :arrow_down:\`\`\`css\n${this.prefix}command/alias 23 21 11 33 22 1\`\`\``)
-					.setTimestamp()
-			);
+			return message.channel.send({
+				embeds: [
+					new MessageEmbed()
+						.setColor("RANDOM")
+						.setTitle(`Please Enter The Correct Arguments`)
+						.setDescription(`For more detailed info please check using the help command. Usage example :arrow_down:\`\`\`css\n${this.prefix}command/alias 23 21 11 33 22 1\`\`\``)
+						.setTimestamp(),
+				],
+			});
 
 		// Sum up the number
 		let dataSum = sum(numbersToCalculate),
@@ -78,16 +82,16 @@ module.exports = class extends Command {
 			.addField(`Average Deviation`, AD.toFixed(4), true)
 			.addField(`Skewness`, `${skew.toFixed(4)}`, true)
 			.addField(`Kurtosis`, `${kurt.toFixed(4)}`, true)
-			.setFooter(
-				`Requested by ${message.author.username}`,
-				message.author.displayAvatarURL({
+			.setFooter({
+				text: `Requested by ${message.author.username}`,
+				iconURL: message.author.displayAvatarURL({
 					format: "jpg",
 					size: 2048,
-				})
-			)
+				}),
+			})
 			.setTimestamp();
 
-		message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };
 

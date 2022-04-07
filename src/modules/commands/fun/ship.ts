@@ -18,10 +18,12 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args.includes("x"))
 			return message.channel.send({
-				embed: {
-					title: "Invalid format",
-					description: `Please enter the name that you want to ship. Usage should be like this example :arrow_down:\`\`\`ts\n${this.prefix}ship Togashi Yuta x Takanashi Rikka\`\`\``,
-				},
+				embeds: [
+					{
+						title: "Invalid format",
+						description: `Please enter the name that you want to ship. Usage should be like this example :arrow_down:\`\`\`ts\n${this.prefix}ship Togashi Yuta x Takanashi Rikka\`\`\``,
+					},
+				],
 			});
 
 		const msg = await message.channel.send(`:cruise_ship: Shipping...`);
@@ -42,11 +44,13 @@ module.exports = class extends Command {
 
 		msg.delete();
 		return message.channel.send({
-			embed: {
-				color: "RANDOM",
-				title: `${chara1} x ${chara2}`,
-				description: `The calculated score of ${data.names} is \`${data.score_int}%\``,
-			},
+			embeds: [
+				{
+					color: "RANDOM",
+					title: `${chara1} x ${chara2}`,
+					description: `The calculated score of ${data.names} is \`${data.score_int}%\``,
+				},
+			],
 		});
 	}
 };

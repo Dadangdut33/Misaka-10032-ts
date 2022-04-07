@@ -15,9 +15,11 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					description: "esrever ot tnaw uoy taht txet eht retne esaelP",
-				},
+				embeds: [
+					{
+						description: "esrever ot tnaw uoy taht txet eht retne esaelP",
+					},
+				],
 			});
 
 		return message.channel.send(reverseString(args.join(" ")));

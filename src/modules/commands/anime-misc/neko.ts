@@ -23,12 +23,14 @@ module.exports = class extends Command {
 		msg.delete();
 		const chars: any = { "/": "%2F", ":": "%3A" };
 		message.channel.send({
-			embed: {
-				color: "RANDOM",
-				title: "Nya nya~",
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: number) => chars[m])})`,
-				image: { url: data.url },
-			},
+			embeds: [
+				{
+					color: "RANDOM",
+					title: "Nya nya~",
+					description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.url.replace(/[:/]/g, (m: number) => chars[m])})`,
+					image: { url: data.url },
+				},
+			],
 		});
 	}
 };

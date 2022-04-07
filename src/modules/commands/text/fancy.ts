@@ -15,9 +15,11 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					description: "Please enter the text that you want to" + ` "𝒻𝒶𝓃𝒸𝒾𝒻𝓎𝓈"`,
-				},
+				embeds: [
+					{
+						description: "𝓅𝓁𝒆𝓪𝓈𝒆 𝒆𝓃𝓉𝒆𝓇 𝓉𝒽𝒆 𝓉𝒆𝓍𝓉 𝓉𝒽𝓪𝓉 𝓎𝑜𝓊 𝓌𝓪𝓃𝓉 𝓉𝑜 𝒻𝓪𝓃𝓬𝓎𝒻𝒾𝒆𝓈",
+					},
+				],
 			});
 
 		var fancied = fancy(args.join(" "));

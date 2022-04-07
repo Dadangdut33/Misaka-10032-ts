@@ -39,15 +39,15 @@ module.exports = class extends Command {
 
 		const embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, message.author.displayAvatarURL())
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL() })
 			.setTitle(`Original Reddit Link`)
 			.setDescription(args[0])
 			.addField(`Direct Download Link`, directLink, true) // Replace the thing in the way
 			.addField(`More Options`, `[RedditSave](${link})`, true)
-			.setFooter(`Via redditsave.com`)
-			.setColor("FF4500")
+			.setFooter({ text: `Via redditsave.com` })
+			.setColor("#FF4500")
 			.setTimestamp();
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

@@ -9,7 +9,7 @@ import { capitalizeFirstLetter, hasNumber } from "../../../utils";
 
 module.exports = class extends BotEvent {
 	constructor() {
-		super("message");
+		super("messageCreate");
 		// this.disable();
 		console.log(`Module: msgListener Loaded | Now seeking for haiku, geh content, anime, manga, and news to crosspost...`);
 	}
@@ -23,14 +23,14 @@ module.exports = class extends BotEvent {
 		const time = moment.tz("Asia/Jakarta").format("HH:mm:ss");
 		const { channel } = message;
 
-		if (channel.type === "news") {
+		if (channel.type === "GUILD_NEWS") {
 			message.crosspost(); // crosspost automatically
 			console.log(`News Published at ${time}`);
 		}
 	};
 
 	checkGeh = (message: Message) => {
-		if (!message.content.startsWith(prefix) && message.channel.type !== "dm") {
+		if (!message.content.startsWith(prefix) && message.channel.type !== "DM") {
 			if (message.content.includes("!geh")) {
 				const toSend = resGeh[Math.floor(Math.random() * resGeh.length)];
 				message.channel.send(toSend);
@@ -41,7 +41,7 @@ module.exports = class extends BotEvent {
 	detectHaiku = (message: Message) => {
 		const regexEmojiHaiku = /(:[^:\s]+:|<:[^:\s]+:[0-9]+>|<a:[^:\s]+:[0-9]+>)/g;
 
-		if (!message.content.startsWith(prefix) && message.channel.type !== "dm") {
+		if (!message.content.startsWith(prefix) && message.channel.type !== "DM") {
 			// Mention, Emoji, Link
 			if (
 				!message.mentions.members!.first() && // Mention member
@@ -68,7 +68,7 @@ module.exports = class extends BotEvent {
 								)
 								.setColor(`RANDOM`);
 
-							message.channel.send(embed);
+							message.reply({ embeds: [embed] });
 						}
 					}
 				}
@@ -77,7 +77,7 @@ module.exports = class extends BotEvent {
 	};
 
 	detectAnimeSearch = async (message: Message) => {
-		if (!message.content.startsWith(prefix) && message.channel.type !== "dm") {
+		if (!message.content.startsWith(prefix) && message.channel.type !== "DM") {
 			// regex for words surrounded by {{}}. Ex: {{anime}}
 			const regexAnimeSearch = /\{\{([^\{\}]*)\}\}/g;
 
@@ -132,8 +132,8 @@ module.exports = class extends BotEvent {
 						msg.delete();
 
 						let embed = new MessageEmbed()
-							.setColor("2E51A2")
-							.setAuthor(`${data.englishTitle ? data.englishTitle : data.title} | ${data.type ? data.type : "N/A"}`, data.picture, data.url)
+							.setColor("#2E51A2")
+							.setAuthor({ name: `${data.englishTitle ? data.englishTitle : data.title} | ${data.type ? data.type : "N/A"}`, iconURL: data.picture, url: data.url })
 							.setDescription(data.synopsis ? data.synopsis : "No synopsis available.")
 							.addField(
 								"Japanese Name",
@@ -173,11 +173,11 @@ module.exports = class extends BotEvent {
 									inline: true,
 								}
 							)
-							.setFooter(`Data Fetched From Myanimelist.net`)
+							.setFooter({ text: `Data Fetched From Myanimelist.net` })
 							.setTimestamp()
 							.setThumbnail(data.picture ? data.picture : ``);
 
-						message.channel.send(embed);
+						message.reply({ embeds: [embed] });
 					} catch (error) {
 						console.log(error);
 						msg.delete();
@@ -218,8 +218,8 @@ module.exports = class extends BotEvent {
 						}
 
 						const embed = new MessageEmbed()
-							.setColor("2E51A2")
-							.setAuthor(`${manga.title} | ${manga.type}`, manga.thumbnail, manga.url)
+							.setColor("#2E51A2")
+							.setAuthor({ name: `${manga.title} | ${manga.type}`, iconURL: manga.thumbnail, url: manga.url })
 							.setDescription(manga.shortDescription ? manga.shortDescription : "-")
 							.addField(`Type`, `${manga.type ? manga.type : "-"}`, true)
 							.addField(`Volumes`, `${manga.vols ? manga.vols : "-"}`, true)
@@ -246,12 +246,12 @@ module.exports = class extends BotEvent {
 									inline: true,
 								}
 							)
-							.setFooter(`Data Fetched From Myanimelist.net`)
+							.setFooter({ text: `Data Fetched From Myanimelist.net` })
 							.setTimestamp()
 							.setThumbnail(manga.thumbnail);
 
 						msg.delete();
-						message.channel.send(embed);
+						message.reply({ embeds: [embed] });
 					})
 					.catch((error) => {
 						console.log(error);

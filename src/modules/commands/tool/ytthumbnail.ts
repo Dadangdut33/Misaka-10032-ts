@@ -34,13 +34,11 @@ module.exports = class extends Command {
 			maxDefault = `https://img.youtube.com/vi/${theID.replace(/&/, "")}/maxresdefault.jpg`;
 
 		msg.edit(`**Loading Finished**`);
-		msg.delete({
-			timeout: 5000,
-		});
+		setTimeout(() => msg.delete(), 5000);
 
 		const embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, message.author.displayAvatarURL({ format: "png", size: 2048 }))
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setTitle(`Link Info`)
 			.setDescription(`**Video ID:** \`${theID.replace(/&/, "")}\`\n**Original Link:**\n${args.join(" ")}`)
 			.addField(
@@ -49,9 +47,9 @@ module.exports = class extends Command {
 				false
 			)
 			.setImage(sdDefault)
-			.setColor("FF0000")
+			.setColor("#FF0000")
 			.setTimestamp();
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

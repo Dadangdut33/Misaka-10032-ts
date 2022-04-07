@@ -23,6 +23,6 @@ module.exports = class extends Command {
 			.setDescription(`${message.author.username} pokes ${args.join(" ")}`)
 			.setImage(data);
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

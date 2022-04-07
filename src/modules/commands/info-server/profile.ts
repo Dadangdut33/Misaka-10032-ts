@@ -25,15 +25,19 @@ module.exports = class extends Command {
 			let state = "-",
 				name = "-",
 				type = "-";
-			if (message.author.presence.activities[0] !== undefined) {
-				if (message.author.presence.activities[0].name !== null) {
-					state = `${message.author.presence.activities[0].emoji ? `${message.author.presence.activities[0].emoji} ` : ""}${
-						message.author.presence.activities[0].state ? message.author.presence.activities[0].state : "-"
-					}`;
-					name = message.author.presence.activities[0].name;
-					type = message.author.presence.activities[0].type;
+
+			const userGuild = await message.guild!.members.fetch(message.author.id);
+
+			if (userGuild.presence)
+				if (userGuild.presence.activities[0] !== undefined) {
+					if (userGuild.presence.activities[0].name !== null) {
+						state = `${userGuild.presence.activities[0].emoji ? `${userGuild.presence.activities[0].emoji} ` : ""}${
+							userGuild.presence.activities[0].state ? userGuild.presence.activities[0].state : "-"
+						}`;
+						name = userGuild.presence.activities[0].name;
+						type = userGuild.presence.activities[0].type;
+					}
 				}
-			}
 
 			// calc age
 			let today = moment().tz("Asia/Jakarta");
@@ -45,7 +49,7 @@ module.exports = class extends Command {
 			embed.setColor(`RANDOM`);
 			embed.addField(`Server Joined at`, `${moment(message.member!.joinedAt).tz("Asia/Jakarta").format("DD/MM/YYYY .(HH:mm:ss)").replace(`.`, `\n`)}`, true);
 			embed.addField(`ID`, `${message.author.id}`, true);
-			embed.addField(`User Status`, `${message.author.presence.status}`, true);
+			embed.addField(`User Status`, `${userGuild.presence ? userGuild.presence.status : `-`}`, true);
 			embed.addField(`Activity Name`, `${name}`, true);
 			embed.addField(`Activity Type`, `${type}`, true);
 			embed.addField(`Activity State`, `${state}`, true);
@@ -62,12 +66,14 @@ module.exports = class extends Command {
 					size: 2048,
 				})})`
 			);
-			embed.setFooter(`${message.author.username}'s Profile`);
+			embed.setFooter({ text: `${message.author.username}'s Profile` });
 			embed.setTimestamp();
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		} else {
 			let User = message.mentions.members!.first();
+			if (!User) return message.channel.send(`User not found!`);
+
 			User!.roles.cache.forEach((role) => {
 				roles.push(`\`${role.name}\``);
 			});
@@ -75,18 +81,19 @@ module.exports = class extends Command {
 			let state = "-",
 				name = "-",
 				type = "-";
-			if (User!.presence.activities[0] !== undefined) {
-				if (User!.presence.activities[0].name !== null) {
-					state = `${User!.presence.activities[0].emoji ? `${User!.presence.activities[0].emoji} ` : ""}${
-						User!.presence.activities[0].state ? User!.presence.activities[0].state : "-"
-					}`;
-					name = User!.presence.activities[0].name;
-					type = User!.presence.activities[0].type;
-					if (state === null) {
-						state = "-";
+
+			const userGuild = await message.guild!.members.fetch(User.id);
+
+			if (userGuild.presence)
+				if (userGuild.presence.activities[0] !== undefined) {
+					if (userGuild.presence.activities[0].name !== null) {
+						state = `${userGuild.presence.activities[0].emoji ? `${userGuild.presence.activities[0].emoji} ` : ""}${
+							userGuild.presence.activities[0].state ? userGuild.presence.activities[0].state : "-"
+						}`;
+						name = userGuild.presence.activities[0].name;
+						type = userGuild.presence.activities[0].type;
 					}
 				}
-			}
 
 			// calc age
 			let today = moment().tz("Asia/Jakarta");
@@ -99,7 +106,7 @@ module.exports = class extends Command {
 			embed.addField(`Nickname`, User!.nickname ? User!.nickname : `-`, false);
 			embed.addField(`Server Joined at`, `${moment(User!.joinedAt).tz("Asia/Jakarta").format("DD/MM/YYYY .(HH:mm:ss)").replace(`.`, `\n`)}`, true);
 			embed.addField(`ID`, `${User!.id}`, true);
-			embed.addField(`User Status`, `${User!.presence.status}`, true);
+			embed.addField(`User Status`, `${userGuild.presence ? userGuild.presence.status : `-`}`, true);
 			embed.addField(`Activity Name`, `${name}`, true);
 			embed.addField(`Activity Type`, `${type}`, true);
 			embed.addField(`Activity State`, `${state}`, true);
@@ -116,9 +123,9 @@ module.exports = class extends Command {
 					size: 2048,
 				})})`
 			);
-			embed.setFooter(`Requested by ${message.author.username}`);
+			embed.setFooter({ text: `Requested by ${message.author.username}` });
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		}
 	}
 };

@@ -21,23 +21,22 @@ module.exports = class extends Command {
 			.setColor("YELLOW")
 			.setThumbnail(message.client!.user!.displayAvatarURL())
 			.setDescription(
-				`My name is **Misaka 10032** *says Misaka, trying to explain herself* jk...\n\nCreated by Dadangdut33 **for private use only**.\n\n**[Click here to see my source code](${this.repo_link})** \n*The bot is currently being rewritten in typescript`
+				`My name is **Misaka 10032** *says Misaka, trying to explain herself* jk...\n\nCreated by Dadangdut33 **for private use only**.\n\n**[Click here to see my source code](${this.repo_link})** `
 			)
 			.addField("TOTAL SERVERS/\nCHANNELS", `${message.client.guilds.cache.size}/${message.client.channels.cache.size}`, true)
-			.addField("TOTAL MEMBERS", message.client.users.cache.size, true)
-			.addField("PRESENCE", message.client!.user!.presence.activities[0] ? message.client!.user!.presence.activities[0].name : `No presence set`, true)
+			.addField("TOTAL MEMBERS", message.client.users.cache.size.toString(), true)
 			.addField("ID", message.client.user!.id, true)
 			.addField("UPTIME", prettyMilliseconds(message.client.uptime!), true)
-			.addField("STATUS", message.client!.user!.presence.status, true)
+			.addField("PRESENCE", message.client!.user!.presence.activities[0] ? message.client!.user!.presence.activities[0].name : `No presence set`, false)
 			.addField("CREATOR", "Dadangdut33#5411", true)
 			.addFields({
 				name: "Dadang's Github Account",
 				value: `[Github](https://github.com/Dadangdut33)`,
 				inline: true,
 			})
-			.setFooter(`Version ${this.build}`)
+			.setFooter({ text: `Version ${this.build}` })
 			.setTimestamp();
 
-		message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

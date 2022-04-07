@@ -32,7 +32,7 @@ module.exports = class extends Command {
 			if (message.reference) {
 				// fetch message by  id
 				ref = message.reference;
-				refMsg = await message.channel.messages.fetch(ref.messageID!).then((msg) => msg);
+				refMsg = await message.channel.messages.fetch(ref.messageId!).then((msg) => msg);
 
 				if (refMsg.attachments.size > 0) {
 					// get attachment
@@ -92,16 +92,14 @@ module.exports = class extends Command {
 		results_array = results_array.filter((v, i, a) => a.findIndex((t) => t[0] === v[0]) === i && v[0] !== "furaffinity.net" && parseInt(v[2].split("%")[0]) > 69);
 
 		msgLoading.edit("**Loading Finished!**");
-		msgLoading.delete({
-			timeout: 1000,
-		});
+		setTimeout(() => msgLoading.delete(), 1000);
 
 		const embed = new MessageEmbed() // create embed
-			.setColor("0096fa")
+			.setColor("#0096fa")
 			.setTitle(`🥫 Found ${results_array.length} results`)
 			.setDescription(`[See Full Result](${link})`)
 			.setImage(url_or_attachment)
-			.setFooter(`Via SauceNao.com | Use top result for accurate result.`);
+			.setFooter({ text: `Via SauceNao.com | Use top result for accurate result.` });
 
 		if (results_array.length > 1) {
 			embed.addField(`Top Result (${results_array[0][2]})`, `[${results_array[0][0]}](${results_array[0][1]})`);
@@ -121,6 +119,6 @@ module.exports = class extends Command {
 		}
 
 		// send embed
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

@@ -15,9 +15,11 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					description: "Please enter the text that you want to" + ` "ˢᵐᵃᶫᶫᶦᶠʸˢ"`,
-				},
+				embeds: [
+					{
+						description: "ᴾᶫᵉᵃˢᵉ ᵉᶰᵗᵉʳ ᵗʰᵉ ᵗᵉˣᵗ ᵗʰᵃᵗ ʸᵒᵘ ʷᵃᶰᵗ ᵗᵒ ˢᵐᵃᶫᶫᶦᶠʸˢ",
+					},
+				],
 			});
 
 		let tinied = tinytext(args.join(" "));

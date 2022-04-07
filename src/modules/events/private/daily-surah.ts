@@ -30,7 +30,7 @@ module.exports = class extends BotEvent {
 					const { data } = await axios.get(`https://api.banghasan.com/quran/format/json/acak`);
 
 					let embedAyat = new MessageEmbed()
-						.setAuthor(`Random Ayat of the day`)
+						.setAuthor({ name: `Random Ayat of the day` })
 						.setTitle(`Q.S. ${data.surat.nama}: ${data.surat.nomor} ${data.surat.asma} (${data.acak.id.ayat})`)
 						.setDescription(`${data.acak.ar.teks}\n\n**Terjemahan**: \n${data.acak.id.teks}`)
 						.addField(
@@ -79,10 +79,10 @@ module.exports = class extends BotEvent {
 							{ name: "Maghrib", value: `${maghribTime}`, inline: true },
 							{ name: "Isha", value: `${ishaTime}`, inline: true }
 						)
-						.setFooter(`Asia/Jakarta (+7)`);
+						.setFooter({ text: `Asia/Jakarta (+7)` });
 
-					channel.send(embedPray);
-					if (!apiError) channel.send(embedAyat);
+					channel.send({ embeds: [embedPray] });
+					if (!apiError) channel.send({ embeds: [embedAyat] });
 				},
 				null,
 				true,

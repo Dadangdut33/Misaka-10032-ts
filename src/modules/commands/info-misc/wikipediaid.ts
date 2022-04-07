@@ -30,16 +30,16 @@ module.exports = class extends Command {
 			const { data } = await axios.get(link);
 
 			let embed = new MessageEmbed()
-				.setAuthor(author, authorpic, authorlink)
+				.setAuthor({ name: author, iconURL: authorpic, url: authorlink })
 				.setColor("RANDOM")
 				.setDescription(`${data.extract}`)
-				.setFooter(footer, footerpic)
+				.setFooter({ text: footer, iconURL: footerpic })
 				.setThumbnail(`${data.thumbnail ? data.thumbnail.source : ""}`)
 				.setTitle(`${data.title}`)
 				.setURL(`${data.content_urls.desktop.page}`)
 				.setTimestamp();
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		} catch (error: any) {
 			if (error.response.status === 403) return message.channel.send("Wikipedia is down, try again later.");
 			if (error.response.status === 404) return message.channel.send(`I couldn't find that article on Wikipedia or maybe you type it wrong?`);

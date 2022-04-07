@@ -29,11 +29,11 @@ module.exports = class extends Command {
 			let embed = new MessageEmbed()
 				.setTitle(`Showing oldest member in ${message.guild!.name} (Max shown 25)`)
 				.setDescription(`${memberList.join("\n")}`)
-				.setAuthor(message.guild!.name, message.guild!.iconURL({ format: "jpg", size: 2048 })!, `https://discord.com/channels/${message.guild!.id}`)
-				.setFooter(`Format date D-M-Y • Time are in GMT + 7`)
+				.setAuthor({ name: message.guild!.name, iconURL: message.guild!.iconURL({ format: "jpg", size: 2048 })!, url: `https://discord.com/channels/${message.guild!.id}` })
+				.setFooter({ text: `Format date D-M-Y • Time are in GMT + 7` })
 				.setTimestamp();
 
-			message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		}
 
 		function getMember() {

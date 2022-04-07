@@ -95,7 +95,7 @@ module.exports = class extends Command {
 
 		for (let i = 0; i < amountOfLoop; i++) {
 			const embed = new MessageEmbed()
-				.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
+				.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 				.setColor("#0099ff")
 				.setTitle(`Simulated ${args[0].charAt(0).toUpperCase() + args[0].slice(1)} Times pull in Promotional Character Banner`)
 				.setDescription(`${get.slice(i * 60, (i + 1) * 60).join("\n")}`);

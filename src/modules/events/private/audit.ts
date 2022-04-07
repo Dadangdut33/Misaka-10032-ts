@@ -23,7 +23,7 @@ function AuditLog(client: Client, options: optionsInterface) {
 	// Only if the message contains image
 	client.on("messageDelete", (message) => {
 		if (message.author) if (message.author.bot) return;
-		if (message.channel.type !== "text") return;
+		if (message.channel.type === "DM") return; // return if dm
 		if (message.attachments.size === 0) return;
 		if (debugmode) console.log(`Module: ${description.name} | messageDelete triggered`);
 
@@ -235,7 +235,7 @@ ${message.attachments.map((x) => x.url)}
 						if (channel.permissionsFor(client.user!)!.has("EMBED_LINKS")) {
 							if (debugmode) console.log(`Module: ${description.name} | send - sending embed to ${channel.name}`);
 							embed = msg;
-							(channel as TextChannel).send({ embed }).catch(console.error);
+							(channel as TextChannel).send({ embeds: [embed] }).catch(console.error);
 						} else {
 							console.log(
 								`${description.name} -> The client doesn't have the permission EMBED_LINKS to the configured channel "${channelname}" on server "${guild.name}" (${guild.id})`

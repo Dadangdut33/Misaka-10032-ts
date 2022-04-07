@@ -19,7 +19,7 @@ module.exports = class extends Command {
 		if (args.length < 3) {
 			let embed = new MessageEmbed().setTitle(`Input Error`).setDescription(`Please input the correct format. Ex: \`\`\`${this.prefix}tl id en Selamat pagi!\`\`\``);
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		}
 		const msg = await message.channel.send(`Loading...`);
 
@@ -32,13 +32,13 @@ module.exports = class extends Command {
 
 				msg.delete();
 				let embed = new MessageEmbed()
-					.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "png", size: 2048 }))
+					.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 					.setTitle(`${args[0]} to ${args[1]}`)
 					.setDescription(result ? result : "Fail to fetch!")
 					.addField("Not correct?", `Check that the language code is correct first in [here](https://developers.google.com/admin-sdk/directory/v1/languages)`)
-					.setFooter(`Via Google Translate`);
+					.setFooter({ text: `Via Google Translate` });
 
-				return message.channel.send(embed);
+				return message.channel.send({ embeds: [embed] });
 			})
 			.catch((err) => {
 				msg.edit(`Error: ${err}`);

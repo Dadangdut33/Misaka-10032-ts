@@ -24,6 +24,6 @@ module.exports = class extends Command {
 			.setDescription(`${message.author.username} smugs ${args.join(" ")}`)
 			.setImage(data);
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

@@ -84,12 +84,12 @@ module.exports = class extends Command {
 			options[i] = `${i + 1}. ${kitsuSearch[i].titles ? `${kitsuSearch[i].titles.english ? kitsuSearch[i].titles.english : kitsuSearch[i].slug}` : kitsuSearch[i].slug}`;
 
 		const embed = new MessageEmbed()
-			.setColor("F75136")
-			.setAuthor("Kitsu.io", "https://media.discordapp.net/attachments/799595012005822484/813793894163546162/kitsu.png", "https://kitsu.io/")
+			.setColor("#F75136")
+			.setAuthor({ name: "Kitsu.io", iconURL: "https://media.discordapp.net/attachments/799595012005822484/813793894163546162/kitsu.png", url: "https://kitsu.io/" })
 			.setTitle(`Please Choose The Anime That You Are Searching For Below`)
 			.setDescription(options.join("\n"));
 
-		const optionsToChoose = await message.channel.send(embed); // Await the embed
+		const optionsToChoose = await message.channel.send({ embeds: [embed] }); // Await the embed
 		const reacted = await promptMessage(optionsToChoose, message.author, 50, chooseArr); // Await reaction
 		const reaction = this.chooseResult(reacted); // Get Result from reaction
 		await optionsToChoose.reactions.removeAll();
@@ -98,9 +98,9 @@ module.exports = class extends Command {
 		if (reaction === null) {
 			// If no reaction after timeout
 			msg.delete();
-			embed.setAuthor("Search aborted!").setTitle("").setDescription(`Search for **${query}** aborted because of no reaction from ${message.author}!`);
+			embed.setAuthor({ name: "Search aborted!" }).setTitle("").setDescription(`Search for **${query}** aborted because of no reaction from ${message.author}!`);
 
-			optionsToChoose.edit(embed);
+			optionsToChoose.edit({ embeds: [embed] });
 			return;
 		}
 
@@ -108,9 +108,13 @@ module.exports = class extends Command {
 		// Results to be shown
 		embed
 			.setTitle("")
-			.setColor("F75136")
-			// @ts-ignore
-			.setAuthor(`${anime.titles.english ? anime.titles.english : search2} | ${anime.showType}`, anime.posterImage.original, `https://kitsu.io/anime/${anime.id}`)
+			.setColor("#F75136")
+			.setAuthor({
+				name: `${anime.titles.english ? anime.titles.english : query} | ${anime.showType}`,
+				// @ts-ignore
+				iconURL: anime.posterImage.original,
+				url: `https://kitsu.io/anime/${anime.id}`,
+			})
 			.setDescription(anime.synopsis)
 			.addField("Japanese Name", `${anime.titles.japanese ? anime.titles.japanese + " | " : "-"}${anime.titles.romaji ? anime.titles.romaji : `-`}`, false)
 			.addField(`Age Rating`, `${anime.ageRating}`, true)
@@ -140,7 +144,7 @@ module.exports = class extends Command {
 					inline: true,
 				}
 			)
-			.setFooter(`Data Fetched From Kitsu.io`)
+			.setFooter({ text: `Data Fetched From Kitsu.io` })
 			.setTimestamp()
 			// @ts-ignore
 			.setThumbnail(anime.posterImage.original);
@@ -148,6 +152,6 @@ module.exports = class extends Command {
 		// @ts-ignore
 		if (anime.coverImage) embed.setImage(anime.coverImage.original);
 		msg.delete();
-		optionsToChoose.edit(embed);
+		optionsToChoose.edit({ embeds: [embed] });
 	}
 };

@@ -31,10 +31,12 @@ module.exports = class extends Command {
 
 		if (!options)
 			return message.channel.send({
-				embed: {
-					color: "RANDOM",
-					description: `Please enter the correct argument example should be like this :arrow_down:\`\`\`css\n${this.prefix}choose [eat] [sleep] [study]\`\`\`For more info use the help commands.`,
-				},
+				embeds: [
+					{
+						color: "RANDOM",
+						description: `Please enter the correct argument example should be like this :arrow_down:\`\`\`css\n${this.prefix}choose [eat] [sleep] [study]\`\`\`For more info use the help commands.`,
+					},
+				],
 			});
 
 		let withArgs = args.join(" ").replace(options.join(" "), "");

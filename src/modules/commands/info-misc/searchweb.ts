@@ -28,11 +28,11 @@ module.exports = class extends Command {
 		msg.edit("**Finishes search!** Found " + result.links.length + " results! Time taken " + (Date.now() - timeMsStart) + "ms");
 
 		let embed = new MessageEmbed()
-			.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
+			.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ format: "jpg", size: 2048 }) })
 			.setTitle(`Web Search`)
 			.setDescription(`Query: ${args.join(" ")}\n\n**Found ${result.links.length} results!**`)
 			.setColor("#e37151")
-			.setFooter(`Via Duckduckgo`);
+			.setFooter({ text: `Via Duckduckgo` });
 
 		// limit to 25 results
 		let limit = result.links.length > 25 ? 25 : result.links.length;
@@ -44,9 +44,9 @@ module.exports = class extends Command {
 			let toShow = `[${title}](${result.links[i]})`;
 			if (title === "") toShow = `${result.links[i]}`;
 
-			embed.addField(i + 1, toShow, true);
+			embed.addField((i + 1).toString(), toShow, true);
 		}
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

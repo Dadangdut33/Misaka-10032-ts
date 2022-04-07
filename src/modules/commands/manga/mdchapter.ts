@@ -37,7 +37,7 @@ module.exports = class extends Command {
 		// check guild, only allow if in 640790707082231834 or 651015913080094721
 		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
 
-		if (!args) return message.channel.send(this.invalidArgs());
+		if (!args) return message.channel.send({ embeds: [this.invalidArgs()] });
 
 		const q = args.join(" ").trim(),
 			msg = await message.channel.send(`Searching for \`${q}\` please wait...`);
@@ -52,7 +52,7 @@ module.exports = class extends Command {
 			// if manga is not found, return
 			if (!manga) {
 				msg.delete();
-				return message.channel.send(this.noMangaFound(q));
+				return message.channel.send({ embeds: [this.noMangaFound(q)] });
 			}
 
 			msg.edit(`Found manga titled: \`${manga.title}\`\n\nRetrieving chapter lists **please wait...**`);
@@ -72,7 +72,7 @@ module.exports = class extends Command {
 
 			// Get the manga's chapters:
 			let chapters = await manga.getFeed({ translatedLanguage: ["en"], order: { chapter: "asc", volume: "asc", createdAt: "asc", updatedAt: "asc", publishAt: "asc" } }, true);
-			if (chapters.length == 0) return message.channel.send(this.noChapterFound(q)); // check is there any chapter or not
+			if (chapters.length == 0) return message.channel.send({ embeds: [this.noChapterFound(q)] }); // check is there any chapter or not
 
 			// get the chapter
 			let loop = Math.ceil(chapters.length / 30), // get how many loop, limit chapters shown to 30 per embed
@@ -85,11 +85,11 @@ module.exports = class extends Command {
 			for (let i = 0; i < loop; i++) {
 				embedChapterLists[i] = new MessageEmbed()
 					.setColor("#e6613e")
-					.setAuthor(
-						`${title} - ${chapterTotal} Chapter ${volume ? `(${volume} Volume)` : ``} | ${originLang} - en`,
-						`https://media.discordapp.net/attachments/799595012005822484/936142797994590288/xbt_jW78_400x400.png`,
-						link
-					)
+					.setAuthor({
+						name: `${title} - ${chapterTotal} Chapter ${volume ? `(${volume} Volume)` : ``} | ${originLang} - en`,
+						iconURL: `https://media.discordapp.net/attachments/799595012005822484/936142797994590288/xbt_jW78_400x400.png`,
+						url: link,
+					})
 					.setThumbnail(cover)
 					.setDescription(
 						chapters
@@ -106,18 +106,18 @@ module.exports = class extends Command {
 						`[Mangadex](${link}) | [MAL](https://myanimelist.net/manga.php?q=${title.replace(/ /g, "%20")}&cat=manga) | [MangaNato](https://manganato.com/search/story/${title.replace(/ /g, "_")}) | [MangaKakalot](https://mangakakalot.com/search/story/${title.replace(/ /g, "_")})`,
 						true
 					)
-					.setFooter(`Page ${i + 1}/${loop}\nVia Mangadex.org | Use the bold number for input to read the chapter`);
+					.setFooter({ text: `Page ${i + 1}/${loop}\nVia Mangadex.org | Use the bold number for input to read the chapter` });
 			}
 
 			// delete message
 			msg.edit(`**Loading finished!**`);
-			msg.delete({ timeout: 5000 });
+			setTimeout(() => msg.delete(), 3000);
 
 			// send embed
 			paginationEmbed(message, embedChapterLists, [], 1500000, true); // 25 minutes
 		} catch (err: any) {
 			// check if error contains no results
-			if (err.toString().includes("no results")) return message.channel.send(this.noMangaFound(q));
+			if (err.toString().includes("no results")) return message.channel.send({ embeds: [this.noMangaFound(q)] });
 
 			// else
 			console.log(err);

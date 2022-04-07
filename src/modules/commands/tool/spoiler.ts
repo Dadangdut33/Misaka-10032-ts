@@ -15,7 +15,7 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		const embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setFooter(args.length > 0 ? `${args.join(" ")} Spoiler Above!!` : message.author.username)
+			.setFooter({ text: args.length > 0 ? `${args.join(" ")} Spoiler Above!!` : message.author.username })
 			.setTitle(`SPOILER WARNING!!${args.length > 0 ? `\`${args.join(" ")}\`` : ``} SPOILER ABOVE!!`)
 			.setThumbnail("https://cdn.discordapp.com/attachments/653206818759376916/700992854763372584/Misaka_10777.jpg")
 			.setDescription(
@@ -28,8 +28,9 @@ module.exports = class extends Command {
 			.setImage("https://cdn.discordapp.com/attachments/651015913080094724/700999319326556171/1456118167-bcaf5c2f41b07564f965bfb17b16a0e2.png")
 			.setTimestamp();
 
-		message.channel.send(`Thanks ${message.author} \n\n\n**${args.length > 0 ? `\`${args.join(" ")}\` ` : ``}SPOILER** ABOVE!!!\n\n\nScroll up at your own risk`, {
-			embed,
+		return message.channel.send({
+			content: `Thanks ${message.author} \n\n\n**${args.length > 0 ? `\`${args.join(" ")}\` ` : ``}SPOILER** ABOVE!!!\n\n\nScroll up at your own risk`,
+			embeds: [embed],
 		});
 	}
 };

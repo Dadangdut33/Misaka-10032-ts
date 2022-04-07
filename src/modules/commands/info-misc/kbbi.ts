@@ -16,10 +16,12 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (args.length < 0)
 			return message.channel.send({
-				embed: {
-					title: "Argumen invalid!",
-					description: "Jika tidak yakin bagaimana cara menggunakan, harap cek dengan `help` command",
-				},
+				embeds: [
+					{
+						title: "Argumen invalid!",
+						description: "Jika tidak yakin bagaimana cara menggunakan, harap cek dengan `help` command",
+					},
+				],
 			});
 
 		// get query
@@ -40,19 +42,25 @@ module.exports = class extends Command {
 		// Jika tidak ada definisi
 		if (notFound.length !== 0)
 			return message.channel.send({
-				embed: {
-					title: "Definisi tidak ditemukan!",
-					description: "Tidak ditemukan definisi dari `" + query + "` Harap masukkan kata yang benar!",
-				},
+				embeds: [
+					{
+						title: "Definisi tidak ditemukan!",
+						description: "Tidak ditemukan definisi dari `" + query + "` Harap masukkan kata yang benar!",
+					},
+				],
 			});
 
 		// embed
 		const embed = new MessageEmbed()
-			.setAuthor(title.replace(/<[^>]*>?/gm, ""), "https://media.discordapp.net/attachments/799595012005822484/821354290237014056/favicon.png", link.replace(/ /g, "%20"))
+			.setAuthor({
+				name: title.replace(/<[^>]*>?/gm, ""),
+				iconURL: "https://media.discordapp.net/attachments/799595012005822484/821354290237014056/favicon.png",
+				url: link.replace(/ /g, "%20"),
+			})
 			.setDescription(`${htmlToText(definitionGet.slice(0, 2048))}`)
 			.addField(`Detail Lebih Lanjut`, `[Klik Disini](${link.replace(/ /g, "%20")})`, false)
-			.setFooter(footer);
+			.setFooter({ text: footer });
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

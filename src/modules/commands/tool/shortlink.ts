@@ -16,23 +16,25 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					color: "#000",
-					description: `Please enter a valid url! Correct link should contain the protocol, Ex: https://youtube.com/`,
-				},
+				embeds: [
+					{
+						color: "#000",
+						description: `Please enter a valid url! Correct link should contain the protocol, Ex: https://youtube.com/`,
+					},
+				],
 			});
 
 		shortUrl.short(args[0], function (err: any, url: string) {
 			if (err) return message.channel.send(`Error: ${err}`);
 
 			let embed = new MessageEmbed()
-				.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
+				.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ format: "jpg", size: 2048 }) })
 				.setColor("RANDOM")
 				.setTitle(`Shortlink Created!`)
 				.addField(`Original Link`, args[0], true)
 				.addField(`Shorten Link`, url, true);
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		});
 	}
 };

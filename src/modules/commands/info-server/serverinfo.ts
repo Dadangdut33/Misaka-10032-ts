@@ -1,4 +1,4 @@
-import { MessageEmbed, Message } from "discord.js";
+import { MessageEmbed, Message, GuildMember, Guild } from "discord.js";
 import moment from "moment-timezone";
 import prettyMilliseconds from "pretty-ms";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
@@ -14,9 +14,22 @@ module.exports = class extends Command {
 		});
 	}
 
+	OnlineUsers(guild: Guild) {
+		let totalMemberInGuild = guild.memberCount,
+			offline = guild.members.cache.filter((m) => !m.presence).size;
+
+		return totalMemberInGuild - offline;
+	}
+
+	getEmoji(guild: Guild) {
+		return guild.emojis.cache.map((emojis) => {
+			return emojis;
+		});
+	}
+
 	async run(message: Message, args: string[]) {
 		const guild = message.guild!;
-		let emoji = getEmoji(); // Map the emojis
+		let emoji = this.getEmoji(guild); // Map the emojis
 
 		let nonAnimated = [];
 		let Animated = [];
@@ -40,21 +53,21 @@ module.exports = class extends Command {
 
 		let embed = new MessageEmbed()
 			.setThumbnail(guildIcon)
-			.setAuthor(guild.name, guildIcon, `https://discord.com/channels/${guild.id}`)
+			.setAuthor({ name: guild.name, iconURL: guildIcon, url: `https://discord.com/channels/${guild.id}` })
 			.setTitle(`Server Information`)
 			.setDescription(`[Get Server Icon](${guildIcon})`)
 			.addField("Server ID", guild.id, true);
 
 		// ppw invite link
-		if (guild.id === "640790707082231834") embed.addField("Permanent Invite Link", process.env.Server_invite, true);
+		if (guild.id === "640790707082231834") embed.addField("Permanent Invite Link", process.env.Server_invite!, true);
 
 		embed
-			.addField("Owner", "<@" + guild.ownerID + ">", false)
+			.addField("Owner", "<@" + guild.ownerId + ">", false)
 			.addField("Server Name", guild.name, true)
-			.addField("Region", guild.region, true)
-			.addField("Members/Online", `${guild.memberCount}/${OnlineUsers()}`, true)
-			.addField("Default Notification", guild.defaultMessageNotifications, true)
-			.addField("AFK Timeout", guild.afkTimeout, true)
+			.addField("Region", `Deprecated`, true)
+			.addField("Members/Online", `${guild.memberCount}/${this.OnlineUsers(guild)}`, true)
+			.addField("Default Notification", guild.defaultMessageNotifications.toString(), true)
+			.addField("AFK Timeout", guild.afkTimeout.toString(), true)
 			.addField("Nitro Lvl/Supporter", `${guild.premiumTier}/${guild.premiumSubscriptionCount}`, true)
 			.addField("Emojis (Max shown 50)", nonAnimated.length > 0 ? nonAnimated.slice(0, 25).join(" ") : `-`, false);
 
@@ -71,22 +84,9 @@ module.exports = class extends Command {
 			.addField("Created On", `${moment(guild.createdAt).tz("Asia/Jakarta").format("dddd DD MMMM YYYY HH:mm:ss")} GMT+0700 (Western Indonesia Time)`, false)
 			.addField("You Joined At", `${moment(message.member!.joinedAt).tz("Asia/Jakarta").format("dddd DD MMMM YYYY HH:mm:ss")} GMT+0700 (Western Indonesia Time)`, false)
 			.setColor("RANDOM")
-			.setFooter(`Requested by ${message.author.username}`, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
+			.setFooter({ text: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "jpg", size: 2048 }) })
 			.setTimestamp();
 
-		message.channel.send(embed);
-
-		function OnlineUsers() {
-			let users = guild.members.cache.filter((m) => m.user.presence.status === "online").size;
-			users += guild.members.cache.filter((m) => m.user.presence.status === "idle").size;
-			users += guild.members.cache.filter((m) => m.user.presence.status === "dnd").size;
-			return users;
-		}
-
-		function getEmoji() {
-			return guild.emojis.cache.map((emojis) => {
-				return emojis;
-			});
-		}
+		return message.channel.send({ embeds: [embed] });
 	}
 };

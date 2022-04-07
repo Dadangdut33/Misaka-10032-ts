@@ -12,10 +12,9 @@ export async function promptMessage(message: Message, author: User, time: number
 	const filter = (reaction: any, user: User) => validReactions.includes(reaction.emoji.name) && user.id === author.id;
 
 	// And ofcourse, await the reactions
-	return message.awaitReactions(filter, { max: 1, time: time }).then((collected) => collected.first() && collected.first()!.emoji.name);
+	return message.awaitReactions({ filter, max: 1, time: time }).then((collected) => collected.first() && collected.first()!.emoji.name);
 }
 
-// Paginator scrapped from https://github.com/saanuregh/discord.js-pagination. Modified by me personally
 export async function paginationEmbed(msg: Message, pages: MessageEmbed[], emojiList = ["⏪", "⏩", "❌"], timeout = 300000, customFooter = false) {
 	try {
 		// Try
@@ -27,15 +26,17 @@ export async function paginationEmbed(msg: Message, pages: MessageEmbed[], emoji
 			curPage: Message;
 
 		if (!customFooter) {
-			curPage = await msg.channel.send(pages[page].setFooter(`Page ${page + 1} / ${pages.length}`));
+			curPage = await msg.channel.send({ embeds: [pages[page].setFooter({ text: `Page ${page + 1} / ${pages.length}` })] });
 		} else {
-			curPage = await msg.channel.send(pages[page]);
+			curPage = await msg.channel.send({ embeds: [pages[page]] });
 		}
 
 		for (const emoji of emojiList) await curPage.react(emoji);
-		const reactionCollector = curPage.createReactionCollector((reaction, user) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id === msg.author.id, {
-			time: timeout,
-		});
+
+		const filter = (reaction: any, user: User) => emojiList.includes(reaction.emoji.name) && !user.bot && user.id === msg.author.id;
+		const reactionCollector = curPage.createReactionCollector({ filter, time: timeout });
+
+		// the collector event
 		reactionCollector.on("collect", (reaction) => {
 			reaction.users.remove(msg.author);
 			switch (reaction.emoji.name) {
@@ -49,16 +50,16 @@ export async function paginationEmbed(msg: Message, pages: MessageEmbed[], emoji
 					curPage.reactions.removeAll(); // Remove Reaction
 
 					pages[page] // Edit Current page make all empty
-						.setAuthor(``, ``, ``) // Author, icon, links
+						.setAuthor({ name: ``, iconURL: ``, url: `` }) // Author, icon, links
 						.setTitle(`Embed Viewing Closed by Message Author`) // Title
 						.setDescription(`❌ ${msg.author} Closed the embed`) // Desc
 						.setURL(``) // Title URL
 						.setImage(``) // Image
 						.setTimestamp(undefined) // Timestamp
-						.setFooter(``, ``) // Footer, icon
+						.setFooter({ text: ``, iconURL: `` }) // Footer, icon
 						.setThumbnail(``).fields = []; // Thumbnail // Field
 
-					curPage.edit(pages[page]); // Edit it
+					curPage.edit({ embeds: [pages[page]] }); // Edit it
 
 					deleted = true;
 
@@ -66,8 +67,8 @@ export async function paginationEmbed(msg: Message, pages: MessageEmbed[], emoji
 				default:
 					break;
 			}
-			if (!customFooter) curPage.edit(pages[page].setFooter(`Page ${page + 1} / ${pages.length}`));
-			else curPage.edit(pages[page]);
+			if (!customFooter) curPage.edit({ embeds: [pages[page].setFooter({ text: `Page ${page + 1} / ${pages.length}` })] });
+			else curPage.edit({ embeds: [pages[page]] });
 		});
 		reactionCollector.on("end", () => {
 			if (!customFooter) {
@@ -77,9 +78,9 @@ export async function paginationEmbed(msg: Message, pages: MessageEmbed[], emoji
 						// If it's not closed by author
 						curPage.reactions.removeAll();
 
-						pages[page].setFooter(`Page ${page + 1} / ${pages.length} | Pages switching removed due to timeout`);
+						pages[page].setFooter({ text: `Page ${page + 1} / ${pages.length} | Pages switching removed due to timeout` });
 
-						curPage.edit(pages[page]);
+						curPage.edit({ embeds: [pages[page]] });
 					}
 				}
 			} else {
@@ -89,17 +90,17 @@ export async function paginationEmbed(msg: Message, pages: MessageEmbed[], emoji
 			}
 		});
 		return curPage;
-	} catch (e) {
+	} catch (e: any) {
 		console.log(e);
 		// Catch error
 		if (e instanceof DiscordAPIError) {
-			let embed = new MessageEmbed().setTitle("Error").setDescription(`Data is too long to be returned as embed!`).addField(`Details`, e).setColor("#000");
+			let embed = new MessageEmbed().setTitle("Error").setDescription(`Data is too long to be returned as embed!`).addField(`Details`, e.toString()).setColor("#000");
 
-			msg.channel.send(embed);
+			msg.channel.send({ embeds: [embed] });
 		} else {
-			let embed = new MessageEmbed().setTitle("Error").setDescription(e).setColor("#000");
+			let embed = new MessageEmbed().setTitle("Error").setDescription(e.toString()).setColor("#000");
 
-			msg.channel.send(embed);
+			msg.channel.send({ embeds: [embed] });
 		}
 	}
 }

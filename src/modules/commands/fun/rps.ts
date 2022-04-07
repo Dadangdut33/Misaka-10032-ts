@@ -26,10 +26,10 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		const embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setFooter(message.author.username, message.author.displayAvatarURL())
+			.setFooter({ text: message.author.username, iconURL: message.author.displayAvatarURL() })
 			.setDescription("Add a reaction to one of these emojis to play the game!");
 
-		const chooseEmojiMsg = await message.channel.send(embed); // Send embed in await
+		const chooseEmojiMsg = await message.channel.send({ embeds: [embed] }); // Send embed in await
 		const reacted = await promptMessage(chooseEmojiMsg, message.author, 50, chooseArr); // Get emojis reaction
 		const botChoice = chooseArr[Math.floor(Math.random() * chooseArr.length)]; // Get bot reaction
 		const result = getResult(reacted, botChoice); // Get result from emojis and bot
@@ -39,12 +39,12 @@ module.exports = class extends Command {
 			// If no reaction after timeout
 			embed.setTitle(`Game Aborted!`).setDescription(`User did not choose any emojis, so the game is aborted`);
 
-			chooseEmojiMsg.edit(embed);
+			chooseEmojiMsg.edit({ embeds: [embed] });
 			return; // return it so it ends
 		} // If reaction, then pass
 
 		embed.setDescription("").addField(result, `${reacted} vs ${botChoice}`);
 
-		chooseEmojiMsg.edit(embed);
+		chooseEmojiMsg.edit({ embeds: [embed] });
 	}
 };

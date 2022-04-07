@@ -21,11 +21,13 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0] || !args[1] || isNaN(parseInt(args[0])) || isNaN(parseInt(args[1])))
 			return message.channel.send({
-				embed: {
-					description: `Invalid format. For more info please check using the help command. Example should be like this\n\`${this.prefix}rng 0 10\``,
-				},
+				embeds: [
+					{
+						description: `Invalid format. For more info please check using the help command. Example should be like this\n\`${this.prefix}rng 0 10\``,
+					},
+				],
 			});
 
-		return message.channel.send(this.getRandomIntInclusive(parseInt(args[0]), parseInt(args[1])));
+		return message.channel.send(this.getRandomIntInclusive(parseInt(args[0]), parseInt(args[1])) + "");
 	}
 };

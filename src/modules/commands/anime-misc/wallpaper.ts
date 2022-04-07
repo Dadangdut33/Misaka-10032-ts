@@ -19,13 +19,15 @@ module.exports = class extends Command {
 
 		const replaceChars: any = { "/": "%2F", ":": "%3A" };
 		message.channel.send({
-			embed: {
-				color: "RANDOM",
-				title: `Via Nekos.fun`,
-				url: `https://nekos.fun/`,
-				description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.image.replace(/[:/]/g, (m: string) => replaceChars[m])})`,
-				image: { url: data.image },
-			},
+			embeds: [
+				{
+					color: "RANDOM",
+					title: `Via Nekos.fun`,
+					url: `https://nekos.fun/`,
+					description: `[SauceNAO](https://saucenao.com/search.php?db=999&url=${data.image.replace(/[:/]/g, (m: string) => replaceChars[m])})`,
+					image: { url: data.image },
+				},
+			],
 		});
 	}
 };

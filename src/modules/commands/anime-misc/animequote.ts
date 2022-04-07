@@ -18,11 +18,13 @@ module.exports = class extends Command {
 		if (!dataGet.success) return message.channel.send("Error: Fail to get data");
 
 		return message.channel.send({
-			embed: {
-				color: "RANDOM",
-				title: `${dataGet.quote}`,
-				description: `${dataGet.name} - ${dataGet.anime}`,
-			},
+			embeds: [
+				{
+					color: "RANDOM",
+					title: `${dataGet.quote}`,
+					description: `${dataGet.name} - ${dataGet.anime}`,
+				},
+			],
 		});
 	}
 };

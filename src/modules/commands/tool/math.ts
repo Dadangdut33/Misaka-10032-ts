@@ -32,15 +32,15 @@ module.exports = class extends Command {
 			}
 
 			let embed = new MessageEmbed()
-				.setAuthor(message.author.username, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
+				.setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ format: "jpg", size: 2048 }) })
 				.addField(`Problem`, `${problem.join(" ")}`, false)
 				.addField(`Solution`, `${commaNumber(mathRes, ".", ",")}`, false);
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		} catch (e) {
 			let embed = new MessageEmbed().setTitle(`Error`).setDescription(`Invalid arguments provided, for more info please check using the help commands!\n**Error:**\`\`\`${e}\`\`\``);
 
-			return message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		}
 	}
 };

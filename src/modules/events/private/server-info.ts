@@ -26,31 +26,31 @@ module.exports = class extends BotEvent {
 			(channel as TextChannel).messages.fetch(id_embed_serverInfo).then((msg) => {
 				// Then fetch the message
 				let embed = new MessageEmbed()
-					.setAuthor(guild.name, guild.iconURL({ format: "png", size: 2048 })!)
+					.setAuthor({ name: guild.name, iconURL: guild.iconURL({ format: "png", size: 2048 })! })
 					.setTitle("Server Information")
 					.setDescription(
 						`Welcome To ${
 							guild.name
 						}! This embed contains some information of the server. Before you start participating please read the rules first in <#${rulesChannelID}>. If you have any questions feel free to ask the owner (<@${
-							guild.ownerID
+							guild.ownerId
 						}>) or <@&${modRolesID}>. Once again welcome, have fun, & please enjoy your stay ^^\n\n[[Get Server Icon]](${guild.iconURL({ format: "png", size: 2048 })})`
 					)
 					.setThumbnail(guild.iconURL({ format: "png", size: 2048 })!)
-					.addField("Server Owner", `<@${guild.ownerID}>`, true)
+					.addField("Server Owner", `<@${guild.ownerId}>`, true)
 					.addField(`Rules & Guides Channel`, `<#${rulesChannelID}>`, true)
 					.addField("Server Age", `${prettyMilliseconds(age)}`, true)
 					.addField("Server Permanent Link", `${process.env.Server_invite}`, false)
 					.addField("Server Created At", `${moment(guild.createdAt).tz("Asia/Jakarta").format("dddd DD MMMM YYYY HH:mm:ss")} GMT+0700`, false)
-					.addField(`Server Region`, guild.region, true)
-					.addField("Default Notification", guild.defaultMessageNotifications, true)
-					.addField("AFK Timeout", guild.afkTimeout, true)
+					.addField(`Server Region`, `deprecated`, true)
+					.addField("Default Notification", guild.defaultMessageNotifications.toString(), true)
+					.addField("AFK Timeout", guild.afkTimeout.toString(), true)
 					.addField("Nitro/Booster", `LVL. ${guild.premiumTier}/${guild.premiumSubscriptionCount} Booster(s)`, true)
-					.addField("Total Members", guild.memberCount, true)
-					.addField("Total Bots", totalBots, true)
+					.addField("Total Members", guild.memberCount.toString(), true)
+					.addField("Total Bots", totalBots.toString(), true)
 					.addField("Status (User Only)", `**Online :** ${totalBots}\n**Offline :** ${guild.memberCount - totalBots - onlineUsers}`, false)
 					.setColor("RANDOM");
 
-				msg.edit(embed);
+				msg.edit({ embeds: [embed] });
 			});
 		});
 	}
@@ -63,11 +63,11 @@ module.exports = class extends BotEvent {
 				let embed = new MessageEmbed()
 					.setTitle("Showing max 10 of")
 					.setDescription(`**Oldest Member**\n${onlyTenOldest.join("\n")}\n\n**Newest Member**\n${onlyTenNewest.join("\n")}`)
-					.setFooter("Last Updated")
+					.setFooter({ text: "Last Updated" })
 					.setColor("RANDOM")
 					.setTimestamp();
 
-				msg.edit(embed);
+				msg.edit({ embeds: [embed] });
 			});
 		});
 	}
@@ -79,12 +79,12 @@ module.exports = class extends BotEvent {
 				// Then fetch the message
 				let embed = new MessageEmbed()
 					.setTitle("Server Emojis")
-					.setDescription(`**Non Animated**\n${nonAnimated.length > 35 ? nonAnimated.slice(0, 35).join(" ") : nonAnimated.join(" ")}`)
+					.setDescription(`**Non Animated**\n${nonAnimated.length > 50 ? nonAnimated.slice(0, 50).join(" ") : nonAnimated.join(" ")}`)
 					.setColor("RANDOM");
 
-				if (nonAnimated.length > 35) embed.setFooter(`And ${nonAnimated.length - 35} more...`);
+				if (nonAnimated.length > 50) embed.setFooter({ text: `And ${nonAnimated.length - 50} more...` });
 
-				msg.edit(embed);
+				msg.edit({ embeds: [embed] });
 			});
 		});
 	}
@@ -94,11 +94,11 @@ module.exports = class extends BotEvent {
 			// First fetch channel from client
 			(channel as TextChannel).messages.fetch(id_embed_animatedEmojis).then((msg) => {
 				// Then fetch the message
-				let embed = new MessageEmbed().setDescription(`**Animated**\n${Animated.length > 35 ? Animated.slice(0, 35).join(" ") : Animated.join(" ")}`).setColor("RANDOM");
+				let embed = new MessageEmbed().setDescription(`**Animated**\n${Animated.length > 50 ? Animated.slice(0, 50).join(" ") : Animated.join(" ")}`).setColor("RANDOM");
 
-				if (Animated.length > 35) embed.setFooter(`And ${Animated.length - 35} more...`);
+				if (Animated.length > 50) embed.setFooter({ text: `And ${Animated.length - 50} more...` });
 
-				msg.edit(embed);
+				msg.edit({ embeds: [embed] });
 			});
 		});
 	}
@@ -114,7 +114,7 @@ module.exports = class extends BotEvent {
 					.setDescription(`[\[Go To The Top\]](${goTop}) | <#${jumpToGeneral}> | <#${vcGeneral}> | <#${publicStage}>`)
 					.setColor("RANDOM");
 
-				msg.edit(embed);
+				msg.edit({ embeds: [embed] });
 			});
 		});
 	}
@@ -126,10 +126,10 @@ module.exports = class extends BotEvent {
 	}
 
 	OnlineUsers(guild: Guild) {
-		let users = guild.members.cache.filter((m) => m.user.presence.status === "online").size;
-		users += guild.members.cache.filter((m) => m.user.presence.status === "idle").size;
-		users += guild.members.cache.filter((m) => m.user.presence.status === "dnd").size;
-		return users;
+		let totalMemberInGuild = guild.memberCount,
+			offline = guild.members.cache.filter((m) => !m.presence).size;
+
+		return totalMemberInGuild - offline;
 	}
 
 	totalBots(guild: Guild) {

@@ -16,10 +16,10 @@ require("dotenv").config();
 // --------
 // client/bot
 // for v13 intent 32767 is ALL INTENT
-// const client = new Client({ intents: 32767 , disableEveryone: false, partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
+const client = new Client({ intents: 32767, allowedMentions: { parse: ["users", "roles"], repliedUser: true }, partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
 
 // v12
-const client = new Client({ disableMentions: "none", partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
+// const client = new Client({ disableMentions: "none", partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
 
 // load client to handler
 import { prefix, build, repo_link } from "./config.json";

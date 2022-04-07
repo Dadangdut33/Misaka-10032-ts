@@ -65,12 +65,12 @@ module.exports = class extends Command {
 			options[i] = `${i + 1}. ${kitsuSearch[i].titles ? `${kitsuSearch[i].titles.english ? kitsuSearch[i].titles.english : kitsuSearch[i].slug}` : kitsuSearch[i].slug}`;
 
 		const embed = new MessageEmbed()
-			.setColor("F75136")
-			.setAuthor("Kitsu.io", "https://media.discordapp.net/attachments/799595012005822484/813793894163546162/kitsu.png", "https://kitsu.io/")
+			.setColor("#F75136")
+			.setAuthor({ name: "Kitsu.io", iconURL: "https://media.discordapp.net/attachments/799595012005822484/813793894163546162/kitsu.png", url: "https://kitsu.io/" })
 			.setTitle(`Please Choose The Manga That You Are Searching For Below`)
 			.setDescription(options.join("\n"));
 
-		const optionsToChoose = await message.channel.send(embed); // Await the embed
+		const optionsToChoose = await message.channel.send({ embeds: [embed] }); // Await the embed
 		const reacted = await promptMessage(optionsToChoose, message.author, 50, chooseArr); // Await reaction
 		const reaction = this.getResult(reacted); // Get Result from reaction
 		await optionsToChoose.reactions.removeAll();
@@ -78,9 +78,9 @@ module.exports = class extends Command {
 		// If no reaction
 		if (reaction === null) {
 			msg.delete();
-			embed.setAuthor("Search aborted!").setTitle("").setDescription(`Search for **${query}** aborted because of no reaction from ${message.author}!`);
+			embed.setAuthor({ name: "Search aborted!" }).setTitle("").setDescription(`Search for **${query}** aborted because of no reaction from ${message.author}!`);
 
-			optionsToChoose.edit(embed);
+			optionsToChoose.edit({ embeds: [embed] });
 			return;
 		}
 
@@ -99,13 +99,13 @@ module.exports = class extends Command {
 		// Edit the embed
 		embed
 			.setTitle("")
-			.setColor("F75136")
-			.setAuthor(
-				`${manga.titles.english ? manga.titles.english : this.capitalizeTheFirstLetterOfEachWord(query)} | ${manga.mangaType}`,
+			.setColor("#F75136")
+			.setAuthor({
+				name: `${manga.titles.english ? manga.titles.english : this.capitalizeTheFirstLetterOfEachWord(query)} | ${manga.mangaType}`,
 				// @ts-ignore -> .original not shown in the data model
-				manga.posterImage.original,
-				`https://kitsu.io/manga/${manga.id}`
-			)
+				iconURL: manga.posterImage.original,
+				url: `https://kitsu.io/manga/${manga.id}`,
+			})
 			.setDescription(manga.synopsis)
 			// @ts-ignore -> .japanese not shown in the data model
 			.addField(`Japanese Name`, `${manga.titles.romaji ? `${manga.titles.romaji} (${manga.titles.japanese})` : "-"}`, false)
@@ -133,7 +133,7 @@ module.exports = class extends Command {
 				}
 			)
 			.addField(`❯\u2000\Kitsu Link`, `[Click Title or Here](https://kitsu.io/manga/${manga.id})`, true)
-			.setFooter(`Data Fetched From Kitsu.io`)
+			.setFooter({ text: `Data Fetched From Kitsu.io` })
 			.setTimestamp()
 			// @ts-ignore -> .original not shown in the data model
 			.setImage(manga.coverImage ? manga.coverImage.original : "")
@@ -141,6 +141,6 @@ module.exports = class extends Command {
 			.setThumbnail(manga.posterImage.original);
 
 		msg.delete();
-		optionsToChoose.edit(embed);
+		optionsToChoose.edit({ embeds: [embed] });
 	}
 };

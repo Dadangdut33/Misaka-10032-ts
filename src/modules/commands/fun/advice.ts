@@ -24,10 +24,12 @@ module.exports = class extends Command {
 
 		msg.delete();
 		return message.channel.send({
-			embed: {
-				description: data,
-				color: "RANDOM",
-			},
+			embeds: [
+				{
+					description: data,
+					color: "RANDOM",
+				},
+			],
 		});
 	}
 };

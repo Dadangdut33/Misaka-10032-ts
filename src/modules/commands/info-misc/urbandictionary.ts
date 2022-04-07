@@ -1,6 +1,6 @@
 import { MessageEmbed, Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { paginationEmbed } from "../../../utils";
+import { paginationEmbed, toTitleCase } from "../../../utils";
 import axios from "axios";
 import { load } from "cheerio";
 
@@ -12,12 +12,6 @@ module.exports = class extends Command {
 			info: "Find the definition of a word from [Urbandictinoary](https://www.urbandictionary.com/)",
 			usage: `${prefix}command/alias <...>`,
 			guildOnly: false,
-		});
-	}
-
-	toTitleCase(str: string) {
-		return str.replace(/\w\S*/g, function (txt: string) {
-			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 		});
 	}
 
@@ -36,7 +30,7 @@ module.exports = class extends Command {
 			let display: MessageEmbed[] = [];
 			$(".definition").each((i, el) => {
 				const author = $(el).find(".ribbon").text(),
-					title = this.toTitleCase($(el).find(".word").text()),
+					title = toTitleCase($(el).find(".word").text()),
 					meaning = $(el).find(".meaning").text(),
 					contributor = $(el).find(".contributor").children("a").text(),
 					examples = $(el).find(".example").text(),
@@ -44,7 +38,7 @@ module.exports = class extends Command {
 
 				// prettier-ignore
 				display[i] = new MessageEmbed()
-					.setAuthor(author)
+					.setAuthor({name: author})
 					.setColor("RANDOM")
 					.setThumbnail(thumbnail)
 					.setURL(link)
@@ -52,7 +46,7 @@ module.exports = class extends Command {
 					.setTitle(title);
 			});
 
-			paginationEmbed(message, display, [], 300000);
+			paginationEmbed(message, display);
 		} catch (error) {
 			return message.channel.send("No definition found, please enter a correct word!");
 		}

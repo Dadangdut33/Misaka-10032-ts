@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { Client, Message, PermissionString } from "discord.js";
 import { Toggleable } from "./Toggleable";
 
 interface optionsInterface {
@@ -22,18 +22,7 @@ interface optionsInterface {
 	usage: string; // "commmand" and "alias" is a reserved word in usage that will replace with the command name and alias
 	info: string;
 	guildOnly: boolean;
-	permission?:
-		| "ADMINISTRATOR"
-		| "MANAGE_MESSAGES"
-		| "MANAGE_CHANNELS"
-		| "MANAGE_ROLES"
-		| "MANAGE_GUILD"
-		| "KICK_MEMBERS"
-		| "BAN_MEMBERS"
-		| "CREATE_INSTANT_INVITE"
-		| "MANAGE_NICKNAMES"
-		| "MANAGE_WEBHOOKS"
-		| "MANAGE_EMOJIS";
+	permission?: PermissionString;
 }
 
 export class Command extends Toggleable implements optionsInterface {

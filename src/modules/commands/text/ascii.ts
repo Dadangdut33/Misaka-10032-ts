@@ -15,25 +15,31 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					description: `Please enter the text that you want to convert bruh`,
-				},
+				embeds: [
+					{
+						description: `Please enter the text that you want to convert bruh`,
+					},
+				],
 			});
 		let msg = args.join(" ");
 
 		figlet.text(msg, function (err: any, data: string) {
 			if (err)
 				return message.channel.send({
-					embed: {
-						description: `Something went wrong\n\`\`\`${err}\`\`\``,
-					},
+					embeds: [
+						{
+							description: `Something went wrong\n\`\`\`${err}\`\`\``,
+						},
+					],
 				});
 
 			if (!data)
 				return message.channel.send({
-					embed: {
-						description: `Invalid text inputted!`,
-					},
+					embeds: [
+						{
+							description: `Invalid text inputted!`,
+						},
+					],
 				});
 
 			if (data.length > 2000) return message.channel.send("Text too long!");

@@ -22,7 +22,7 @@ module.exports = class extends BotEvent {
 		if (!channel) return console.log("Invalid channel for message spotlight");
 
 		// listener for a channel message
-		client.on("message", async (message) => {
+		client.on("messageCreate", async (message) => {
 			try {
 				if (!channelToWatch.includes(message.channel.id)) return;
 				if (message.author.bot) return;
@@ -62,10 +62,10 @@ module.exports = class extends BotEvent {
 				if (reaction.message.guild!.id !== guild.id) return;
 
 				// make sure user is admin
-				if (!reactor.hasPermission("ADMINISTRATOR")) return;
+				if (!reactor.permissions.has("ADMINISTRATOR")) return;
 
 				// check reaction content
-				if (!reaction.emoji.name.includes("SETUJUBANH")) return;
+				if (!reaction.emoji.name!.includes("SETUJUBANH")) return;
 
 				// -------------------------------------
 				// make sure it's not a dupe or already in the DB
@@ -91,22 +91,22 @@ module.exports = class extends BotEvent {
 
 				const embed = new MessageEmbed()
 					.setColor("YELLOW")
-					.setAuthor(
-						msg.author.username,
-						msg.author.displayAvatarURL({ format: "jpg", size: 2048 }),
-						`https://discord.com/channels/${guild_ID}/${reaction.message.channel.id}/${reaction.message.id}`
-					)
-					.setDescription(msg ? msg : "-")
+					.setAuthor({
+						name: msg.author.username,
+						iconURL: msg.author.displayAvatarURL({ format: "png", size: 2048 }),
+						url: `https://discord.com/channels/${guild_ID}/${reaction.message.channel.id}/${reaction.message.id}`,
+					})
+					.setDescription(msg ? msg.toString() : "-")
 					.setImage(attachment)
 					.addField(`Source`, `[Jump](https://discord.com/channels/${guild_ID}/${reaction.message.channel.id}/${reaction.message.id})`)
-					.setFooter(footerChoice[Math.floor(Math.random() * footerChoice.length)])
+					.setFooter({ text: footerChoice[Math.floor(Math.random() * footerChoice.length)] })
 					.setTimestamp();
 
 				// add attachment link if exist
 				if (attachment !== "") embed.addField(`Attachment`, `[Link](${attachment})`);
 
 				// send the message 🚀
-				channel.send(`<#${reaction.message.channel.id}>`, { embed: embed });
+				channel.send({ content: `<#${reaction.message.channel.id}>`, embeds: [embed] });
 
 				// -------------------------------------
 				// check if attachment is a video
@@ -114,7 +114,7 @@ module.exports = class extends BotEvent {
 				if (attachment.includes(".mp4")) channel.send(attachment);
 
 				// if a video but embedded because it is a link 🚀
-				if (msg.embeds.length > 0) if (msg.embeds[0].type === "video") channel.send(msg.embeds[0].url!);
+				if (msg.embeds.length > 0) if (msg.embeds[0].video) channel.send(msg.embeds[0].video.url!);
 			} catch (e) {
 				console.log(`[${new Date().toLocaleString()}]`);
 				console.log(e);

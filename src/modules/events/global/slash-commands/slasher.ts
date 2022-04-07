@@ -33,7 +33,6 @@ module.exports = class extends BotEvent {
 				});
 		});
 
-		// @ts-ignore
 		client.ws.on("INTERACTION_CREATE", async (interaction) => {
 			const command = interaction.data.name.toLowerCase();
 

@@ -21,6 +21,6 @@ module.exports = class extends Command {
 			.setTitle(`:arrow_down: QR Code Generated`)
 			.setImage(url);
 
-		return message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };

@@ -16,9 +16,11 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		if (!args[0])
 			return message.channel.send({
-				embed: {
-					description: "Please enter the text that you want to" + ` "ｗｉｄｅｎ"`,
-				},
+				embeds: [
+					{
+						description: "Ｐｌｅａｓｅ ｅｎｔｅｒ ｔｈｅ ｔｅｘｔ ｔｈａｔ ｙｏｕ ｗａｎｔ ｔｏ ｗｉｄｅｎ",
+					},
+				],
 			});
 
 		let vaporized = vaporize(args.join(" "));

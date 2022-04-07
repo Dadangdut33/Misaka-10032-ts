@@ -27,7 +27,7 @@ module.exports = class extends Command {
 			.addField("❯\u2000Day To Farm:", "Confidential Information", true)
 			.addField("❯\u2000Chapter That Are Released To Public Can Be Found On:", "https://buku-tatang-sutarman.blogspot.com/")
 			.setImage("https://cdn.discordapp.com/attachments/651015913080094724/794514667992776724/Tatang_Sutarma.gif")
-			.setFooter("Above are images of Tatang Sutarma Sighting In Public")
+			.setFooter({ text: "Above are images of Tatang Sutarma Sighting In Public" })
 			.setTimestamp();
 
 		return embed;
@@ -64,7 +64,7 @@ module.exports = class extends Command {
 	}
 
 	async run(message: Message, args: string[]) {
-		if (!args[0]) return message.channel.send(this.infoInvalid());
+		if (!args[0]) return message.channel.send({ embeds: [this.infoInvalid()] });
 
 		switch (args.join(" ").toLowerCase()) {
 			case "all":
@@ -91,14 +91,14 @@ module.exports = class extends Command {
 			case "misteri":
 			case "harta karun":
 			case "tatang":
-				message.channel.send(this.tatangSutarma(message));
+				message.channel.send({ embeds: [this.tatangSutarma(message)] });
 				break;
 
 			default:
 				const dataGet = await find_DB_Return("g_Char", { book: capitalizeFirstLetter(args.join(" ").toLowerCase()) });
-				if (dataGet.length === 0) return message.channel.send(this.infoInvalid());
+				if (dataGet.length === 0) return message.channel.send({ embeds: [this.infoInvalid()] });
 
-				message.channel.send(this.dataToEmbed(dataGet, message));
+				message.channel.send({ embeds: [this.dataToEmbed(dataGet, message)] });
 				break;
 		}
 	}

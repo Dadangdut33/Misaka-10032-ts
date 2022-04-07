@@ -48,13 +48,13 @@ module.exports = class extends Command {
 
 			const embed = new MessageEmbed()
 				.setTitle("Showing Full Command List!")
-				.setFooter(
-					`Requested by ${message.author.username}`,
-					message.author.displayAvatarURL({
+				.setFooter({
+					text: `Requested by ${message.author.username}`,
+					iconURL: message.author.displayAvatarURL({
 						format: "png",
 						size: 2048,
-					})
-				)
+					}),
+				})
 				.setTimestamp()
 				.setColor("RANDOM")
 				.setThumbnail("https://cdn.discordapp.com/attachments/653206818759376916/795497635812343848/Kirino_Question.png")
@@ -84,7 +84,7 @@ module.exports = class extends Command {
 				}
 			);
 
-			message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		} else {
 			let command = this.commandHandler.commands.get(args[0].toLowerCase());
 
@@ -96,22 +96,21 @@ module.exports = class extends Command {
 			if (!command) {
 				// if not found
 				const embed = new MessageEmbed().setTitle("Something went wrong!").setDescription("Invalid command provided, please try again!").setTimestamp();
-				message.channel.send(embed);
-				return;
+				return message.channel.send({ embeds: [embed] });
 			}
 
 			const embed = new MessageEmbed()
 				.setTitle(`Details For \`${command.name}\` Command!`)
-				.setFooter(`Parameters: <> = required, [] = optional`)
+				.setFooter({ text: `Parameters: <> = required, [] = optional` })
 				.setTimestamp()
 				.setColor("RANDOM")
-				.setAuthor(
-					`Requested by ${message.author.username}`,
-					message.author.displayAvatarURL({
+				.setAuthor({
+					name: `Requested by ${message.author.username}`,
+					iconURL: message.author.displayAvatarURL({
 						format: "png",
 						size: 2048,
-					})
-				)
+					}),
+				})
 				.setThumbnail("https://cdn.discordapp.com/attachments/653206818759376916/740451618344009800/unknown.png")
 				.addField(`Command Name`, `${command.name}`, true)
 				.addField(`Aliases`, `${command.aliases.length > 0 ? command.aliases.join(", ") : "-"}`, true)
@@ -122,7 +121,7 @@ module.exports = class extends Command {
 				.addField(`Command's Source Code`, `[Click Here](https://github.com/Dadangdut33/Misaka-10032/blob/main/modules/commands/${command.categories}/${command.name}.ts)`, true)
 				.addField(`Bot's Repository`, `[GitHub](${this.repo_link})`, true);
 
-			message.channel.send(embed);
+			return message.channel.send({ embeds: [embed] });
 		}
 	}
 };

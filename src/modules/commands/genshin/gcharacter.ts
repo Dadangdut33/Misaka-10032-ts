@@ -25,14 +25,14 @@ module.exports = class extends Command {
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
 			.setTitle(":arrow_down: Materials and mora needed for lvl up")
-			.setImage("https://cdn.discordapp.com/attachments/799595012005822484/799595215521316924/EriB3vTVkAYs0HD.jpg");
+			.setImage("https://cdn.discordapp.com/attachments/799595012005822484/799595215521316924/EriB3vTVkAYs0HD.png");
 		return embed;
 	}
 
 	embedCharacter(data: any) {
 		let embed = new MessageEmbed()
 			.setColor(data.color)
-			.setAuthor(`${data.name[0]} ${data.stars}`, data.pic_Small)
+			.setAuthor({ name: `${data.name[0]} ${data.stars}`, iconURL: data.pic_Small })
 			.setDescription(`**Data are based on game v${Genshin_Ver}**\n${data.name[0]} ${data.description}`)
 			.addField("❯\u2000Talent Leveling Material:", data.fields.talent, true)
 			.addField("❯\u2000Character Ascension Material:", data.fields.charAsc, true)
@@ -57,7 +57,7 @@ module.exports = class extends Command {
 			.setColor("RANDOM")
 			.setTitle(":arrow_down: Materials and Mora Needed For Leveling")
 			.setDescription(`For full character list type list in command\`${this.prefix}${this.name} list\``)
-			.setImage("https://cdn.discordapp.com/attachments/799595012005822484/799595215521316924/EriB3vTVkAYs0HD.jpg");
+			.setImage("https://cdn.discordapp.com/attachments/799595012005822484/799595215521316924/EriB3vTVkAYs0HD.png");
 		return embed;
 	}
 
@@ -73,7 +73,7 @@ module.exports = class extends Command {
 
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
-			.setAuthor(`Requested by ${message.author.username}`, `${message.author.displayAvatarURL()}`)
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setTitle(`Showing Full Genshin Impact Character List`)
 			.addField(`❯\u2000\Upcoming Character`, "- Ayaka [Cryo]\n")
 			.setTimestamp();
@@ -131,16 +131,16 @@ module.exports = class extends Command {
 
 		switch (args.join(" ").toLowerCase()) {
 			case "list":
-				message.channel.send(await this.listChar(message));
+				message.channel.send({ embeds: [await this.listChar(message)] });
 				break;
 
 			case "lvlup" || "lvl":
-				message.channel.send(this.lvlUp());
+				message.channel.send({ embeds: [this.lvlUp()] });
 				break;
 
 			default:
 				const docs = await find_DB_Return("g_Char", { name: capitalizeFirstLetter(args.join(" ").toLowerCase()) });
-				if (docs.length === 0) return message.channel.send(this.notFound());
+				if (docs.length === 0) return message.channel.send({ embeds: [this.notFound()] });
 
 				pages.push(this.embedCharacter(docs[0]));
 				pages.push(this.embedCard(docs[0]));

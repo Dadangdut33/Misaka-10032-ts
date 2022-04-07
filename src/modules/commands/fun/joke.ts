@@ -26,12 +26,14 @@ module.exports = class extends Command {
 
 		msg.delete();
 		return message.channel.send({
-			embed: {
-				color: "RANDOM",
-				title: data.title,
-				url: data.url,
-				description: data.body,
-			},
+			embeds: [
+				{
+					color: "RANDOM",
+					title: data.title,
+					url: data.url,
+					description: data.body,
+				},
+			],
 		});
 	}
 };

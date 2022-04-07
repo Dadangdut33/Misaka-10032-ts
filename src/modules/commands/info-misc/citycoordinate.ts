@@ -29,17 +29,19 @@ module.exports = class extends Command {
 		let result = cities.filter((city: any) => city.name.match(this.capitalizeTheFirstLetterOfEachWord(search)));
 		if (result[0] === undefined)
 			return message.channel.send({
-				embed: {
-					color: 0x00ff00,
-					description: "Can't find the city, maybe you type it wrong?",
-				},
+				embeds: [
+					{
+						color: 0x00ff00,
+						description: "Can't find the city, maybe you type it wrong?",
+					},
+				],
 			});
 
 		let location = result[0].loc.coordinates, //Location
 			timezones = ct.getTimezonesForCountry(result[0].country); //Timezone
 
 		let embed = new MessageEmbed()
-			.setAuthor(`Requested by ${message.author.username}`, message.author.displayAvatarURL({ format: "jpg", size: 2048 }))
+			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "jpg", size: 2048 }) })
 			.setTitle(`${result[0].name} [${result[0].country}]\n**Population:** ${result[0].population}\n**Coordinates**: \`${location[1]}, ${location[0]}\``)
 			.addField(`City ID`, result[0].cityId, true)
 			.addField(`Feature Code`, result[0].featureCode, true)
@@ -58,6 +60,6 @@ module.exports = class extends Command {
 			embed.addField(i === 0 ? `Timezones in country` : `Cont.`, toAdd.join("\n"), true);
 		}
 
-		message.channel.send(embed);
+		return message.channel.send({ embeds: [embed] });
 	}
 };
