@@ -9,6 +9,7 @@ module.exports = class extends Command {
 			info: "Batch delete tagged user's message [Limit 100] and only limited to message up to [14 days], only usable by admin and mods",
 			usage: `\`${prefix}command/alias <user> <amount>\``,
 			guildOnly: true,
+			permission: "MANAGE_MESSAGES",
 		});
 	}
 
