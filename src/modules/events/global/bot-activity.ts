@@ -230,10 +230,6 @@ export const activity: activityInterface[] = [
 	},
 	{
 		type: "PLAYING",
-		desc: `You can download anime from this bot. Cool huh? I guess...`,
-	},
-	{
-		type: "PLAYING",
 		desc: `Try ${prefix}neko`,
 	},
 	{

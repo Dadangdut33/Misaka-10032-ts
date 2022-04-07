@@ -1,6 +1,6 @@
 # Misaka-10032
 
-A Personal discord bot i made. I use it for my private discord server. **Rewrite in typescript (Still in proggress)**. I rewrite it to learn more about typescript.
+A Personal discord bot that I code and use for my private discord server. Now uses discord.js v13 and typescript.
 
 <details open>
   <summary><b>Preview</b></summary>
@@ -10,17 +10,29 @@ A Personal discord bot i made. I use it for my private discord server. **Rewrite
 </details>
 
 ---
+# 📌 Getting Started
 
-## Some info
+First clone the repo and install all the packages by doing `npm install` or `npm ci` Then run the bot by doing `npm start`. 
 
-The bot is currently still in proggress of rewrite in typescript and still using discord.js v12. After rewrite in typescript is done, i will try to use discord.js v13.
+Alternatively, you can build/compile the bot to js by doing `npm run build`. You can also start the builded version by doing `npm run start-build`. Or you can build and run the file directly by running `npm run build-run`. 
 
-## Getting Started
 
-First clone the repo and install all the packages by doing `npm install` Then run the bot by doing `npm start`. \
-Alternatively, you can build/compile the bot to js by doing `npm run build`. You can also start the builded version by doing `npm run start-build`. Or you can build and run the file directly by running `npm run build-run`. \
-**More info later.**
+## 🔑 Project ENV
 
-## Questions?
+All tokens needed **must** be stored and contained in .env file, there is an example that contains all needed token in [here](.env.example).
+
+## 🔏 Certain server events
+
+[This folder](src/modules/events/private/) contains events that only run on certain server. You can modify it for your own personal use if you want. You can also disable it by deleting the file or just uncomment `this.disable()`. 
+
+## ⚙ config.json
+
+Set bot prefix and some other info here. You can ignore the [private_Events_Info field](src/config.json) in config.json, it contains ids of channel and server for the private events.
+
+# ❓ Questions?
 
 Feel free to ask me in discussions if you have any questions
+
+# 🚀 Want to contribute?
+
+You can open an issue or pull request. I will be glad to help.
