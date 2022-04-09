@@ -16,13 +16,12 @@ module.exports = class extends Command {
 		let data: string = await new RandomApi().getAnimeImgURLV2("tickle");
 		// check if there is http or not
 		if (!data.includes("http")) return message.channel.send(data ? data : "Something went wrong");
-		message.delete();
 
 		let embed = new MessageEmbed()
 			.setColor("RANDOM")
 			.setDescription(`${message.author.username} tickles ${args.join(" ")}`)
 			.setImage(data);
 
-		return message.channel.send({ embeds: [embed] });
+		return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
 	}
 };

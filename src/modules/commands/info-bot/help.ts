@@ -118,7 +118,7 @@ module.exports = class extends Command {
 				.addField(`Guild Only`, `${command.guildOnly}`, false)
 				.addField(`Description`, `${command.info}`)
 				.addField(`Usage`, `${command.usage}`)
-				.addField(`Command's Source Code`, `[Click Here](https://github.com/Dadangdut33/Misaka-10032/blob/main/modules/commands/${command.categories}/${command.name}.ts)`, true)
+				.addField(`Command's Source Code`, `[Click Here](https://github.com/Dadangdut33/Misaka-10032-ts/blob/main/modules/commands/${command.categories}/${command.name}.ts)`, true)
 				.addField(`Bot's Repository`, `[GitHub](${this.repo_link})`, true);
 
 			return message.channel.send({ embeds: [embed] });
