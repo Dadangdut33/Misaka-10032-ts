@@ -43,21 +43,23 @@ module.exports = class extends Command {
 		let embed = new MessageEmbed()
 			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "jpg", size: 2048 }) })
 			.setTitle(`${result[0].name} [${result[0].country}]\n**Population:** ${result[0].population}\n**Coordinates**: \`${location[1]}, ${location[0]}\``)
-			.addField(`City ID`, result[0].cityId, true)
-			.addField(`Feature Code`, result[0].featureCode, true)
-			.addField(`Admin Code`, result[0].adminCode, true)
+			.addField(`City ID`, result[0].cityId.toString(), true)
+			.addField(`Feature Code`, result[0].featureCode.toString(), true)
+			.addField(`Admin Code`, result[0].adminCode.toString(), true)
 			.setTimestamp();
 
 		// timezone, slice to 20 per field
 		const loopAmount = Math.ceil(timezones.length / 20); // get loop amount
 
-		for (let i = 0; i < loopAmount; i++) {
-			let sliced = timezones.slice(i * 20, i * 20 + 20);
-			const toAdd = [];
-			for (let j = 0; j < sliced.length; j++) {
-				toAdd.push(`${sliced[j].name} [${sliced[j].utcOffsetStr}]`);
+		if (loopAmount > 0) {
+			for (let i = 0; i < loopAmount; i++) {
+				let sliced = timezones.slice(i * 20, i * 20 + 20);
+				const toAdd = [];
+				for (let j = 0; j < sliced.length; j++) {
+					toAdd.push(`${sliced[j].name} [${sliced[j].utcOffsetStr}]`);
+				}
+				embed.addField(i === 0 ? `Timezones in country` : `Cont.`, toAdd.join("\n"), true);
 			}
-			embed.addField(i === 0 ? `Timezones in country` : `Cont.`, toAdd.join("\n"), true);
 		}
 
 		return message.channel.send({ embeds: [embed] });
