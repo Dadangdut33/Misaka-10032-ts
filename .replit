@@ -1,2 +1,2 @@
 language = "typescript"
-run = "npm start"
+run = "npm run build-run"
