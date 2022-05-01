@@ -2,9 +2,9 @@ import { Message, MessageEmbed } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { promptMessage } from "../../../utils";
 const chooseArr = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
-import { MangaSearchModel } from "mal-scraper";
+import { MangaSearchModel, search } from "mal-scraper";
 const malScraper = require("mal-scraper");
-const malSearcher = malScraper.search;
+const malSearcher: typeof search = malScraper.search;
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -43,7 +43,7 @@ module.exports = class extends Command {
 		}
 		const query = args.join(" ").trim();
 		const msg = await message.channel.send(`Searching for \`${query}\`...`);
-		const data = (await malSearcher.search("manga", { maxResults: 5, query: query })) as MangaSearchModel[];
+		const data = (await malSearcher.search("manga", { maxResults: 5, term: query })) as MangaSearchModel[];
 
 		msg.edit(`**Manga Found!**`);
 
