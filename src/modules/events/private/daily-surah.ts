@@ -9,7 +9,7 @@ const cron = require("cron");
 module.exports = class extends BotEvent {
 	constructor() {
 		super("ready");
-		// this.disable();
+		this.disable();
 	}
 
 	async run(client: Client) {
