@@ -1,5 +1,6 @@
 export { Handler, handlerLoadOptionsInterface } from "./Handler";
 export { Feature } from "./Feature";
-export { Command } from "./Command";
+export { Command, musicSettingsInterface } from "./Command";
 export { BotEvent } from "./BotEvent";
 export { Utils } from "./FileUtils";
+export { StaticState } from "./StaticState";

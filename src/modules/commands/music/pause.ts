@@ -4,9 +4,9 @@ import { getVoiceConnection } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("stop", {
+		super("pause", {
 			categories: "music",
-			info: "Stop current radio",
+			info: "Disconnect from voice channel and stop music",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
@@ -25,12 +25,16 @@ module.exports = class extends Command {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
-		// stop current music
-		if (music.player.state.status === "playing" || music.player.state.status === "paused") {
-			music.player.stop();
-			message.channel.send({ content: `⏹ **Stopped.** currently played radio is stopped` });
+		// check playing status
+		if (music.player.state.status === "playing") {
+			// pause player
+			music.player.pause();
+
+			return message.reply({ content: `⏸ **Paused**`, allowedMentions: { repliedUser: false } });
+		} else if (music.player.state.status === "paused" || music.player.state.status === "autopaused") {
+			return message.reply({ content: `⛔ **Already paused!**`, allowedMentions: { repliedUser: false } });
 		} else {
-			message.channel.send({ content: `⛔ **No radio is playing!**` });
+			return message.reply({ content: `⛔ **Not playing anything!**`, allowedMentions: { repliedUser: false } });
 		}
 	}
 };

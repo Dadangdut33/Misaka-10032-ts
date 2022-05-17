@@ -1,5 +1,7 @@
 import { Client, Message, PermissionString } from "discord.js";
+import { AudioPlayer, AudioResource } from "@discordjs/voice";
 import { Toggleable } from "./Toggleable";
+import { StaticState } from "./StaticState";
 
 interface optionsInterface {
 	aliases?: string[];
@@ -23,6 +25,17 @@ interface optionsInterface {
 	info: string;
 	guildOnly: boolean;
 	permission?: PermissionString;
+}
+
+export interface musicSettingsInterface {
+	player: AudioPlayer;
+	currentAudio: AudioResource;
+}
+
+interface extraArgsInterface {
+	client: Client;
+	music: musicSettingsInterface;
+	staticState: StaticState;
 }
 
 export class Command extends Toggleable implements optionsInterface {
@@ -71,7 +84,7 @@ export class Command extends Toggleable implements optionsInterface {
 	/**
 	 * @description Method that runs when the command is executed
 	 */
-	async run(message: Message, args: string[], client: Client): Promise<any> {
+	async run(message: Message, args: string[], extraArgs: extraArgsInterface): Promise<any> {
 		throw new Error(`Command '${this.name}' is missing run method`);
 	}
 }

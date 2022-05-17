@@ -1,10 +1,9 @@
 import { Message, VoiceBasedChannel, Guild } from "discord.js";
-import { Command, handlerLoadOptionsInterface } from "../../../handler";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioPlayer, createAudioResource, AudioPlayer } from "@discordjs/voice";
 import ytdl from "ytdl-core";
 
 module.exports = class extends Command {
-	player: AudioPlayer;
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("radio", {
 			categories: "music",
@@ -12,7 +11,6 @@ module.exports = class extends Command {
 			usage: `\`${prefix}command [valid YT Link/lofi/animelofi/piano/phonk]\``,
 			guildOnly: true,
 		});
-		this.player = createAudioPlayer();
 	}
 
 	joinVcChannel(message: Message, vc: VoiceBasedChannel, guild: Guild) {
@@ -66,10 +64,11 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[]) {
+	async run(message: Message, args: string[], { music, staticState }: { music: musicSettingsInterface; staticState: StaticState }) {
 		// check if args is empty
 		if (!args[0]) return message.reply({ content: "⛔ **You must provide a valid Youtube link! or choose a valid predefined radio!**", allowedMentions: { repliedUser: false } });
 
+		const { player } = music;
 		const radioDict: any = {
 			lofi: "https://youtu.be/5qap5aO4i9A",
 			animelofi: "https://youtu.be/WDXPJWIgX-o",
@@ -101,34 +100,21 @@ module.exports = class extends Command {
 		// if bot not in vc join vc
 		if (!getVoiceConnection(guild.id)) voiceConnection = this.joinVcChannel(message, vc, guild); // join vc
 
-		const mReply = await message.reply({ content: `🎶 **Playing** \`${link}\``, allowedMentions: { repliedUser: false } });
+		const mReply = await message.reply({ content: `🎶 **Loading** \`${link}\``, allowedMentions: { repliedUser: false } });
 		try {
 			const videoInfo = await ytdl.getInfo(link);
 			mReply.edit({ content: `🎶 **Loading** \`${videoInfo.videoDetails.title}\`` });
-			this.sendVideoInfo(message, videoInfo);
 
 			// connect
 			const resource = this.getVideoResource(link);
-			voiceConnection!.subscribe(this.player);
-			this.player.play(resource);
+			voiceConnection!.subscribe(player);
+			player.play(resource);
+			staticState.setCurrentAudio(resource);
+			staticState.setAudioLink(link);
 
+			// send info
+			this.sendVideoInfo(message, videoInfo);
 			mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\`` });
-
-			this.player.on("stateChange", () => {
-				console.log(this.player.state.status);
-				// if stopped, repeat
-				if (this.player.state.status === "idle") {
-					this.sendVideoInfo(message, videoInfo);
-					this.player.play(this.getVideoResource(link));
-				}
-
-				if (this.player.state.status === "autopaused") {
-					this.player.stop();
-
-					// tels user that song is done
-					message.channel.send({ content: `⏹ **Stopped.** Music done playing` });
-				}
-			});
 		} catch (error) {
 			mReply.edit({ content: `⛔ **An error occured!**\n${error}`, allowedMentions: { repliedUser: false } });
 		}

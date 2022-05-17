@@ -1,18 +1,19 @@
 import { Message } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { getVoiceConnection } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("stop", {
+		super("leave", {
+			aliases: ["disconnect"],
 			categories: "music",
-			info: "Stop current radio",
+			info: "Disconnect from voice channel",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
 	}
 
-	async run(message: Message, args: string[], { music }: { music: musicSettingsInterface }) {
+	async run(message: Message, args: string[]) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -20,17 +21,15 @@ module.exports = class extends Command {
 			return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
 		}
 
+		const vc = user.voice.channel;
+
 		// check if bot is in vc or not
 		if (!getVoiceConnection(guild.id)) {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
-		// stop current music
-		if (music.player.state.status === "playing" || music.player.state.status === "paused") {
-			music.player.stop();
-			message.channel.send({ content: `⏹ **Stopped.** currently played radio is stopped` });
-		} else {
-			message.channel.send({ content: `⛔ **No radio is playing!**` });
-		}
+		// leave vc
+		getVoiceConnection(guild.id)!.destroy();
+		return message.reply({ content: `👌 **Left** \`${vc.name}\``, allowedMentions: { repliedUser: false } });
 	}
 };

@@ -1,8 +1,10 @@
 import { Client, MessageEmbed, Message } from "discord.js";
+import { AudioPlayer, AudioResource, createAudioPlayer, createAudioResource } from "@discordjs/voice";
 import { Feature } from "./Feature";
 import { Command } from "./Command";
 import { BotEvent } from "./BotEvent";
 import { Utils } from "./FileUtils";
+import { StaticState } from "./StaticState";
 import { prefix } from "../config.json";
 
 export interface handlerLoadOptionsInterface {
@@ -24,6 +26,9 @@ export class Handler {
 	commands: Map<string, Command>;
 	aliases: Map<string, Command>;
 	commandEvents: Map<string, BotEvent[]>;
+	staticState: StaticState;
+	// music
+	player: AudioPlayer;
 
 	/**
 	 * @description Create a new handler instance
@@ -66,6 +71,18 @@ export class Handler {
 		 * @type {Map<string, BotEvent[]>}
 		 */
 		this.commandEvents = new Map();
+
+		/**
+		 * Static state of some variables
+		 * @type {StaticState}
+		 */
+		this.staticState = new StaticState();
+
+		/**
+		 * The audio player of the bot
+		 * @type {AudioPlayer}
+		 */
+		this.player = createAudioPlayer();
 	}
 
 	/**
@@ -236,7 +253,7 @@ export class Handler {
 			}
 
 			try {
-				await cmd.run(message, args, this.client); // await because the command that runs is async
+				await cmd.run(message, args, { client: this.client, music: { player: this.player, currentAudio: this.staticState.getCurrentAudio() }, staticState: this.staticState }); // await because the command that runs is async
 			} catch (err) {
 				// log time
 				console.log(`[${new Date().toLocaleString()}]`);
@@ -244,6 +261,19 @@ export class Handler {
 				let embed = new MessageEmbed().setTitle(`Error └[∵┌]└[ ∵ ]┘[┐∵]┘`).setDescription(`**Error Details**\n\`\`\`js\n${err}\`\`\``).setColor("#000000");
 
 				message.reply({ embeds: [embed] });
+			}
+		});
+
+		// register music commands
+		this.player.on("stateChange", () => {
+			console.log(this.player.state.status);
+			// if stopped, repeat
+			if (this.player.state.status === "idle") {
+				try {
+					this.player.play(this.staticState.getCurrentAudio());
+				} catch (error) {
+					this.player.play(this.staticState.getFreshAudioResource());
+				}
 			}
 		});
 	}
