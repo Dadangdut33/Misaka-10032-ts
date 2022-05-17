@@ -1,4 +1,4 @@
-import { MessageEmbed, Message } from "discord.js";
+import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 
