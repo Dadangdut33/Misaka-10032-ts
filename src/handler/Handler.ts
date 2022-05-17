@@ -280,16 +280,16 @@ export class Handler {
 		// To make it 24/7
 		const startMusic = async () => {
 			const dataStart = await find_DB_Return("music_state", { id: "ppw" });
-			const guild = this.client.guilds.cache.get(dataStart.guild_id)!;
+			const guild = this.client.guilds.cache.get(dataStart[0].guild_id)!;
 
 			if (guild) {
 				joinVoiceChannel({
-					channelId: dataStart.vc_id,
-					guildId: dataStart.guild_id,
+					channelId: dataStart[0].vc_id,
+					guildId: dataStart[0].guild_id,
 					adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
 				});
 
-				this.staticState.setAudioLink(dataStart.audio_link);
+				this.staticState.setAudioLink(dataStart[0].audio_link);
 
 				this.player.play(this.staticState.getFreshAudioResource());
 
@@ -300,7 +300,13 @@ export class Handler {
 		};
 
 		setTimeout(() => {
-			startMusic();
-		}, 10000); // 10 seconds after the bot starts
+			try {
+				startMusic();
+			} catch (error) {
+				setTimeout(() => {
+					startMusic();
+				}, 7000);
+			}
+		}, 7000); // 10 seconds after the bot starts
 	}
 }
