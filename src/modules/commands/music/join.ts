@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, VoiceBasedChannel, Guild, Client } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 
@@ -12,7 +12,6 @@ module.exports = class extends Command {
 			guildOnly: true,
 		});
 	}
-
 	async run(message: Message, args: string[]) {
 		const user = message.member!;
 		const guild = message.guild!;

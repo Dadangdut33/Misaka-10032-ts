@@ -4,10 +4,10 @@ import { getVoiceConnection } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("leave", {
-			aliases: ["disconnect"],
+		super("stop", {
+			aliases: ["leave", "disconnect"],
 			categories: "music",
-			info: "Disconnect from voice channel",
+			info: "Disconnect from voice channel and stop music",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
