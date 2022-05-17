@@ -9,7 +9,6 @@ module.exports = class extends Command {
 	repo_link;
 	constructor({ prefix, build, repo_link }: handlerLoadOptionsInterface) {
 		super("changelog", {
-			aliases: [],
 			categories: "changelog",
 			info: "Get bot changelog",
 			usage: `\`${prefix}command/alias\``,

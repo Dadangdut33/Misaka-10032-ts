@@ -4,7 +4,6 @@ import { Command, handlerLoadOptionsInterface } from "../../../handler";
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("ping", {
-			aliases: ["p"],
 			categories: "info-bot",
 			info: "Get the ping of the bot",
 			usage: `\`${prefix}ping or ${prefix}alias\``,

@@ -7,7 +7,6 @@ module.exports = class extends Command {
 	prefix;
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("tafsir", {
-			aliases: [],
 			categories: "muslim",
 			info: `Online tafsir using [Sutanlab API](https://github.com/sutanlab/quran-api).\n\n Tafsir hanya bisa untuk per ayat karena satu tafsir saja panjang sekali dan tidak cukup untuk diletakkan di embed discord.`,
 			usage: `\`${prefix}command/alias <nomor surat> <ayat>\``,

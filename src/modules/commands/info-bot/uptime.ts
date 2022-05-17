@@ -7,7 +7,6 @@ module.exports = class extends Command {
 	build;
 	constructor({ prefix, build }: handlerLoadOptionsInterface) {
 		super("uptime", {
-			aliases: [],
 			categories: "info-bot",
 			info: "Get info of bot's uptime",
 			usage: `\`${prefix}uptime\``,

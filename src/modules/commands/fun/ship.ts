@@ -7,7 +7,6 @@ module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("ship", {
 			categories: "fun",
-			aliases: [],
 			info: "Ship people or characters using [Duncte123 API](https://docs.duncte123.com/)",
 			usage: `\`${prefix}command <charname> x <charname> *Notice the (x)\``,
 			guildOnly: false,
