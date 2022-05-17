@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("unpause", {
 			aliases: ["resume"],
 			categories: "music",
-			info: "Disconnect from voice channel and stop music",
+			info: "Unpause/resume current radio",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});

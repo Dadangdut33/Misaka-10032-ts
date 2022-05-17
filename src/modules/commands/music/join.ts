@@ -23,15 +23,14 @@ module.exports = class extends Command {
 		}
 
 		const vc = user.voice.channel;
-		let connection = getVoiceConnection(guild.id);
 
 		// check if bot is in vc or not
-		if (connection) {
+		if (message.guild?.me?.voice.channel) {
 			return message.reply({ content: "⛔ **Bot is already in a voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
 		// join vc
-		connection = joinVoiceChannel({
+		let connection = joinVoiceChannel({
 			channelId: vc.id,
 			guildId: guild.id,
 			adapterCreator: guild.voiceAdapterCreator! as DiscordGatewayAdapterCreator,

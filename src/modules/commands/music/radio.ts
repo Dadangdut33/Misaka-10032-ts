@@ -2,6 +2,7 @@ import { Message, VoiceBasedChannel, Guild } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioPlayer, createAudioResource, AudioPlayer } from "@discordjs/voice";
 import ytdl from "ytdl-core";
+const commaNumber = require("comma-number");
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -46,7 +47,7 @@ module.exports = class extends Command {
 						},
 						{
 							name: "Views / Likes",
-							value: `${videoInfo.videoDetails.viewCount} / ${videoInfo.videoDetails.likes}`,
+							value: `${parseInt(videoInfo.videoDetails.viewCount).toLocaleString()} / ${videoInfo.videoDetails.likes ? videoInfo.videoDetails.likes.toLocaleString() : 0}`,
 							inline: true,
 						},
 						{
@@ -115,7 +116,7 @@ module.exports = class extends Command {
 
 			// send info
 			this.sendVideoInfo(message, videoInfo);
-			mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\`` });
+			mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 		} catch (error) {
 			mReply.edit({ content: `⛔ **An error occured!**\n${error}`, allowedMentions: { repliedUser: false } });
 		}

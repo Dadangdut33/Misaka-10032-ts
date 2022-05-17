@@ -266,8 +266,7 @@ export class Handler {
 
 		// register music commands
 		this.player.on("stateChange", () => {
-			console.log(this.player.state.status);
-			// if stopped, repeat
+			// if stopped, repeat. Only if it's in playing mode
 			if (this.player.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
 				try {
 					this.player.play(this.staticState.getCurrentAudio());
