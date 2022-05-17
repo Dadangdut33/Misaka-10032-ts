@@ -268,7 +268,7 @@ export class Handler {
 		this.player.on("stateChange", () => {
 			console.log(this.player.state.status);
 			// if stopped, repeat
-			if (this.player.state.status === "idle") {
+			if (this.player.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
 				try {
 					this.player.play(this.staticState.getCurrentAudio());
 				} catch (error) {

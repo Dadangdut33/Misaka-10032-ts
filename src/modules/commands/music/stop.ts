@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
 import { getVoiceConnection } from "@discordjs/voice";
 
 module.exports = class extends Command {
@@ -12,7 +12,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { music }: { music: musicSettingsInterface }) {
+	async run(message: Message, args: string[], { music, staticState }: { music: musicSettingsInterface; staticState: StaticState }) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -27,10 +27,11 @@ module.exports = class extends Command {
 
 		// stop current music
 		if (music.player.state.status === "playing" || music.player.state.status === "paused") {
+			staticState.setLocalStatus("stopped");
 			music.player.stop();
-			message.channel.send({ content: `⏹ **Stopped.** currently played radio is stopped` });
+			return message.reply({ content: `⏹ **Stopped.** currently played radio is now stopped`, allowedMentions: { repliedUser: false } });
 		} else {
-			message.channel.send({ content: `⛔ **No radio is playing!**` });
+			return message.reply({ content: `⛔ **No radio is playing!**`, allowedMentions: { repliedUser: false } });
 		}
 	}
 };

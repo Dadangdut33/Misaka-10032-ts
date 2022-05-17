@@ -1,9 +1,11 @@
 import { AudioResource, createAudioResource } from "@discordjs/voice";
 import ytdl from "ytdl-core";
 
+type localStatus = "playing" | "stopped" | "";
 export class StaticState {
 	currentAudio: AudioResource;
 	audioLink: string;
+	localStatus: localStatus;
 	constructor() {
 		/**
 		 * The current audio resource
@@ -16,6 +18,12 @@ export class StaticState {
 		 * @type {string}
 		 */
 		this.audioLink = "";
+
+		/**
+		 * The local status
+		 * @type {string}
+		 */
+		this.localStatus = "";
 	}
 
 	/**
@@ -61,5 +69,22 @@ export class StaticState {
 		this.setCurrentAudio(newAudioResource);
 
 		return newAudioResource;
+	}
+
+	/**
+	 * @description Set local status
+	 * @param {string} status - The local status
+	 * @returns {void}
+	 */
+	setLocalStatus(status: localStatus): void {
+		this.localStatus = status;
+	}
+
+	/**
+	 * @description Get local status
+	 * @returns {localStatus}
+	 */
+	getLocalStatus(): localStatus {
+		return this.localStatus;
 	}
 }

@@ -5,6 +5,7 @@ import { getVoiceConnection } from "@discordjs/voice";
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("unpause", {
+			aliases: ["resume"],
 			categories: "music",
 			info: "Disconnect from voice channel and stop music",
 			usage: `\`${prefix}command/alias\``,

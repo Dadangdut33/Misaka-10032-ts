@@ -46,6 +46,7 @@ module.exports = class extends Command {
 				player.play(staticState.getFreshAudioResource());
 			}
 
+			staticState.setLocalStatus("playing");
 			player.unpause();
 			return message.reply({ content: `✅ **Joined** \`${vc.name}\` **Continuing current radio**`, allowedMentions: { repliedUser: false } });
 		} else {

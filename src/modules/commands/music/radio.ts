@@ -111,6 +111,7 @@ module.exports = class extends Command {
 			player.play(resource);
 			staticState.setCurrentAudio(resource);
 			staticState.setAudioLink(link);
+			staticState.setLocalStatus("playing");
 
 			// send info
 			this.sendVideoInfo(message, videoInfo);
