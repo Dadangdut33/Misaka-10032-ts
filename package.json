@@ -11,6 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@discordjs/voice": "^0.9.0",
     "adhan": "^4.3.2",
     "all-the-cities": "^3.1.0",
     "animequotes": "^2.0.0",
