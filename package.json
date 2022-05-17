@@ -43,6 +43,7 @@
     "node-url-shortener": "^2.0.1",
     "normalize-strings": "^1.1.1",
     "number-to-words": "^1.2.4",
+    "opusscript": "^0.0.8",
     "owoify-js": "^1.0.7",
     "pluralize": "^8.0.0",
     "pretty-ms": "^7.0.1",
