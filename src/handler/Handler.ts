@@ -1,11 +1,12 @@
 import { Client, MessageEmbed, Message } from "discord.js";
-import { AudioPlayer, AudioResource, createAudioPlayer, createAudioResource } from "@discordjs/voice";
+import { AudioPlayer, createAudioPlayer, DiscordGatewayAdapterCreator, joinVoiceChannel } from "@discordjs/voice";
 import { Feature } from "./Feature";
 import { Command } from "./Command";
 import { BotEvent } from "./BotEvent";
 import { Utils } from "./FileUtils";
 import { StaticState } from "./StaticState";
 import { prefix } from "../config.json";
+import { find_DB_Return } from "../utils";
 
 export interface handlerLoadOptionsInterface {
 	client: Client;
@@ -275,5 +276,31 @@ export class Handler {
 				}
 			}
 		});
+
+		// To make it 24/7
+		const startMusic = async () => {
+			const dataStart = await find_DB_Return("music_state", { id: "ppw" });
+			const guild = this.client.guilds.cache.get(dataStart.guild_id)!;
+
+			if (guild) {
+				joinVoiceChannel({
+					channelId: dataStart.vc_id,
+					guildId: dataStart.guild_id,
+					adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
+				});
+
+				this.staticState.setAudioLink(dataStart.audio_link);
+
+				this.player.play(this.staticState.getFreshAudioResource());
+
+				console.log("Music started automatically | 24/7 Module for PPW");
+			} else {
+				console.log("Music failed to start automatically | PPW not found");
+			}
+		};
+
+		setTimeout(() => {
+			startMusic();
+		}, 10000); // 10 seconds after the bot starts
 	}
 }

@@ -1,8 +1,8 @@
 import { Message, VoiceBasedChannel, Guild } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
-import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioPlayer, createAudioResource, AudioPlayer } from "@discordjs/voice";
+import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioResource } from "@discordjs/voice";
 import ytdl from "ytdl-core";
-const commaNumber = require("comma-number");
+import { edit_DB_One } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -113,6 +113,7 @@ module.exports = class extends Command {
 			staticState.setCurrentAudio(resource);
 			staticState.setAudioLink(link);
 			staticState.setLocalStatus("playing");
+			edit_DB_One("music_state", { id: "ppw" }, { audio_link: link });
 
 			// send info
 			this.sendVideoInfo(message, videoInfo);
