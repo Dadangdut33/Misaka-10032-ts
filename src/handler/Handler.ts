@@ -292,6 +292,7 @@ export class Handler {
 				this.staticState.setAudioLink(dataStart[0].audio_link);
 
 				this.player.play(this.staticState.getFreshAudioResource());
+				this.player.unpause();
 
 				console.log("Music started automatically | 24/7 Module for PPW");
 			} else {
