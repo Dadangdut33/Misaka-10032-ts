@@ -305,10 +305,14 @@ export class Handler {
 			try {
 				startMusic();
 			} catch (error) {
-				setTimeout(() => {
-					startMusic();
-				}, 7000);
+				try {
+					setTimeout(() => {
+						startMusic();
+					}, 10000);
+				} catch (error) {
+					console.log("Fail to try load music module for the second time");
+				}
 			}
-		}, 5000); // 5 seconds after the bot starts
+		}, 10000); // 10 seconds after the bot starts
 	}
 }
