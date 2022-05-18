@@ -277,29 +277,30 @@ export class Handler {
 			}
 		});
 
-		// To make it 24/7
+		// To make it 24/7 - only on ppw
 		const startMusic = async () => {
 			const dataStart = await find_DB_Return("music_state", { id: "ppw" });
 			const guild = this.client.guilds.cache.get(dataStart[0].guild_id)!;
 
 			if (guild) {
-				joinVoiceChannel({
+				const con = joinVoiceChannel({
 					channelId: dataStart[0].vc_id,
 					guildId: dataStart[0].guild_id,
 					adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
 				});
+				con.subscribe(this.player);
 
 				this.staticState.setAudioLink(dataStart[0].audio_link);
+				this.player.play(this.staticState.getFreshAudioResource(dataStart[0].audio_link));
 
-				this.player.play(this.staticState.getFreshAudioResource());
-				this.player.unpause();
-
-				console.log("Music started automatically | 24/7 Module for PPW");
+				this.staticState.setLocalStatus("playing");
+				console.log("Music started automatically | 24/7 Music module for PPW");
 			} else {
 				console.log("Music failed to start automatically | PPW not found");
 			}
 		};
 
+		// try twice
 		setTimeout(() => {
 			try {
 				startMusic();
@@ -308,6 +309,6 @@ export class Handler {
 					startMusic();
 				}, 7000);
 			}
-		}, 7000); // 10 seconds after the bot starts
+		}, 5000); // 5 seconds after the bot starts
 	}
 }

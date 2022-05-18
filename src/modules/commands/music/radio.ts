@@ -113,7 +113,7 @@ module.exports = class extends Command {
 			staticState.setCurrentAudio(resource);
 			staticState.setAudioLink(link);
 			staticState.setLocalStatus("playing");
-			edit_DB_One("music_state", { id: "ppw" }, { audio_link: link, vc_id: vc.id });
+			edit_DB_One("music_state", { guild_id: guild.id }, { audio_link: link, vc_id: vc.id });
 
 			// send info
 			this.sendVideoInfo(message, videoInfo);

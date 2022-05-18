@@ -64,8 +64,8 @@ export class StaticState {
 	 * @description Create new audio resource from link in case it expired
 	 * @returns {AudioResource}
 	 */
-	getFreshAudioResource(): AudioResource {
-		const newAudioResource: AudioResource = createAudioResource(ytdl(this.audioLink), { inlineVolume: true });
+	getFreshAudioResource(link?: string): AudioResource {
+		const newAudioResource: AudioResource = createAudioResource(link ? link : ytdl(this.audioLink), { inlineVolume: true });
 		this.setCurrentAudio(newAudioResource);
 
 		return newAudioResource;
