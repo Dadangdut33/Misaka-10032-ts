@@ -53,7 +53,8 @@
 		"tiny-text": "^1.0.1",
 		"to-zalgo": "^1.0.1",
 		"vaporwave": "^1.0.4",
-		"weather-js": "^2.0.0"
+		"weather-js": "^2.0.0",
+		"ytdl-core": "^4.11.0"
 	},
 	"engines": {
 		"node": ">=16.x"
