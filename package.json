@@ -8,7 +8,9 @@
 		"build-run": "rimraf prod && tsc && node prod/index.js",
 		"start-build": "node prod/index.js",
 		"start-tsnode": "ts-node src/index.ts",
-		"start": "tsc && node prod/index.js"
+		"tsc": "./node_modules/typescript/bin/tsc",
+		"postinstall": "npm run tsc",
+		"start": "node prod/index.js"
 	},
 	"license": "MIT",
 	"dependencies": {
