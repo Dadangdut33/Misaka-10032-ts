@@ -30,14 +30,19 @@ module.exports = class extends Command {
 	}
 
 	getVideoResource(link: string) {
-		return createAudioResource(ytdl(link), { inlineVolume: true });
+		return createAudioResource(
+			ytdl(link, {
+				quality: [128, 127, 120, 96, 95, 94, 93],
+			}),
+			{ inlineVolume: true }
+		);
 	}
 
 	sendVideoInfo(message: Message, videoInfo: ytdl.videoInfo) {
 		message.channel.send({
 			embeds: [
 				{
-					title: "Now Playing",
+					title: `Now Playing ${!videoInfo.videoDetails.isLiveContent ? "🎵 On Loop" : "📺"}`,
 					description: `**[${videoInfo.videoDetails.title}](${videoInfo.videoDetails.video_url})** by [${videoInfo.videoDetails.author.name}](${videoInfo.videoDetails.ownerProfileUrl})`,
 					fields: [
 						{

@@ -29,7 +29,7 @@ export class Handler {
 	commandEvents: Map<string, BotEvent[]>;
 	staticState: StaticState;
 	// music
-	player: AudioPlayer;
+	radioPlayer: AudioPlayer;
 
 	/**
 	 * @description Create a new handler instance
@@ -83,7 +83,7 @@ export class Handler {
 		 * The audio player of the bot
 		 * @type {AudioPlayer}
 		 */
-		this.player = createAudioPlayer();
+		this.radioPlayer = createAudioPlayer();
 	}
 
 	/**
@@ -254,7 +254,7 @@ export class Handler {
 			}
 
 			try {
-				await cmd.run(message, args, { client: this.client, music: { player: this.player, currentAudio: this.staticState.getCurrentAudio() }, staticState: this.staticState }); // await because the command that runs is async
+				await cmd.run(message, args, { client: this.client, music: { player: this.radioPlayer, currentAudio: this.staticState.getCurrentAudio() }, staticState: this.staticState }); // await because the command that runs is async
 			} catch (err) {
 				// log time
 				console.log(`[${new Date().toLocaleString()}]`);
@@ -266,13 +266,14 @@ export class Handler {
 		});
 
 		// register music commands
-		this.player.on("stateChange", () => {
+		this.radioPlayer.on("stateChange", () => {
 			// if stopped, repeat. Only if it's in playing mode
-			if (this.player.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
+			if (this.radioPlayer.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
+				console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, repeating`);
 				try {
-					this.player.play(this.staticState.getCurrentAudio());
+					this.radioPlayer.play(this.staticState.getCurrentAudio());
 				} catch (error) {
-					this.player.play(this.staticState.getFreshAudioResource());
+					this.radioPlayer.play(this.staticState.getFreshAudioResource());
 				}
 			}
 		});
@@ -288,10 +289,10 @@ export class Handler {
 					guildId: dataStart[0].guild_id,
 					adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
 				});
-				con.subscribe(this.player);
+				con.subscribe(this.radioPlayer);
 
 				this.staticState.setAudioLink(dataStart[0].audio_link);
-				this.player.play(this.staticState.getFreshAudioResource(dataStart[0].audio_link));
+				this.radioPlayer.play(this.staticState.getFreshAudioResource(dataStart[0].audio_link));
 
 				this.staticState.setLocalStatus("playing");
 				console.log("Music started automatically | 24/7 Music module for PPW");

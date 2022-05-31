@@ -65,7 +65,12 @@ export class StaticState {
 	 * @returns {AudioResource}
 	 */
 	getFreshAudioResource(link?: string): AudioResource {
-		const newAudioResource: AudioResource = createAudioResource(link ? link : ytdl(this.audioLink), { inlineVolume: true });
+		const newAudioResource: AudioResource = createAudioResource(
+			ytdl(link ? link : this.audioLink, {
+				quality: [128, 127, 120, 96, 95, 94, 93],
+			}),
+			{ inlineVolume: true }
+		);
 		this.setCurrentAudio(newAudioResource);
 
 		return newAudioResource;
