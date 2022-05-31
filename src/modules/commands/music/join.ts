@@ -25,8 +25,8 @@ module.exports = class extends Command {
 		const vc = user.voice.channel;
 
 		// check if bot is in vc or not
-		if (message.guild?.me?.voice.channel) {
-			return message.reply({ content: "⛔ **Bot is already in a voice channel!**", allowedMentions: { repliedUser: false } });
+		if (guild.me?.voice.channel) {
+			return message.reply({ content: "⛔ **Bot is already in a voice channel!** Use `move` command if you want to change it's location", allowedMentions: { repliedUser: false } });
 		}
 
 		// join vc
@@ -42,7 +42,7 @@ module.exports = class extends Command {
 			try {
 				player.play(currentAudio);
 			} catch (error) {
-				player.play(staticState.getFreshAudioResource());
+				player.play(await staticState.getFreshAudioResource());
 			}
 
 			staticState.setLocalStatus("playing");

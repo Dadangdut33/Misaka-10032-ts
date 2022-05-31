@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { getVoiceConnection } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -21,7 +20,7 @@ module.exports = class extends Command {
 		}
 
 		// check if bot is in vc or not
-		if (!getVoiceConnection(guild.id)) {
+		if (!guild.me?.voice.channel) {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 

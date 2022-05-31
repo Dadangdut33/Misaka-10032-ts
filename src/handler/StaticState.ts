@@ -64,10 +64,12 @@ export class StaticState {
 	 * @description Create new audio resource from link in case it expired
 	 * @returns {AudioResource}
 	 */
-	getFreshAudioResource(link?: string): AudioResource {
+	async getFreshAudioResource(link?: string): Promise<AudioResource<unknown>> {
+		const videoInfo = await ytdl.getInfo(link ? link : this.audioLink);
+
 		const newAudioResource: AudioResource = createAudioResource(
 			ytdl(link ? link : this.audioLink, {
-				quality: [128, 127, 120, 96, 95, 94, 93],
+				quality: videoInfo.videoDetails.isLiveContent ? [128, 127, 120, 96, 95, 94, 93] : "highestaudio",
 			}),
 			{ inlineVolume: true }
 		);

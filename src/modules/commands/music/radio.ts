@@ -29,10 +29,10 @@ module.exports = class extends Command {
 		}
 	}
 
-	getVideoResource(link: string) {
+	getVideoResource(link: string, videoInfo: ytdl.videoInfo) {
 		return createAudioResource(
 			ytdl(link, {
-				quality: [128, 127, 120, 96, 95, 94, 93],
+				quality: videoInfo.videoDetails.isLiveContent ? [128, 127, 120, 96, 95, 94, 93] : "highestaudio",
 			}),
 			{ inlineVolume: true }
 		);
@@ -112,7 +112,7 @@ module.exports = class extends Command {
 			mReply.edit({ content: `🎶 **Loading** \`${videoInfo.videoDetails.title}\`` });
 
 			// connect
-			const resource = this.getVideoResource(link);
+			const resource = this.getVideoResource(link, videoInfo);
 			voiceConnection!.subscribe(player);
 			player.play(resource);
 			staticState.setCurrentAudio(resource);

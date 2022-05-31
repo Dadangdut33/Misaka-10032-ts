@@ -266,14 +266,14 @@ export class Handler {
 		});
 
 		// register music commands
-		this.radioPlayer.on("stateChange", () => {
+		this.radioPlayer.on("stateChange", async () => {
 			// if stopped, repeat. Only if it's in playing mode
 			if (this.radioPlayer.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
 				console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, repeating`);
 				try {
 					this.radioPlayer.play(this.staticState.getCurrentAudio());
 				} catch (error) {
-					this.radioPlayer.play(this.staticState.getFreshAudioResource());
+					this.radioPlayer.play(await this.staticState.getFreshAudioResource());
 				}
 			}
 		});
@@ -292,7 +292,7 @@ export class Handler {
 				con.subscribe(this.radioPlayer);
 
 				this.staticState.setAudioLink(dataStart[0].audio_link);
-				this.radioPlayer.play(this.staticState.getFreshAudioResource(dataStart[0].audio_link));
+				this.radioPlayer.play(await this.staticState.getFreshAudioResource(dataStart[0].audio_link));
 
 				this.staticState.setLocalStatus("playing");
 				console.log("Music started automatically | 24/7 Music module for PPW");
