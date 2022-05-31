@@ -25,7 +25,7 @@ module.exports = class extends Command {
 		const vc = user.voice.channel;
 
 		// check if bot is in vc or not
-		if (guild.me?.voice.channel) {
+		if (guild.me?.voice.channel && getVoiceConnection(guild.id)) {
 			return message.reply({ content: "⛔ **Bot is already in a voice channel!** Use `move` command if you want to change it's location", allowedMentions: { repliedUser: false } });
 		}
 

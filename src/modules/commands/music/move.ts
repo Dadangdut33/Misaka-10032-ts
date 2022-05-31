@@ -1,18 +1,16 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { getVoiceConnection } from "@discordjs/voice";
+import { joinVoiceChannel, DiscordGatewayAdapterCreator } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("leave", {
-			aliases: ["disconnect"],
+		super("move", {
 			categories: "music",
-			info: "Disconnect from voice channel",
+			info: "Move to user's connected voice channel",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
 	}
-
 	async run(message: Message, args: string[]) {
 		const user = message.member!;
 		const guild = message.guild!;
@@ -29,10 +27,18 @@ module.exports = class extends Command {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
-		// leave vc
-		if (getVoiceConnection(guild.id)) getVoiceConnection(guild.id)!.destroy();
-		else guild.me?.voice.disconnect();
+		// check if user is in the same vc as bot
+		if (guild.me?.voice.channel.id === vc.id) {
+			return message.reply({ content: "⛔ **You are already in the same voice channel as me!**", allowedMentions: { repliedUser: false } });
+		}
 
-		return message.reply({ content: `👌 **Left** \`${vc.name}\``, allowedMentions: { repliedUser: false } });
+		// join vc
+		joinVoiceChannel({
+			channelId: vc.id,
+			guildId: guild.id,
+			adapterCreator: guild.voiceAdapterCreator! as DiscordGatewayAdapterCreator,
+		});
+
+		return message.reply({ content: `✈ **Moved** to \`${vc.name}\``, allowedMentions: { repliedUser: false } });
 	}
 };
