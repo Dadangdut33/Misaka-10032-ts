@@ -7,7 +7,7 @@
 		"build": "tsc",
 		"build-run": "rimraf prod && tsc && node prod/index.js",
 		"start-build": "node prod/index.js",
-		"start-tsnode": "ts-node src/index.ts",
+		"tsnode": "ts-node src/index.ts",
 		"tsc": "./node_modules/typescript/bin/tsc",
 		"postinstall": "npm run tsc",
 		"start": "node prod/index.js"
