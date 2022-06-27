@@ -67,7 +67,7 @@ module.exports = class extends Command {
 		msgLoading.edit("**Fetching data from SauceNao...**");
 
 		// Fetching the HTML using axios
-		let { data } = await axios.get(link),
+		let { data } = await axios.get(link + `&api_key=${process.env.SAUCENAO_API_KEY}`),
 			$ = load(data), // Using cheerio to load the HTML fetched
 			results = $(".resulttablecontent"), // get all the elements with class "resulttablecontent"
 			limit = results.length;

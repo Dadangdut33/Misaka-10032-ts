@@ -206,7 +206,7 @@ export const activity: activityInterface[] = [
 	},
 	{
 		type: "PLAYING",
-		desc: "Running on replit.com",
+		desc: "Running on heroku",
 	},
 	{
 		type: "PLAYING",
@@ -303,5 +303,13 @@ export const activity: activityInterface[] = [
 	{
 		type: "PLAYING",
 		desc: `Feel free to make a pull request on this bot's repo`,
+	},
+	{
+		type: "PLAYING",
+		desc: `Tired...`,
+	},
+	{
+		type: "PLAYING",
+		desc: `UOOOOOOOOOOGGGGGHHHHH`,
 	},
 ];

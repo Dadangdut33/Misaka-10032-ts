@@ -10,12 +10,14 @@ A Personal discord bot that I code and use for my private discord server. Now us
 </details>
 
 ---
+
 # 📌 Getting Started
 
-First clone the repo and install all the packages by doing `npm install` or `npm ci` Then run the bot by doing `npm start`. 
+First clone the repo and install all the packages by doing `npm install` or `npm ci` Then run the bot by doing `npm run tsnode`.
 
-Alternatively, you can build/compile the bot to js by doing `npm run build`. You can also start the builded version by doing `npm run start-build`. Or you can build and run the file directly by running `npm run build-run`. 
+Alternatively, you can build/compile the bot to js by doing `npm run build`. You can also start the builded version by doing `npm run start-build`. Or you can build and run the file directly by running `npm run build-run`.
 
+This project is hosted on heroku hence why there are `tsc` and `postinstall` commands in the package.json file.
 
 ## 🔑 Project ENV
 
@@ -23,7 +25,7 @@ All tokens needed **must** be stored and contained in .env file, there is an exa
 
 ## 🔏 Certain server events
 
-[This folder](src/modules/events/private/) contains events that only run on certain server. You can modify it for your own personal use if you want. You can also disable it by deleting the file or just uncomment `this.disable()`. 
+[This folder](src/modules/events/private/) contains events that only run on certain server. You can modify it for your own personal use if you want. You can also disable it by deleting the file or just uncomment `this.disable()`.
 
 ## ⚙ config.json
 
