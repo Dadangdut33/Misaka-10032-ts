@@ -15,6 +15,9 @@ module.exports = class extends Command {
 	}
 
 	async run(message: Message, args: string[]) {
+		// check guild, only allow if in 640790707082231834 or 651015913080094721
+		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
+
 		let embed = new MessageEmbed().setDescription("Looking For Lyrics ...").setColor("YELLOW");
 
 		if (!args.length) return message.channel.send("Please Type In The Song Name");

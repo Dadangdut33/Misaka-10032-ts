@@ -1,12 +1,13 @@
 import { Client, MessageEmbed, Message } from "discord.js";
-import { AudioPlayer, createAudioPlayer, DiscordGatewayAdapterCreator, joinVoiceChannel } from "@discordjs/voice";
+import { AudioPlayer, createAudioPlayer, DiscordGatewayAdapterCreator, joinVoiceChannel, createAudioResource, NoSubscriberBehavior } from "@discordjs/voice";
 import { Feature } from "./Feature";
 import { Command } from "./Command";
 import { BotEvent } from "./BotEvent";
 import { Utils } from "./FileUtils";
 import { StaticState } from "./StaticState";
 import { prefix } from "../config.json";
-import { find_DB_Return } from "../utils";
+import { find_DB_Return, edit_DB } from "../utils";
+import play from "play-dl";
 
 export interface handlerLoadOptionsInterface {
 	client: Client;
@@ -83,7 +84,11 @@ export class Handler {
 		 * The audio player of the bot
 		 * @type {AudioPlayer}
 		 */
-		this.radioPlayer = createAudioPlayer();
+		this.radioPlayer = createAudioPlayer({
+			behaviors: {
+				noSubscriber: NoSubscriberBehavior.Play,
+			},
+		});
 	}
 
 	/**
@@ -268,12 +273,37 @@ export class Handler {
 		// register music commands
 		this.radioPlayer.on("stateChange", async () => {
 			// if stopped, repeat. Only if it's in playing mode
+			// if (this.radioPlayer.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
+			// 	console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, repeating`);
+			// 	try {
+			// 		this.radioPlayer.play(this.staticState.getCurrentAudio());
+			// 	} catch {
+			// 		this.radioPlayer.play(await this.staticState.getFreshAudioResource());
+			// 	}
+			// }
+
+			// if stopped continue next song from queue
 			if (this.radioPlayer.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
-				console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, repeating`);
-				try {
-					this.radioPlayer.play(this.staticState.getCurrentAudio());
-				} catch (error) {
-					this.radioPlayer.play(await this.staticState.getFreshAudioResource());
+				console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, continuing next song`);
+				// this.radioPlayer.play(await this.staticState.getFreshAudioResource());
+				// get queue data
+				const queueData = await find_DB_Return("music_state", { gid: "651015913080094721" });
+				if (queueData) {
+					const queue = queueData[0].queue;
+					if (queue.length > 0) {
+						const nextSong = queue.shift();
+						const stream = await play.stream(nextSong.link)!;
+						const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
+
+						this.staticState.setAudioLink(nextSong.link);
+						this.staticState.setCurrentAudio(resource);
+						this.radioPlayer.play(resource);
+
+						// update queue data
+						edit_DB("music_state", { gid: "651015913080094721" }, { $set: { queue: queue } });
+					} else {
+						this.staticState.setLocalStatus("stopped");
+					}
 				}
 			}
 		});

@@ -1,18 +1,22 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
 import { getVoiceConnection } from "@discordjs/voice";
+import { edit_DB_One } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("stop", {
+		super("clear", {
 			categories: "music",
-			info: "Stop current radio",
+			info: "Stop and clear current radio queue",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
 	}
 
 	async run(message: Message, args: string[], { music, staticState }: { music: musicSettingsInterface; staticState: StaticState }) {
+		// check guild, only allow if in 640790707082231834 or 651015913080094721
+		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
+
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -29,7 +33,9 @@ module.exports = class extends Command {
 		if (music.player.state.status === "playing" || music.player.state.status === "paused") {
 			staticState.setLocalStatus("stopped");
 			music.player.stop();
-			return message.reply({ content: `⏹ **Stopped.** currently played radio is now stopped`, allowedMentions: { repliedUser: false } });
+			edit_DB_One("music_state", { gid: guild.id }, { queue: [] });
+
+			return message.reply({ content: `⏹ **Queue Cleared.** currently played radio is now stopped`, allowedMentions: { repliedUser: false } });
 		} else {
 			return message.reply({ content: `⛔ **No radio is playing!**`, allowedMentions: { repliedUser: false } });
 		}
