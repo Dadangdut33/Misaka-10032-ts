@@ -149,6 +149,7 @@ module.exports = class extends Command {
 					},
 				}),
 				currentTitle: "",
+				currentUrl: "",
 				volume: 100, // not used but kept for future use
 			});
 
@@ -167,19 +168,20 @@ module.exports = class extends Command {
 				link: link,
 			};
 
+			playerObj.currentTitle = queueItem.title;
+			playerObj.currentUrl = queueItem.link;
+
 			if (playerObj.player.state.status !== "playing") {
 				// connect
 				const resource = await this.getVideoResource(link);
 				voiceConnection!.subscribe(playerObj.player);
 				playerObj.player.play(resource);
-				playerObj.currentTitle = queueItem.title;
 				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
 
 				// send info
 				this.sendVideoInfo(message, "Now Playing", videoInfo);
 				mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			} else {
-				playerObj.currentTitle = queueItem.title;
 				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
 				this.sendVideoInfo(message, "Added to queue", videoInfo);
 				mReply.edit({ content: `🎶 **Added to queue** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });

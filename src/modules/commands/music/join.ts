@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { joinVoiceChannel, DiscordGatewayAdapterCreator, getVoiceConnection, createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
+import { joinVoiceChannel, DiscordGatewayAdapterCreator, getVoiceConnection, createAudioPlayer, NoSubscriberBehavior, createAudioResource } from "@discordjs/voice";
+import play from "play-dl";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -46,6 +47,7 @@ module.exports = class extends Command {
 					},
 				}),
 				currentTitle: "",
+				currentUrl: "",
 				volume: 100, // not used but kept for future use
 			});
 

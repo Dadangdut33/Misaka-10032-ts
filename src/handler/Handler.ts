@@ -205,6 +205,7 @@ export class Handler {
 					},
 				}),
 				currentTitle: "",
+				currentUrl: "",
 				volume: 100, // not used but kept for future use
 			});
 		});
@@ -226,6 +227,8 @@ export class Handler {
 							const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
 
 							player.play(resource);
+							this.radioPlayerMaps.get(key)!.currentTitle = nextSong.title;
+							this.radioPlayerMaps.get(key)!.currentUrl = nextSong.link;
 							edit_DB("music_state", { gid: key }, { $set: { queue: queue } }); // update queue data
 
 							// send message to channel

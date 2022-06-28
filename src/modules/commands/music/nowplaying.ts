@@ -1,13 +1,14 @@
+import { createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
 import { Message } from "discord.js";
+import ytdl from "ytdl-core";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { createAudioPlayer, getVoiceConnection, NoSubscriberBehavior } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("unpause", {
-			aliases: ["resume"],
+		super("nowplaying", {
+			aliases: ["np"],
 			categories: "music",
-			info: "Unpause/resume current radio",
+			info: "Get now playing music",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
@@ -22,7 +23,7 @@ module.exports = class extends Command {
 		}
 
 		// check if bot is in vc or not
-		if (!getVoiceConnection(guild.id)) {
+		if (!guild.me?.voice.channel) {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
@@ -44,13 +45,25 @@ module.exports = class extends Command {
 			playerObj = musicP.get(guild.id)!;
 		}
 
-		if (playerObj.player.state.status === "paused") {
-			// pause player
-			playerObj.player.unpause();
+		// check playing status
+		if (playerObj.player.state.status === "playing") {
+			const videoInfo = await ytdl.getInfo(playerObj.currentUrl);
 
-			return message.reply({ content: `▶ **Resumed**`, allowedMentions: { repliedUser: false } });
+			// pause player
+			return message.reply({
+				embeds: [
+					{
+						author: { name: `Now Playing` },
+						description: `🎶 [${playerObj.currentTitle}](${playerObj.currentUrl}) (${videoInfo.videoDetails.lengthSeconds} seconds)`,
+						image: {
+							url: `https://img.youtube.com/vi/${videoInfo.videoDetails.videoId}/hqdefault.jpg`,
+						},
+					},
+				],
+				allowedMentions: { repliedUser: false },
+			});
 		} else {
-			return message.reply({ content: `⛔ **Music is not paused!**`, allowedMentions: { repliedUser: false } });
+			return message.reply({ content: `⛔ **Not playing anything!**`, allowedMentions: { repliedUser: false } });
 		}
 	}
 };

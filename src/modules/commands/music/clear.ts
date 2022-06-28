@@ -37,6 +37,7 @@ module.exports = class extends Command {
 					},
 				}),
 				currentTitle: "",
+				currentUrl: "",
 				volume: 100, // not used but kept for future use
 			});
 

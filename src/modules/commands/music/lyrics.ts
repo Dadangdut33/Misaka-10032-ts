@@ -30,6 +30,7 @@ module.exports = class extends Command {
 					},
 				}),
 				currentTitle: "",
+				currentUrl: "",
 				volume: 100, // not used but kept for future use
 			});
 
@@ -40,7 +41,6 @@ module.exports = class extends Command {
 
 		const msg = await message.channel.send({ embeds: [embed] });
 		try {
-			console.log(playerObj.currentTitle);
 			const Client = new Genius.Client(process.env.Genius_Key);
 			const songs = await Client.songs.search(args.length > 0 ? args.join(" ") : playerObj.currentTitle);
 			const lyrics = await songs[0].lyrics();

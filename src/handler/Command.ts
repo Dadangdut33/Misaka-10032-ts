@@ -30,6 +30,7 @@ export type musicSettingsInterface = Map<string, playerObject>;
 export interface playerObject {
 	player: AudioPlayer;
 	currentTitle: string;
+	currentUrl: string;
 	volume: number;
 }
 
