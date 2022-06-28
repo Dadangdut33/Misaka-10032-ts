@@ -1,7 +1,6 @@
 import { Client, Message, PermissionString } from "discord.js";
 import { AudioPlayer, AudioResource } from "@discordjs/voice";
 import { Toggleable } from "./Toggleable";
-import { StaticState } from "./StaticState";
 
 interface optionsInterface {
 	aliases?: string[];
@@ -27,15 +26,17 @@ interface optionsInterface {
 	permission?: PermissionString;
 }
 
-export interface musicSettingsInterface {
+export type musicSettingsInterface = Map<string, playerObject>;
+export interface playerObject {
 	player: AudioPlayer;
-	currentAudio: AudioResource;
+	currentTitle: string;
+	currentUrl: string;
+	volume: number;
 }
 
 interface extraArgsInterface {
 	client: Client;
-	music: musicSettingsInterface;
-	staticState: StaticState;
+	musicP: Map<string, playerObject>;
 }
 
 export class Command extends Toggleable implements optionsInterface {

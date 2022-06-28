@@ -1,31 +1,48 @@
 import { MessageEmbed, Message } from "discord.js";
 import moment from "moment-timezone";
 import Genius from "genius-lyrics";
-import { Command, handlerLoadOptionsInterface } from "../../../handler";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
+import { createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("lyrics", {
 			aliases: ["ly"],
 			categories: "music",
-			info: "Get lyrics of song. Source from genius.com",
-			usage: `\`${prefix}command/alias <song name>\``,
-			guildOnly: false,
+			info: "Get lyrics of currently played song or from input. Source from genius.com",
+			usage: `\`${prefix}command/alias [song name]\``,
+			guildOnly: true,
 		});
 	}
 
-	async run(message: Message, args: string[]) {
-		// check guild, only allow if in 640790707082231834 or 651015913080094721
-		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
-
+	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
 		let embed = new MessageEmbed().setDescription("Looking For Lyrics ...").setColor("YELLOW");
 
-		if (!args.length) return message.channel.send("Please Type In The Song Name");
+		const guild = message.guild!;
+		// get player
+		let playerObj = musicP.get(guild.id)!;
+		if (!playerObj) {
+			// if no player for guild create one
+			musicP.set(guild.id, {
+				player: createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Play,
+					},
+				}),
+				currentTitle: "",
+				currentUrl: "",
+				volume: 100, // not used but kept for future use
+			});
+
+			playerObj = musicP.get(guild.id)!;
+		}
+
+		if (!args.length && playerObj.player.state.status !== "playing") return message.channel.send("Please Type In The Song Name");
 
 		const msg = await message.channel.send({ embeds: [embed] });
 		try {
 			const Client = new Genius.Client(process.env.Genius_Key);
-			const songs = await Client.songs.search(args.join(" "));
+			const songs = await Client.songs.search(args.length > 0 ? args.join(" ") : playerObj.currentTitle);
 			const lyrics = await songs[0].lyrics();
 
 			if (lyrics.length == 0) {

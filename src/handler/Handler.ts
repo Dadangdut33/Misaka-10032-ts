@@ -1,10 +1,9 @@
 import { Client, MessageEmbed, Message, TextChannel } from "discord.js";
 import { AudioPlayer, createAudioPlayer, DiscordGatewayAdapterCreator, joinVoiceChannel, createAudioResource, NoSubscriberBehavior } from "@discordjs/voice";
 import { Feature } from "./Feature";
-import { Command } from "./Command";
+import { Command, playerObject } from "./Command";
 import { BotEvent } from "./BotEvent";
 import { Utils } from "./FileUtils";
-import { StaticState } from "./StaticState";
 import { prefix } from "../config.json";
 import { find_DB_Return, edit_DB } from "../utils";
 import play from "play-dl";
@@ -28,9 +27,8 @@ export class Handler {
 	commands: Map<string, Command>;
 	aliases: Map<string, Command>;
 	commandEvents: Map<string, BotEvent[]>;
-	staticState: StaticState;
 	// music
-	radioPlayer: AudioPlayer;
+	radioPlayerMaps: Map<string, playerObject>;
 
 	/**
 	 * @description Create a new handler instance
@@ -75,20 +73,10 @@ export class Handler {
 		this.commandEvents = new Map();
 
 		/**
-		 * Static state of some variables
-		 * @type {StaticState}
+		 * Maps of audio player of the bot
+		 * @type {Map<string, playerObject>}
 		 */
-		this.staticState = new StaticState();
-
-		/**
-		 * The audio player of the bot
-		 * @type {AudioPlayer}
-		 */
-		this.radioPlayer = createAudioPlayer({
-			behaviors: {
-				noSubscriber: NoSubscriberBehavior.Play,
-			},
-		});
+		this.radioPlayerMaps = new Map();
 	}
 
 	/**
@@ -203,9 +191,65 @@ export class Handler {
 	}
 
 	/**
-	 * @description Register the command and event handlers
+	 * @description Register music players
+	 * @returns {void}
 	 */
-	register() {
+	registerPlayers(): void {
+		// register music players per guild
+		this.client.guilds.cache.forEach((guild) => {
+			console.log(`[Handler] Initiating players for guild ${guild.name}`);
+			this.radioPlayerMaps.set(guild.id, {
+				player: createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Play,
+					},
+				}),
+				currentTitle: "",
+				currentUrl: "",
+				volume: 100, // not used but kept for future use
+			});
+		});
+
+		// register music commands
+		this.radioPlayerMaps.forEach(({ player, currentTitle, volume }, key) => {
+			player.on("stateChange", async () => {
+				if (player.state.status === "idle") {
+					console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, continuing next song`);
+					// get queue data
+					const queueData = await find_DB_Return("music_state", { gid: key });
+					if (queueData) {
+						const queue = queueData[0].queue;
+
+						const textChannel = this.client.channels.cache.get(queueData[0].tc_id) as TextChannel;
+						if (queue.length > 0) {
+							const nextSong = queue.shift();
+							const stream = await play.stream(nextSong.link)!;
+							const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
+
+							player.play(resource);
+							this.radioPlayerMaps.get(key)!.currentTitle = nextSong.title;
+							this.radioPlayerMaps.get(key)!.currentUrl = nextSong.link;
+							edit_DB("music_state", { gid: key }, { $set: { queue: queue } }); // update queue data
+
+							// send message to channel
+							textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
+						} else {
+							edit_DB("music_state", { gid: key }, { $set: { queue: [] } }); // update queue data
+
+							// send message telling finished playing all songs
+							textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
+						}
+					}
+				}
+			});
+		});
+	}
+
+	/**
+	 * @description Register the command and event handlers
+	 * @returns {void}
+	 */
+	register(): void {
 		// Handle events
 		for (const [name, handlers] of this.commandEvents) {
 			this.client.on(name, (...params) => {
@@ -221,6 +265,10 @@ export class Handler {
 				}
 			});
 		}
+
+		this.client.once("ready", () => {
+			this.registerPlayers();
+		});
 
 		// Handle commands
 		this.client.on("messageCreate", async (message: Message) => {
@@ -259,7 +307,11 @@ export class Handler {
 			}
 
 			try {
-				await cmd.run(message, args, { client: this.client, music: { player: this.radioPlayer, currentAudio: this.staticState.getCurrentAudio() }, staticState: this.staticState }); // await because the command that runs is async
+				// await because the command that runs is async
+				await cmd.run(message, args, {
+					client: this.client,
+					musicP: this.radioPlayerMaps,
+				});
 			} catch (err) {
 				// log time
 				console.log(`[${new Date().toLocaleString()}]`);
@@ -269,95 +321,5 @@ export class Handler {
 				message.reply({ embeds: [embed] });
 			}
 		});
-
-		// register music commands
-		this.radioPlayer.on("stateChange", async () => {
-			// if stopped, repeat. Only if it's in playing mode
-			// if (this.radioPlayer.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
-			// 	console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, repeating`);
-			// 	try {
-			// 		this.radioPlayer.play(this.staticState.getCurrentAudio());
-			// 	} catch {
-			// 		this.radioPlayer.play(await this.staticState.getFreshAudioResource());
-			// 	}
-			// }
-
-			// if stopped continue next song from queue
-			if (this.radioPlayer.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
-				console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, continuing next song`);
-				// get queue data
-				const queueData = await find_DB_Return("music_state", { gid: "651015913080094721" });
-				if (queueData) {
-					const queue = queueData[0].queue;
-
-					const textChannel = this.client.channels.cache.get(queueData[0].tc_id) as TextChannel;
-					if (queue.length > 0) {
-						const nextSong = queue.shift();
-						const stream = await play.stream(nextSong.link)!;
-						const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
-
-						this.staticState.setAudioLink(nextSong.link);
-						this.staticState.setCurrentAudio(resource);
-						this.radioPlayer.play(resource);
-
-						// update queue data
-						edit_DB("music_state", { gid: "651015913080094721" }, { $set: { queue: queue } });
-
-						console.log(`[${new Date().toLocaleString()}] - [Music] Continuing next song`);
-
-						// send message to channel
-						textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
-					} else {
-						this.staticState.setLocalStatus("stopped");
-
-						console.log(`[${new Date().toLocaleString()}] - [Music] Queue is empty, stopping`);
-
-						// update queue data
-						edit_DB("music_state", { gid: "651015913080094721" }, { $set: { queue: [] } });
-
-						// send message telling finished playing all songs
-						textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
-					}
-				}
-			}
-		});
-
-		// To make it 24/7 - only on ppw
-		const startMusic = async () => {
-			const dataStart = await find_DB_Return("music_state", { id: "ppw" });
-			const guild = this.client.guilds.cache.get(dataStart[0].guild_id)!;
-
-			if (guild) {
-				const con = joinVoiceChannel({
-					channelId: dataStart[0].vc_id,
-					guildId: dataStart[0].guild_id,
-					adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
-				});
-				con.subscribe(this.radioPlayer);
-
-				this.staticState.setAudioLink(dataStart[0].audio_link);
-				this.radioPlayer.play(await this.staticState.getFreshAudioResource(dataStart[0].audio_link));
-
-				this.staticState.setLocalStatus("playing");
-				console.log("Music started automatically | 24/7 Music module for PPW");
-			} else {
-				console.log("Music failed to start automatically | PPW not found");
-			}
-		};
-
-		// try twice
-		// setTimeout(() => {
-		// 	try {
-		// 		startMusic();
-		// 	} catch (error) {
-		// 		try {
-		// 			setTimeout(() => {
-		// 				startMusic();
-		// 			}, 10000);
-		// 		} catch (error) {
-		// 			console.log("Fail to try load music module for the second time");
-		// 		}
-		// 	}
-		// }, 10000); // 10 seconds after the bot starts
 	}
 }

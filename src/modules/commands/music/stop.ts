@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
-import { getVoiceConnection } from "@discordjs/voice";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
+import { createAudioPlayer, getVoiceConnection, NoSubscriberBehavior } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -12,10 +12,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { music, staticState }: { music: musicSettingsInterface; staticState: StaticState }) {
-		// check guild, only allow if in 640790707082231834 or 651015913080094721
-		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
-
+	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -28,10 +25,27 @@ module.exports = class extends Command {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
+		// get player
+		let playerObj = musicP.get(guild.id)!;
+		if (!playerObj) {
+			// if no player for guild create one
+			musicP.set(guild.id, {
+				player: createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Play,
+					},
+				}),
+				currentTitle: "",
+				currentUrl: "",
+				volume: 100, // not used but kept for future use
+			});
+
+			playerObj = musicP.get(guild.id)!;
+		}
+
 		// stop current music
-		if (music.player.state.status === "playing" || music.player.state.status === "paused") {
-			staticState.setLocalStatus("stopped");
-			music.player.stop();
+		if (playerObj.player.state.status === "playing" || playerObj.player.state.status === "paused") {
+			playerObj.player.stop();
 
 			return message.reply({ content: `⏹ **Stopped.** currently played radio is now stopped`, allowedMentions: { repliedUser: false } });
 		} else {
