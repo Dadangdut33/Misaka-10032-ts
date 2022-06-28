@@ -10,8 +10,8 @@ module.exports = class extends Command {
 		super("play", {
 			aliases: ["p"],
 			categories: "music",
-			info: "Play a song/radio (Youtube link Only). Available predefined radio:\n- [**[lofi]**](https://youtu.be/5qap5aO4i9A) - lofi hip hop radio - beats to relax/study to\n- [**[animelofi]**](https://youtu.be/WDXPJWIgX-o) - anime lofi hip hop radio - 24/7 chill lofi remixes of anime\n- [**[piano]**](https://youtu.be/xWRHTpqQMGM) - Beautiful Piano Music 24/7 - Study Music, Relaxing Music, Sleep Music, Meditation Music\n- [**[phonk]**](https://youtu.be/Ax4Y5n4f5K8) - 24/7 TRAPPIN IN JAPAN // phonk / lofi hip hop / vapor trap Radio.\n\n**Note:** The bot will repeat the song when it's done, If you want to stop the radio, use the stop command.",
-			usage: `\`${prefix}command [valid YT Link/lofi/animelofi/piano/phonk]\``,
+			info: "Play a yt video/live stream. Available predefined radio ('[' and ']' is mandatory):\n- [**[lofi]**](https://youtu.be/5qap5aO4i9A) - lofi hip hop radio - beats to relax/study to\n- [**[animelofi]**](https://youtu.be/WDXPJWIgX-o) - anime lofi hip hop radio - 24/7 chill lofi remixes of anime\n- [**[piano]**](https://youtu.be/xWRHTpqQMGM) - Beautiful Piano Music 24/7 - Study Music, Relaxing Music, Sleep Music, Meditation Music\n- [**[phonk]**](https://youtu.be/Ax4Y5n4f5K8) - 24/7 TRAPPIN IN JAPAN // phonk / lofi hip hop / vapor trap Radio.\n\n**Note:** Bot will not leave unless prompted to leave.",
+			usage: `\`${prefix}command <search YT video name/valid YT Link/[lofi]/[animelofi]/[piano]/[phonk]>\``,
 			guildOnly: true,
 		});
 	}
@@ -77,34 +77,60 @@ module.exports = class extends Command {
 
 		const { player } = music;
 		const radioDict: any = {
-			lofi: "https://youtu.be/5qap5aO4i9A",
-			animelofi: "https://youtu.be/WDXPJWIgX-o",
-			piano: "https://youtu.be/xWRHTpqQMGM",
-			phonk: "https://youtu.be/Ax4Y5n4f5K8",
+			"[lofi]": "https://youtu.be/5qap5aO4i9A",
+			"[animelofi]": "https://youtu.be/WDXPJWIgX-o",
+			"[piano]": "https://youtu.be/xWRHTpqQMGM",
+			"[phonk]": "https://youtu.be/Ax4Y5n4f5K8",
 		};
-
-		let link: string;
-		// check if args is a predefined radio
-		if (radioDict[args[0]]) link = radioDict[args[0]];
-		else {
-			// verify yt link first
-			if (!ytdl.validateURL(args[0])) return message.reply({ content: "⛔ **You must provide a valid Youtube link!**", allowedMentions: { repliedUser: false } });
-
-			link = args[0];
-		}
 
 		// get data
 		const user = message.member!;
 		const guild = message.guild!;
 
 		// check if user is in vc or not
-		if (!user.voice.channel) {
-			return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
+		if (!user.voice.channel) return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
+
+		let link: string = "";
+		// check if args is a predefined radio
+		if (radioDict[args[0]]) link = radioDict[args[0]];
+		else {
+			// check if link or not
+			if (ytdl.validateURL(args[0])) link = args[0];
+			else {
+				const res = await play.search(args.join(" "), { limit: 5, source: { youtube: "video" } });
+
+				if (!res) return message.reply({ content: "⛔ **No results found!**", allowedMentions: { repliedUser: false } });
+
+				message.channel.send({
+					embeds: [
+						{
+							color: 0x00ff00,
+							author: { name: "Please choose from the list" },
+							description: res.map((data, index) => `${index + 1}. [${data.title}](${data.url})`).join("\n"),
+							footer: { text: "Type the number of the video you want to play" },
+						},
+					],
+				});
+
+				try {
+					const m = await message.channel.awaitMessages({ filter: (m: Message) => m.author.id === message.author.id, max: 1, time: 30000, errors: ["time"] }).catch();
+
+					if (!m.first()) return message.reply({ content: "⛔ **Cancelled because input not provided by user!**", allowedMentions: { repliedUser: false } });
+					const num = parseInt(m.first()!.content);
+					if (isNaN(num))
+						return message.reply({ content: num.toString().includes("cancel") ? "⛔ **Cancelled!**" : "⛔ **Incorrect input!**", allowedMentions: { repliedUser: false } });
+
+					if (num > res.length || num < 1) return message.reply({ content: "⛔ **Incorrect input!**", allowedMentions: { repliedUser: false } });
+					link = res[num - 1].url;
+				} catch (error) {
+					message.reply({ content: `⛔ **Cancelled because input not provided by user!**\n`, allowedMentions: { repliedUser: false } });
+					return;
+				}
+			}
 		}
 
-		const vc = user.voice.channel;
-
 		// vc connection
+		const vc = user.voice.channel;
 		let voiceConnection = getVoiceConnection(guild.id);
 
 		// if bot not in vc join vc
@@ -150,7 +176,7 @@ module.exports = class extends Command {
 				mReply.edit({ content: `🎶 **Added to queue** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			}
 		} catch (error) {
-			mReply.edit({ content: `⛔ **An error occured!**\n${error}`, allowedMentions: { repliedUser: false } });
+			mReply.edit({ content: `⛔ **An error occured!**\n\`${error}\``, allowedMentions: { repliedUser: false } });
 		}
 	}
 };

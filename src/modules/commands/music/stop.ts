@@ -1,11 +1,10 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
 import { getVoiceConnection } from "@discordjs/voice";
-import { edit_DB_One } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("clear", {
+		super("stop", {
 			categories: "music",
 			info: "Stop and clear current radio queue",
 			usage: `\`${prefix}command/alias\``,
@@ -31,9 +30,10 @@ module.exports = class extends Command {
 
 		// stop current music
 		if (music.player.state.status === "playing" || music.player.state.status === "paused") {
-			edit_DB_One("music_state", { gid: guild.id }, { queue: [] });
+			staticState.setLocalStatus("stopped");
+			music.player.stop();
 
-			return message.reply({ content: `⏹ **Queue Cleared.**`, allowedMentions: { repliedUser: false } });
+			return message.reply({ content: `⏹ **Stopped.** currently played radio is now stopped`, allowedMentions: { repliedUser: false } });
 		} else {
 			return message.reply({ content: `⛔ **No radio is playing!**`, allowedMentions: { repliedUser: false } });
 		}

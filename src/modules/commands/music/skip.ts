@@ -53,6 +53,11 @@ module.exports = class extends Command {
 					// send message to channel
 					textChannel.send({ embeds: [{ title: `⏩ Skipped current song!`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 				} else {
+					// check if state is playing the stop player
+					if (music.player.state.status === "playing") {
+						music.player.stop();
+					}
+
 					staticState.setLocalStatus("stopped");
 
 					// update queue data
