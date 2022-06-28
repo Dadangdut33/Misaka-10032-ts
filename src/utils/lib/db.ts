@@ -28,3 +28,7 @@ export function edit_DB_One(tableName: string, query: any, data: any) {
 export function delete_DB_One(tableName: string, query: any) {
 	mongoose.connection.db.collection(tableName).deleteOne(query);
 }
+
+export function edit_DB(tableName: string, query: any, editQuery: any) {
+	mongoose.connection.db.collection(tableName).updateMany(query, editQuery);
+}

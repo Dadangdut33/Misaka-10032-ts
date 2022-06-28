@@ -1,7 +1,13 @@
 import { AudioResource, createAudioResource } from "@discordjs/voice";
 import ytdl from "ytdl-core";
+import play from "play-dl";
 
 type localStatus = "playing" | "stopped" | "";
+/**
+ * TODO:
+ * - implement multiple guilds support by adding a guildId property somewhere
+ */
+
 export class StaticState {
 	currentAudio: AudioResource;
 	audioLink: string;
@@ -65,14 +71,9 @@ export class StaticState {
 	 * @returns {AudioResource}
 	 */
 	async getFreshAudioResource(link?: string): Promise<AudioResource<unknown>> {
-		const videoInfo = await ytdl.getInfo(link ? link : this.audioLink);
+		const stream = await play.stream(link ? link : this.audioLink)!;
 
-		const newAudioResource: AudioResource = createAudioResource(
-			ytdl(link ? link : this.audioLink, {
-				quality: videoInfo.videoDetails.isLiveContent ? [128, 127, 120, 96, 95, 94, 93] : "highestaudio",
-			}),
-			{ inlineVolume: true }
-		);
+		const newAudioResource: AudioResource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
 		this.setCurrentAudio(newAudioResource);
 
 		return newAudioResource;
