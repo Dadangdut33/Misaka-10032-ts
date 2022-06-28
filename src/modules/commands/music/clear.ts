@@ -6,6 +6,7 @@ import { edit_DB_One } from "../../../utils";
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("clear", {
+			aliases: ["stop"],
 			categories: "music",
 			info: "Stop and clear current radio queue",
 			usage: `\`${prefix}command/alias\``,

@@ -139,13 +139,13 @@ module.exports = class extends Command {
 				staticState.setCurrentAudio(resource);
 				staticState.setAudioLink(link);
 				staticState.setLocalStatus("playing");
-				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id }, $push: { queue: queueItem } });
+				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
 
 				// send info
 				this.sendVideoInfo(message, "Now Playing", videoInfo);
 				mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			} else {
-				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id }, $push: { queue: queueItem } });
+				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
 				this.sendVideoInfo(message, "Added to queue", videoInfo);
 				mReply.edit({ content: `🎶 **Added to queue** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			}

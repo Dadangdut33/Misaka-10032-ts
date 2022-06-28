@@ -21,29 +21,20 @@ module.exports = class extends Command {
 		// check if user is in vc or not
 		const queueData = await find_DB_Return("music_state", { gid: guild.id });
 
-		// if no queue data
-		if (!queueData) {
-			const embed = new MessageEmbed()
-				.setColor("#0099ff")
-				.setThumbnail("https://i.imgur.com/FWKIR7N.png")
-				.setAuthor({ name: "Queue for " + guild.name, iconURL: guild.iconURL({ format: "png", size: 2048 }) as string })
-				.setDescription("Queue is currently empty!");
+		// if error db
+		if (!queueData) return message.reply({ content: "⛔ **Error finding music state in database!** You can report this issue to my creator.", allowedMentions: { repliedUser: false } });
 
-			return message.channel.send({ embeds: [embed] });
-		}
-
+		// get queue data
 		const data = queueData[0];
+		let maxShown = 10;
+		let loopAmount = Math.ceil(data.queue.length / maxShown); // loop amount
 
-		// loop amount
-		let loopAmount = Math.ceil(data.queue.length / 10);
-
-		// if queue is less than 25
-		if (data.queue.length < 25) {
+		if (data.queue.length <= maxShown) {
 			const embedData = new MessageEmbed()
 				.setColor("#0099ff")
 				.setThumbnail("https://i.imgur.com/FWKIR7N.png")
 				.setAuthor({ name: "Queue for " + guild.name, iconURL: guild.iconURL({ format: "png", size: 2048 }) as string })
-				.setDescription(data.queue.map((song: any, index: number) => `${index + 1}. [${song.title}](${song.link})`).join("\n"));
+				.setDescription(data.queue.length > 0 ? data.queue.map((song: any, index: number) => `${index + 1}. [${song.title}](${song.link})`).join("\n") : "Queue is currently empty!");
 
 			return message.channel.send({ embeds: [embedData] });
 		} else {

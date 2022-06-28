@@ -1,4 +1,4 @@
-import { Client, MessageEmbed, Message } from "discord.js";
+import { Client, MessageEmbed, Message, TextChannel } from "discord.js";
 import { AudioPlayer, createAudioPlayer, DiscordGatewayAdapterCreator, joinVoiceChannel, createAudioResource, NoSubscriberBehavior } from "@discordjs/voice";
 import { Feature } from "./Feature";
 import { Command } from "./Command";
@@ -285,11 +285,12 @@ export class Handler {
 			// if stopped continue next song from queue
 			if (this.radioPlayer.state.status === "idle" && this.staticState.getLocalStatus() === "playing") {
 				console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, continuing next song`);
-				// this.radioPlayer.play(await this.staticState.getFreshAudioResource());
 				// get queue data
 				const queueData = await find_DB_Return("music_state", { gid: "651015913080094721" });
 				if (queueData) {
 					const queue = queueData[0].queue;
+
+					const textChannel = this.client.channels.cache.get(queueData[0].tc_id) as TextChannel;
 					if (queue.length > 0) {
 						const nextSong = queue.shift();
 						const stream = await play.stream(nextSong.link)!;
@@ -301,8 +302,21 @@ export class Handler {
 
 						// update queue data
 						edit_DB("music_state", { gid: "651015913080094721" }, { $set: { queue: queue } });
+
+						console.log(`[${new Date().toLocaleString()}] - [Music] Continuing next song`);
+
+						// send message to channel
+						textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 					} else {
 						this.staticState.setLocalStatus("stopped");
+
+						console.log(`[${new Date().toLocaleString()}] - [Music] Queue is empty, stopping`);
+
+						// update queue data
+						edit_DB("music_state", { gid: "651015913080094721" }, { $set: { queue: [] } });
+
+						// send message telling finished playing all songs
+						textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
 					}
 				}
 			}
