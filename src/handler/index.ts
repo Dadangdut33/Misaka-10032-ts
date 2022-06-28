@@ -3,4 +3,3 @@ export { Feature } from "./Feature";
 export { Command, musicSettingsInterface } from "./Command";
 export { BotEvent } from "./BotEvent";
 export { Utils } from "./FileUtils";
-export { StaticState } from "./StaticState";

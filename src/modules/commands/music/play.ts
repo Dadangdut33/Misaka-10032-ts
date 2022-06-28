@@ -1,6 +1,6 @@
 import { Message, VoiceBasedChannel, Guild } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
-import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioResource } from "@discordjs/voice";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
+import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioResource, createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
 import ytdl from "ytdl-core";
 import play from "play-dl";
 import { edit_DB } from "../../../utils";
@@ -68,14 +68,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { music, staticState }: { music: musicSettingsInterface; staticState: StaticState }) {
-		// check guild, only allow if in 640790707082231834 or 651015913080094721
-		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
-
-		// check if args is empty
-		if (!args[0]) return message.reply({ content: "⛔ **You must provide a valid Youtube link! or choose a valid predefined radio!**", allowedMentions: { repliedUser: false } });
-
-		const { player } = music;
+	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
 		const radioDict: any = {
 			"[lofi]": "https://youtu.be/5qap5aO4i9A",
 			"[animelofi]": "https://youtu.be/WDXPJWIgX-o",
@@ -145,6 +138,23 @@ module.exports = class extends Command {
 			}
 		}
 
+		// get player
+		let playerObj = musicP.get(guild.id)!;
+		if (!playerObj) {
+			// if no player for guild create one
+			musicP.set(guild.id, {
+				player: createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Play,
+					},
+				}),
+				currentTitle: "",
+				volume: 100, // not used but kept for future use
+			});
+
+			playerObj = musicP.get(guild.id)!;
+		}
+
 		const mReply = await message.reply({ content: `🎶 **Loading** \`${link}\``, allowedMentions: { repliedUser: false } });
 		try {
 			const videoInfo = await ytdl.getInfo(link);
@@ -157,20 +167,19 @@ module.exports = class extends Command {
 				link: link,
 			};
 
-			if (staticState.getLocalStatus() !== "playing") {
+			if (playerObj.player.state.status !== "playing") {
 				// connect
 				const resource = await this.getVideoResource(link);
-				voiceConnection!.subscribe(player);
-				player.play(resource);
-				staticState.setCurrentAudio(resource);
-				staticState.setAudioLink(link);
-				staticState.setLocalStatus("playing");
+				voiceConnection!.subscribe(playerObj.player);
+				playerObj.player.play(resource);
+				playerObj.currentTitle = queueItem.title;
 				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
 
 				// send info
 				this.sendVideoInfo(message, "Now Playing", videoInfo);
 				mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			} else {
+				playerObj.currentTitle = queueItem.title;
 				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
 				this.sendVideoInfo(message, "Added to queue", videoInfo);
 				mReply.edit({ content: `🎶 **Added to queue** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });

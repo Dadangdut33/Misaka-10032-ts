@@ -1,3 +1,4 @@
+import { createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
 
@@ -11,10 +12,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { music }: { music: musicSettingsInterface }) {
-		// check guild, only allow if in 640790707082231834 or 651015913080094721
-		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
-
+	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -27,13 +25,30 @@ module.exports = class extends Command {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
+		// get player
+		let playerObj = musicP.get(guild.id)!;
+		if (!playerObj) {
+			// if no player for guild create one
+			musicP.set(guild.id, {
+				player: createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Play,
+					},
+				}),
+				currentTitle: "",
+				volume: 100, // not used but kept for future use
+			});
+
+			playerObj = musicP.get(guild.id)!;
+		}
+
 		// check playing status
-		if (music.player.state.status === "playing") {
+		if (playerObj.player.state.status === "playing") {
 			// pause player
-			music.player.pause();
+			playerObj.player.pause();
 
 			return message.reply({ content: `⏸ **Paused**`, allowedMentions: { repliedUser: false } });
-		} else if (music.player.state.status === "paused" || music.player.state.status === "autopaused") {
+		} else if (playerObj.player.state.status === "paused" || playerObj.player.state.status === "autopaused") {
 			return message.reply({ content: `⛔ **Already paused!**`, allowedMentions: { repliedUser: false } });
 		} else {
 			return message.reply({ content: `⛔ **Not playing anything!**`, allowedMentions: { repliedUser: false } });

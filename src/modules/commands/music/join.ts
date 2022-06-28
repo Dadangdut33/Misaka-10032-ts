@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface, StaticState } from "../../../handler";
-import { joinVoiceChannel, DiscordGatewayAdapterCreator, getVoiceConnection } from "@discordjs/voice";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
+import { joinVoiceChannel, DiscordGatewayAdapterCreator, getVoiceConnection, createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -12,13 +12,9 @@ module.exports = class extends Command {
 			guildOnly: true,
 		});
 	}
-	async run(message: Message, args: string[], { music, staticState }: { music: musicSettingsInterface; staticState: StaticState }) {
-		// check guild, only allow if in 640790707082231834 or 651015913080094721
-		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
-		
+	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
-		const { player, currentAudio } = music;
 
 		// check if user is in vc or not
 		if (!user.voice.channel) {
@@ -33,26 +29,29 @@ module.exports = class extends Command {
 		}
 
 		// join vc
-		let connection = joinVoiceChannel({
+		joinVoiceChannel({
 			channelId: vc.id,
 			guildId: guild.id,
 			adapterCreator: guild.voiceAdapterCreator! as DiscordGatewayAdapterCreator,
 		});
 
-		if (player.state.status === "paused" || player.state.status === "playing" || player.state.status === "autopaused") {
-			connection.subscribe(player);
+		// get player
+		let playerObj = musicP.get(guild.id)!;
+		if (!playerObj) {
+			// if no player for guild create one
+			musicP.set(guild.id, {
+				player: createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Play,
+					},
+				}),
+				currentTitle: "",
+				volume: 100, // not used but kept for future use
+			});
 
-			try {
-				player.play(currentAudio);
-			} catch (error) {
-				player.play(await staticState.getFreshAudioResource());
-			}
-
-			staticState.setLocalStatus("playing");
-			player.unpause();
-			return message.reply({ content: `✅ **Joined** \`${vc.name}\` **Continuing current radio**`, allowedMentions: { repliedUser: false } });
-		} else {
-			return message.reply({ content: `✅ **Joined** \`${vc.name}\``, allowedMentions: { repliedUser: false } });
+			playerObj = musicP.get(guild.id)!;
 		}
+
+		return message.reply({ content: `✅ **Joined** \`${vc.name}\``, allowedMentions: { repliedUser: false } });
 	}
 };

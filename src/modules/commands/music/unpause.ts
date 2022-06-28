@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { getVoiceConnection } from "@discordjs/voice";
+import { createAudioPlayer, getVoiceConnection, NoSubscriberBehavior } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -13,10 +13,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { music }: { music: musicSettingsInterface }) {
-		// check guild, only allow if in 640790707082231834 or 651015913080094721
-		if (message.guild!.id !== "640790707082231834" && message.guild!.id !== "651015913080094721") return message.channel.send("This command is only available in a certain server!");
-
+	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -29,10 +26,26 @@ module.exports = class extends Command {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
-		// check playing status
-		if (music.player.state.status === "paused") {
+		// get player
+		let playerObj = musicP.get(guild.id)!;
+		if (!playerObj) {
+			// if no player for guild create one
+			musicP.set(guild.id, {
+				player: createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Play,
+					},
+				}),
+				currentTitle: "",
+				volume: 100, // not used but kept for future use
+			});
+
+			playerObj = musicP.get(guild.id)!;
+		}
+
+		if (playerObj.player.state.status === "paused") {
 			// pause player
-			music.player.unpause();
+			playerObj.player.unpause();
 
 			return message.reply({ content: `▶ **Resumed**`, allowedMentions: { repliedUser: false } });
 		} else {
