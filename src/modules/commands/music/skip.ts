@@ -44,7 +44,7 @@ module.exports = class extends Command {
 				const textChannel = message.guild!.channels.cache.get(queueData[0].tc_id) as TextChannel;
 				if (queue.length > 0) {
 					const nextSong = queue.shift();
-					const stream = await play.stream(nextSong.link)!;
+					const stream = await play.stream(nextSong.link, { quality: 1250, precache: 1000 })!;
 					const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
 
 					playerObj.player.play(resource);
