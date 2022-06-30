@@ -1,8 +1,7 @@
-import { MessageEmbed, Message, Guild } from "discord.js";
+import { MessageEmbed, Message } from "discord.js";
 import moment from "moment-timezone";
 import Genius from "genius-lyrics";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { playerObject } from "../../../handler/Command";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -15,14 +14,14 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: (guild: Guild, playerMaps: Map<string, playerObject>) => void }) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		let embed = new MessageEmbed().setDescription("Looking For Lyrics ...").setColor("YELLOW");
 
 		const guild = message.guild!;
 		// get player
 		let playerObj = musicP.get(guild.id)!;
 		if (!playerObj) {
-			addNewPlayer(guild, musicP);
+			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
 

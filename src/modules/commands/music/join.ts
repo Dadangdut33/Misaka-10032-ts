@@ -1,7 +1,6 @@
-import { Guild, Message } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
+import { Message } from "discord.js";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { joinVoiceChannel, DiscordGatewayAdapterCreator, getVoiceConnection } from "@discordjs/voice";
-import { playerObject } from "../../../handler/Command";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -13,7 +12,7 @@ module.exports = class extends Command {
 			guildOnly: true,
 		});
 	}
-	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: (guild: Guild, playerMaps: Map<string, playerObject>) => void }) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
 
@@ -39,7 +38,7 @@ module.exports = class extends Command {
 		// get player
 		let playerObj = musicP.get(guild.id)!;
 		if (!playerObj) {
-			addNewPlayer(guild, musicP);
+			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
 

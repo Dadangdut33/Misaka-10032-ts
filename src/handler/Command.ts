@@ -27,6 +27,7 @@ interface optionsInterface {
 }
 
 export type musicSettingsInterface = Map<string, playerObject>;
+export type addNewPlayerArgsInterface = (guild: Guild, playerMaps: musicSettingsInterface, client: Client) => void;
 export interface playerObject {
 	player: AudioPlayer;
 	currentTitle: string;
@@ -36,8 +37,8 @@ export interface playerObject {
 
 interface extraArgsInterface {
 	client: Client;
-	musicP: Map<string, playerObject>;
-	addNewPlayer: (guild: Guild, playerMaps: Map<string, playerObject>) => void;
+	musicP: musicSettingsInterface;
+	addNewPlayer: addNewPlayerArgsInterface;
 }
 
 export class Command extends Toggleable implements optionsInterface {

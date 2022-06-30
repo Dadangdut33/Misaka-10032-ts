@@ -197,18 +197,16 @@ export class Handler {
 	registerPlayers(): void {
 		// register music players per guild
 		this.client.guilds.cache.forEach((guild) => {
-			console.log(guild.id);
-			if (guild.id !== "651015913080094721")
-				this.radioPlayerMaps.set(guild.id, {
-					player: createAudioPlayer({
-						behaviors: {
-							noSubscriber: NoSubscriberBehavior.Play,
-						},
-					}),
-					currentTitle: "",
-					currentUrl: "",
-					volume: 100, // not used but kept for future use
-				});
+			this.radioPlayerMaps.set(guild.id, {
+				player: createAudioPlayer({
+					behaviors: {
+						noSubscriber: NoSubscriberBehavior.Play,
+					},
+				}),
+				currentTitle: "",
+				currentUrl: "",
+				volume: 100, // not used but kept for future use
+			});
 		});
 
 		// register music commands
@@ -248,8 +246,7 @@ export class Handler {
 	/**
 	 * @description add new player to map for guild that hasn't been added yet
 	 */
-	addNewPlayer(guild: Guild, playerMaps: Map<string, playerObject>): void {
-		console.log(playerMaps);
+	addNewPlayer(guild: Guild, playerMaps: Map<string, playerObject>, client: Client): void {
 		playerMaps.set(guild.id, {
 			player: createAudioPlayer({
 				behaviors: {
@@ -270,7 +267,7 @@ export class Handler {
 				if (queueData) {
 					const queue = queueData[0].queue;
 
-					const textChannel = this.client.channels.cache.get(queueData[0].tc_id) as TextChannel;
+					const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
 					if (queue.length > 0) {
 						const nextSong = queue.shift();
 						const stream = await play.stream(nextSong.link)!;

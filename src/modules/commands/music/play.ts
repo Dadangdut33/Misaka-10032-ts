@@ -1,10 +1,9 @@
 import { Message, VoiceBasedChannel, Guild } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioResource } from "@discordjs/voice";
 import ytdl from "ytdl-core";
 import play from "play-dl";
 import { edit_DB } from "../../../utils";
-import { playerObject } from "../../../handler/Command";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -69,7 +68,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: (guild: Guild, playerMaps: Map<string, playerObject>) => void }) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const radioDict: any = {
 			"[lofi]": "https://youtu.be/5qap5aO4i9A",
 			"[animelofi]": "https://youtu.be/WDXPJWIgX-o",
@@ -142,7 +141,7 @@ module.exports = class extends Command {
 		// get player
 		let playerObj = musicP.get(guild.id)!;
 		if (!playerObj) {
-			addNewPlayer(guild, musicP);
+			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
 
