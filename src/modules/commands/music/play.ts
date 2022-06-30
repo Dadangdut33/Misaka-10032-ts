@@ -98,9 +98,9 @@ module.exports = class extends Command {
 					embeds: [
 						{
 							color: 0x00ff00,
-							author: { name: "Please choose from the list" },
+							author: { name: "Please choose from the list (⏳30)" },
 							description: res.map((data, index) => `${index + 1}. [${data.title}](${data.url})`).join("\n"),
-							footer: { text: "Type the number of the video you want to play" },
+							footer: { text: "Type the number of the video you want to play.Type 'cancel' to cancel" },
 						},
 					],
 				});

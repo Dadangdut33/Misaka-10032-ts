@@ -52,6 +52,7 @@
 		"pluralize": "^8.0.0",
 		"pretty-ms": "^7.0.1",
 		"search-scraper": "^2.0.1",
+		"string-progressbar": "^1.0.4",
 		"stutterify": "^2.2.0",
 		"tiny-text": "^1.0.1",
 		"to-zalgo": "^1.0.1",

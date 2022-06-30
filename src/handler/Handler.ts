@@ -229,11 +229,6 @@ export class Handler {
 					const queue = queueData[0].queue;
 
 					const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
-<<<<<<< Updated upstream
-					if (queue.length > 0) {
-						const nextSong = queue.shift();
-						const stream = await play.stream(nextSong.link)!;
-=======
 
 					// check loop or not
 					if (!playerObj.loop) {
@@ -259,7 +254,6 @@ export class Handler {
 					} else {
 						// loop mode
 						const stream = await play.stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
->>>>>>> Stashed changes
 						const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
 
 						playerObj.player.play(resource);
