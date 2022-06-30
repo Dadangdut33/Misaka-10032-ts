@@ -32,7 +32,7 @@ module.exports = class extends Command {
 	}
 
 	async getVideoResource(link: string) {
-		const stream = await play.stream(link)!;
+		const stream = await play.stream(link, { quality: 1250, precache: 1000 })!;
 		return createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
 	}
 
