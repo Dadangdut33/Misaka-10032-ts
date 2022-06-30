@@ -212,36 +212,62 @@ export class Handler {
 			}),
 			currentTitle: "",
 			currentUrl: "",
+			loop: false,
 			volume: 100, // not used but kept for future use
 		});
 
 		// set events for the set player
 		const playerObj = playerMaps.get(guild.id)!;
 		playerObj.player.on("stateChange", async () => {
+			// if stopped
 			if (playerObj.player.state.status === "idle") {
 				// get queue data
 				const queueData = await find_DB_Return("music_state", { gid: guild.id });
-				if (queueData) {
+
+				// verify if guild is registered or not
+				if (queueData.length > 0) {
 					const queue = queueData[0].queue;
 
 					const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
+<<<<<<< Updated upstream
 					if (queue.length > 0) {
 						const nextSong = queue.shift();
-						const stream = await play.stream(nextSong.link, { quality: 1250, precache: 1000 })!;
+						const stream = await play.stream(nextSong.link)!;
+=======
+
+					// check loop or not
+					if (!playerObj.loop) {
+						// if not loop check if queue is empty or not
+						if (queue.length > 0) {
+							const nextSong = queue.shift();
+							const stream = await play.stream(nextSong.link, { quality: 1250, precache: 1000 })!;
+							const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
+
+							playerObj.player.play(resource);
+							playerMaps.get(guild.id)!.currentTitle = nextSong.title;
+							playerMaps.get(guild.id)!.currentUrl = nextSong.link;
+							edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
+
+							// send message to channel
+							textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
+						} else {
+							edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
+
+							// send message telling finished playing all songs
+							textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
+						}
+					} else {
+						// loop mode
+						const stream = await play.stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
+>>>>>>> Stashed changes
 						const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
 
 						playerObj.player.play(resource);
-						playerMaps.get(guild.id)!.currentTitle = nextSong.title;
-						playerMaps.get(guild.id)!.currentUrl = nextSong.link;
-						edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
 
 						// send message to channel
-						textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
-					} else {
-						edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
-
-						// send message telling finished playing all songs
-						textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
+						textChannel.send({
+							embeds: [{ title: `▶ Looping current song`, description: `Now playing: [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }],
+						});
 					}
 				} else {
 					insert_DB_One("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] }); // create queue data

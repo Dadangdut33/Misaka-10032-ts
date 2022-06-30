@@ -32,6 +32,7 @@ export interface playerObject {
 	player: AudioPlayer;
 	currentTitle: string;
 	currentUrl: string;
+	loop: boolean;
 	volume: number;
 }
 
