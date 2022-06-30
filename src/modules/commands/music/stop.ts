@@ -1,6 +1,7 @@
-import { Message } from "discord.js";
+import { Message, Guild } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { createAudioPlayer, getVoiceConnection, NoSubscriberBehavior } from "@discordjs/voice";
+import { getVoiceConnection } from "@discordjs/voice";
+import { playerObject } from "../../../handler/Command";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -12,7 +13,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: (guild: Guild, playerMaps: Map<string, playerObject>) => void }) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -28,18 +29,7 @@ module.exports = class extends Command {
 		// get player
 		let playerObj = musicP.get(guild.id)!;
 		if (!playerObj) {
-			// if no player for guild create one
-			musicP.set(guild.id, {
-				player: createAudioPlayer({
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Play,
-					},
-				}),
-				currentTitle: "",
-				currentUrl: "",
-				volume: 100, // not used but kept for future use
-			});
-
+			addNewPlayer(guild, musicP);
 			playerObj = musicP.get(guild.id)!;
 		}
 

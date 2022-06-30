@@ -1,5 +1,5 @@
-import { Client, MessageEmbed, Message, TextChannel } from "discord.js";
-import { AudioPlayer, createAudioPlayer, DiscordGatewayAdapterCreator, joinVoiceChannel, createAudioResource, NoSubscriberBehavior } from "@discordjs/voice";
+import { Client, MessageEmbed, Message, TextChannel, Guild } from "discord.js";
+import { createAudioPlayer, createAudioResource, NoSubscriberBehavior } from "@discordjs/voice";
 import { Feature } from "./Feature";
 import { Command, playerObject } from "./Command";
 import { BotEvent } from "./BotEvent";
@@ -197,24 +197,24 @@ export class Handler {
 	registerPlayers(): void {
 		// register music players per guild
 		this.client.guilds.cache.forEach((guild) => {
-			console.log(`[Handler] Initiating players for guild ${guild.name}`);
-			this.radioPlayerMaps.set(guild.id, {
-				player: createAudioPlayer({
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Play,
-					},
-				}),
-				currentTitle: "",
-				currentUrl: "",
-				volume: 100, // not used but kept for future use
-			});
+			console.log(guild.id);
+			if (guild.id !== "651015913080094721")
+				this.radioPlayerMaps.set(guild.id, {
+					player: createAudioPlayer({
+						behaviors: {
+							noSubscriber: NoSubscriberBehavior.Play,
+						},
+					}),
+					currentTitle: "",
+					currentUrl: "",
+					volume: 100, // not used but kept for future use
+				});
 		});
 
 		// register music commands
-		this.radioPlayerMaps.forEach(({ player, currentTitle, volume }, key) => {
+		this.radioPlayerMaps.forEach(({ player, currentTitle, currentUrl, volume }, key) => {
 			player.on("stateChange", async () => {
 				if (player.state.status === "idle") {
-					console.log(`[${new Date().toLocaleString()}] - [Music] Stopped, continuing next song`);
 					// get queue data
 					const queueData = await find_DB_Return("music_state", { gid: key });
 					if (queueData) {
@@ -242,6 +242,55 @@ export class Handler {
 					}
 				}
 			});
+		});
+	}
+
+	/**
+	 * @description add new player to map for guild that hasn't been added yet
+	 */
+	addNewPlayer(guild: Guild, playerMaps: Map<string, playerObject>): void {
+		console.log(playerMaps);
+		playerMaps.set(guild.id, {
+			player: createAudioPlayer({
+				behaviors: {
+					noSubscriber: NoSubscriberBehavior.Play,
+				},
+			}),
+			currentTitle: "",
+			currentUrl: "",
+			volume: 100, // not used but kept for future use
+		});
+
+		// set events for the set player
+		const playerObj = playerMaps.get(guild.id)!;
+		playerObj.player.on("stateChange", async () => {
+			if (playerObj.player.state.status === "idle") {
+				// get queue data
+				const queueData = await find_DB_Return("music_state", { gid: guild.id });
+				if (queueData) {
+					const queue = queueData[0].queue;
+
+					const textChannel = this.client.channels.cache.get(queueData[0].tc_id) as TextChannel;
+					if (queue.length > 0) {
+						const nextSong = queue.shift();
+						const stream = await play.stream(nextSong.link)!;
+						const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
+
+						playerObj.player.play(resource);
+						playerMaps.get(guild.id)!.currentTitle = nextSong.title;
+						playerMaps.get(guild.id)!.currentUrl = nextSong.link;
+						edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
+
+						// send message to channel
+						textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
+					} else {
+						edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
+
+						// send message telling finished playing all songs
+						textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
+					}
+				}
+			}
 		});
 	}
 
@@ -311,6 +360,7 @@ export class Handler {
 				await cmd.run(message, args, {
 					client: this.client,
 					musicP: this.radioPlayerMaps,
+					addNewPlayer: this.addNewPlayer,
 				});
 			} catch (err) {
 				// log time
