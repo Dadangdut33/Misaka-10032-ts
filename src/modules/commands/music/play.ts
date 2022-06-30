@@ -3,7 +3,7 @@ import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPla
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioResource } from "@discordjs/voice";
 import ytdl from "ytdl-core";
 import play from "play-dl";
-import { edit_DB } from "../../../utils";
+import { edit_DB, find_DB_Return, insert_DB_One } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -160,18 +160,28 @@ module.exports = class extends Command {
 			playerObj.currentTitle = queueItem.title;
 			playerObj.currentUrl = queueItem.link;
 
+			// 1st play
 			if (playerObj.player.state.status !== "playing") {
 				// connect
 				const resource = await this.getVideoResource(link);
 				voiceConnection!.subscribe(playerObj.player);
 				playerObj.player.play(resource);
-				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
+
+				// check exist in db or not
+				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
+				if (checkExist.length === 0) insert_DB_One("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [] });
+				else edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
 
 				// send info
 				this.sendVideoInfo(message, "Now Playing", videoInfo);
 				mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			} else {
-				edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
+				// add to queue
+				// check exist in db or not
+				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
+				if (!checkExist) insert_DB_One("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [queueItem] });
+				else edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
+
 				this.sendVideoInfo(message, "Added to queue", videoInfo);
 				mReply.edit({ content: `🎶 **Added to queue** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			}

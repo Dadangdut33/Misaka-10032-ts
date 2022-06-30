@@ -1,9 +1,8 @@
-import { Message, TextChannel, Guild } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { createAudioResource, getVoiceConnection } from "@discordjs/voice";
-import { edit_DB, find_DB_Return } from "../../../utils";
+import { edit_DB, find_DB_Return, insert_DB_One } from "../../../utils";
 import play from "play-dl";
-import { playerObject } from "../../../handler/Command";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -39,7 +38,7 @@ module.exports = class extends Command {
 		if (playerObj.player.state.status === "playing" || playerObj.player.state.status === "paused") {
 			// get queue data
 			const queueData = await find_DB_Return("music_state", { gid: guild.id });
-			if (queueData) {
+			if (queueData.length > 0) {
 				const queue = queueData[0].queue;
 
 				const textChannel = message.guild!.channels.cache.get(queueData[0].tc_id) as TextChannel;
@@ -65,6 +64,8 @@ module.exports = class extends Command {
 					// send message telling finished playing all songs
 					textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
 				}
+			} else {
+				insert_DB_One("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
 			}
 		} else {
 			return message.reply({ content: `⛔ **No radio is playing!**`, allowedMentions: { repliedUser: false } });

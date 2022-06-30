@@ -1,13 +1,13 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { getVoiceConnection } from "@discordjs/voice";
-import { edit_DB_One } from "../../../utils";
+import { edit_DB_One, find_DB_Return, insert_DB_One } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("clear", {
 			categories: "music",
-			info: "Stop and clear current radio queue",
+			info: "Clear radio queue",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
@@ -35,7 +35,10 @@ module.exports = class extends Command {
 
 		// stop current music
 		if (playerObj.player.state.status === "playing" || playerObj.player.state.status === "paused") {
-			edit_DB_One("music_state", { gid: guild.id }, { queue: [] });
+			let queueData = await find_DB_Return("music_state", { gid: guild.id });
+
+			if (queueData.length === 0) insert_DB_One("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
+			else edit_DB_One("music_state", { gid: guild.id }, { queue: [] });
 
 			return message.reply({ content: `⏹ **Queue Cleared.**`, allowedMentions: { repliedUser: false } });
 		} else {
