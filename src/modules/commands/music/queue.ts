@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
-import { find_DB_Return, paginationEmbed } from "../../../utils";
+import { find_DB_Return, insert_DB_One, paginationEmbed } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -16,10 +16,14 @@ module.exports = class extends Command {
 		const guild = message.guild!;
 
 		// check if user is in vc or not
-		const queueData = await find_DB_Return("music_state", { gid: guild.id });
+		let queueData = await find_DB_Return("music_state", { gid: guild.id });
 
 		// if error db
-		if (!queueData) return message.reply({ content: "⛔ **Error finding music state in database!** You can report this issue to my creator.", allowedMentions: { repliedUser: false } });
+		if (queueData.length === 0) {
+			insert_DB_One("music_state", { gid: guild.id, vc_id: "", tc_id: message.channel.id, queue: [] });
+
+			queueData = [{ queue: [] }];
+		}
 
 		// get queue data
 		const data = queueData[0];

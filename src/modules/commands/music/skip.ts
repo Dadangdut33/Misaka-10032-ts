@@ -1,7 +1,7 @@
 import { Message, TextChannel } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { createAudioResource, getVoiceConnection, createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
-import { edit_DB, find_DB_Return } from "../../../utils";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
+import { createAudioResource, getVoiceConnection } from "@discordjs/voice";
+import { edit_DB, find_DB_Return, insert_DB_One } from "../../../utils";
 import play from "play-dl";
 
 module.exports = class extends Command {
@@ -14,7 +14,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -30,18 +30,7 @@ module.exports = class extends Command {
 		// get player
 		let playerObj = musicP.get(guild.id)!;
 		if (!playerObj) {
-			// if no player for guild create one
-			musicP.set(guild.id, {
-				player: createAudioPlayer({
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Play,
-					},
-				}),
-				currentTitle: "",
-				currentUrl: "",
-				volume: 100, // not used but kept for future use
-			});
-
+			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
 
@@ -49,7 +38,7 @@ module.exports = class extends Command {
 		if (playerObj.player.state.status === "playing" || playerObj.player.state.status === "paused") {
 			// get queue data
 			const queueData = await find_DB_Return("music_state", { gid: guild.id });
-			if (queueData) {
+			if (queueData.length > 0) {
 				const queue = queueData[0].queue;
 
 				const textChannel = message.guild!.channels.cache.get(queueData[0].tc_id) as TextChannel;
@@ -75,6 +64,8 @@ module.exports = class extends Command {
 					// send message telling finished playing all songs
 					textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
 				}
+			} else {
+				insert_DB_One("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
 			}
 		} else {
 			return message.reply({ content: `⛔ **No radio is playing!**`, allowedMentions: { repliedUser: false } });

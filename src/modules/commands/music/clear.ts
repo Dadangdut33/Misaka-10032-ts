@@ -1,19 +1,19 @@
 import { Message } from "discord.js";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { getVoiceConnection, createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
-import { edit_DB_One } from "../../../utils";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
+import { getVoiceConnection } from "@discordjs/voice";
+import { edit_DB_One, find_DB_Return, insert_DB_One } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("clear", {
 			categories: "music",
-			info: "Stop and clear current radio queue",
+			info: "Clear radio queue",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
 	}
 
-	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -29,24 +29,16 @@ module.exports = class extends Command {
 		// get player
 		let playerObj = musicP.get(guild.id)!;
 		if (!playerObj) {
-			// if no player for guild create one
-			musicP.set(guild.id, {
-				player: createAudioPlayer({
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Play,
-					},
-				}),
-				currentTitle: "",
-				currentUrl: "",
-				volume: 100, // not used but kept for future use
-			});
-
+			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
 
 		// stop current music
 		if (playerObj.player.state.status === "playing" || playerObj.player.state.status === "paused") {
-			edit_DB_One("music_state", { gid: guild.id }, { queue: [] });
+			let queueData = await find_DB_Return("music_state", { gid: guild.id });
+
+			if (queueData.length === 0) insert_DB_One("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
+			else edit_DB_One("music_state", { gid: guild.id }, { queue: [] });
 
 			return message.reply({ content: `⏹ **Queue Cleared.**`, allowedMentions: { repliedUser: false } });
 		} else {

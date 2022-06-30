@@ -1,8 +1,7 @@
 import { MessageEmbed, Message } from "discord.js";
 import moment from "moment-timezone";
 import Genius from "genius-lyrics";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
-import { createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -15,25 +14,14 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		let embed = new MessageEmbed().setDescription("Looking For Lyrics ...").setColor("YELLOW");
 
 		const guild = message.guild!;
 		// get player
 		let playerObj = musicP.get(guild.id)!;
 		if (!playerObj) {
-			// if no player for guild create one
-			musicP.set(guild.id, {
-				player: createAudioPlayer({
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Play,
-					},
-				}),
-				currentTitle: "",
-				currentUrl: "",
-				volume: 100, // not used but kept for future use
-			});
-
+			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
 

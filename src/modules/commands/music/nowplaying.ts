@@ -1,7 +1,6 @@
-import { createAudioPlayer, NoSubscriberBehavior } from "@discordjs/voice";
 import { Message } from "discord.js";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import ytdl from "ytdl-core";
-import { Command, handlerLoadOptionsInterface, musicSettingsInterface } from "../../../handler";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -14,7 +13,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[], { musicP }: { musicP: musicSettingsInterface }) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
@@ -30,21 +29,9 @@ module.exports = class extends Command {
 		// get player
 		let playerObj = musicP.get(guild.id)!;
 		if (!playerObj) {
-			// if no player for guild create one
-			musicP.set(guild.id, {
-				player: createAudioPlayer({
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Play,
-					},
-				}),
-				currentTitle: "",
-				currentUrl: "",
-				volume: 100, // not used but kept for future use
-			});
-
+			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
-
 		// check playing status
 		if (playerObj.player.state.status === "playing") {
 			const videoInfo = await ytdl.getInfo(playerObj.currentUrl);
