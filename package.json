@@ -1,6 +1,6 @@
 {
 	"name": "misaka-10032-bot-ts",
-	"version": "4.0.0",
+	"version": "5.0.0",
 	"description": "A once private discord bot repository. This is a fork of the original bot rewriten in TypeScript.",
 	"main": "./src/index.ts",
 	"scripts": {

@@ -27,6 +27,7 @@ module.exports = class extends Command {
 				.setAuthor({ name: `${message.client.user?.username} Ver. ${this.build}`, iconURL: message.client.user?.displayAvatarURL(), url: this.repo_link })
 				.setTitle(`Changelog`)
 				.setDescription(content)
+				.addField("Info", `This changelog list is not updated anymore, for more info check [the repo's commit history](${this.repo_link}/commits/master)`)
 				.setTimestamp();
 			pages.push(page);
 		}
