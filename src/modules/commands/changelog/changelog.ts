@@ -22,7 +22,7 @@ module.exports = class extends Command {
 		var pages = [];
 
 		for (let i = 0; i < 4; i++) {
-			let content = readFileSync(path.join(__dirname, `../../../local_lib/changelog/changelog${i + 1}.md`), "utf-8");
+			let content = readFileSync(path.join(__dirname, `../../../utils/changelog/changelog${i + 1}.md`), "utf-8");
 			let page = new MessageEmbed()
 				.setAuthor({ name: `${message.client.user?.username} Ver. ${this.build}`, iconURL: message.client.user?.displayAvatarURL(), url: this.repo_link })
 				.setTitle(`Changelog`)
