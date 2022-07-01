@@ -62,7 +62,7 @@ module.exports = class extends Command {
 					edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } });
 
 					// send message telling finished playing all songs
-					textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
+					textChannel.send({ embeds: [{ description: "Queue empty", color: "RANDOM" }] });
 				}
 			} else {
 				insert_DB_One("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });

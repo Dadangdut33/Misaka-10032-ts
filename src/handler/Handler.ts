@@ -1,12 +1,12 @@
 import { Client, MessageEmbed, Message, TextChannel, Guild } from "discord.js";
 import { createAudioPlayer, createAudioResource, NoSubscriberBehavior } from "@discordjs/voice";
 import { Feature } from "./Feature";
-import { Command, musicSettingsInterface, playerObject } from "./Command";
+import { Command, musicSettingsInterface } from "./Command";
 import { BotEvent } from "./BotEvent";
 import { Utils } from "./FileUtils";
 import { prefix } from "../config.json";
 import { find_DB_Return, edit_DB, insert_DB_One } from "../utils";
-import play from "play-dl";
+import { stream } from "play-dl";
 
 export interface handlerLoadOptionsInterface {
 	client: Client;
@@ -235,8 +235,8 @@ export class Handler {
 						// if not loop check if queue is empty or not
 						if (queue.length > 0) {
 							const nextSong = queue.shift();
-							const stream = await play.stream(nextSong.link, { quality: 1250, precache: 1000 })!;
-							const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
+							const streamInfo = await stream(nextSong.link, { quality: 1250, precache: 1000 })!;
+							const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
 							playerObj.player.play(resource);
 							playerMaps.get(guild.id)!.currentTitle = nextSong.title;
@@ -253,8 +253,8 @@ export class Handler {
 						}
 					} else {
 						// loop mode
-						const stream = await play.stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
-						const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
+						const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
+						const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
 						playerObj.player.play(resource);
 

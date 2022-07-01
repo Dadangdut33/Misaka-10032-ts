@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { splitBar } from "string-progressbar";
-import ytdl from "ytdl-core";
+import { getInfo } from "ytdl-core";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -69,7 +69,7 @@ module.exports = class extends Command {
 		}
 		// check playing status
 		if (playerObj.player.state.status === "playing") {
-			const videoInfo = await ytdl.getInfo(playerObj.currentUrl);
+			const videoInfo = await getInfo(playerObj.currentUrl);
 			const total = parseInt(videoInfo.videoDetails.lengthSeconds);
 			const current = ~~(playerObj.player.state.playbackDuration / 1000);
 
