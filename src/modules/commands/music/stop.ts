@@ -33,12 +33,12 @@ module.exports = class extends Command {
 		}
 
 		// stop current music
-		if (playerObj.player.state.status === "playing" || playerObj.player.state.status === "paused") {
+		if (playerObj.player.state.status === "playing") {
 			playerObj.player.stop();
 
 			return message.reply({ content: `⏹ **Stopped.** currently played radio is now stopped`, allowedMentions: { repliedUser: false } });
 		} else {
-			return message.reply({ content: `⛔ **No radio is playing!**`, allowedMentions: { repliedUser: false } });
+			return message.reply({ content: `⛔ **Radio is not playing anything!**`, allowedMentions: { repliedUser: false } });
 		}
 	}
 };
