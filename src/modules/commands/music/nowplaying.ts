@@ -71,7 +71,7 @@ module.exports = class extends Command {
 		if (playerObj.player.state.status === "playing") {
 			const videoInfo = await getInfo(playerObj.currentUrl);
 			const total = parseInt(videoInfo.videoDetails.lengthSeconds);
-			const current = ~~(playerObj.player.state.playbackDuration / 1000);
+			const current = playerObj.seekTime + ~~(playerObj.player.state.playbackDuration / 1000);
 
 			let loadBar: string[] = [];
 			if (!videoInfo.videoDetails.isLiveContent) {
@@ -85,7 +85,7 @@ module.exports = class extends Command {
 						author: { name: `🎶 ${playerObj.currentTitle} ${!videoInfo.videoDetails.isLiveContent ? "🎵" : "(📺 Live)"}`, url: playerObj.currentUrl },
 						description: `${
 							!videoInfo.videoDetails.isLiveContent
-								? `${this.fancyTimeFormatMs(playerObj.player.state.playbackDuration)}/${this.fancyTimeFormat(total)}\n[${loadBar.join("")}]`
+								? `${this.fancyTimeFormat(current)}/${this.fancyTimeFormat(total)}\n[${loadBar.join("")}]`
 								: `Has been running for ${this.fancyTimeFormatMs(playerObj.player.state.playbackDuration)}`
 						} `,
 						fields: [

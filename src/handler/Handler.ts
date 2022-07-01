@@ -212,6 +212,7 @@ export class Handler {
 			}),
 			currentTitle: "",
 			currentUrl: "",
+			seekTime: 0,
 			loop: false,
 			volume: 100, // not used but kept for future use
 		});
@@ -241,12 +242,14 @@ export class Handler {
 							playerObj.player.play(resource);
 							playerMaps.get(guild.id)!.currentTitle = nextSong.title;
 							playerMaps.get(guild.id)!.currentUrl = nextSong.link;
+							playerMaps.get(guild.id)!.seekTime = 0;
 							edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
 
 							// send message to channel
 							textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 						} else {
 							edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
+							playerMaps.get(guild.id)!.seekTime = 0;
 
 							// send message telling finished playing all songs
 							textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
@@ -257,6 +260,7 @@ export class Handler {
 						const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
 						playerObj.player.play(resource);
+						playerMaps.get(guild.id)!.seekTime = 0;
 
 						// send message to channel
 						textChannel.send({
