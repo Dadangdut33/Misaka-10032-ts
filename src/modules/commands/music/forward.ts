@@ -6,13 +6,32 @@ import { createAudioResource } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("seek", {
+		super("forward", {
+			aliases: ["ff"],
 			categories: "music",
-			info: "Seek time in current radio. Format: \n-`<time in seconds>` -> ex:120\n-`<minutes:seconds>` -> ex: 2:12\n-`<hours:minutes:seconds>` -> ex: 1:2:12",
-			usage: `\`${prefix}command <time in seconds>/<minutes:seconds>/<hours:minutes:seconds>\``,
+			info: "Fast forward the current song. Format: \n-`<time in seconds>` -> ex:120\n-`<minutes:seconds>` -> ex: 2:12\n-`<hours:minutes:seconds>` -> ex: 1:2:12",
+			usage: `\`${prefix}command/alias <time in seconds>/<minutes:seconds>/<hours:minutes:seconds>\``,
 			guildOnly: true,
 		});
 	}
+
+	fancyTimeFormat(duration: number) {
+		// Hours, minutes and seconds
+		let hrs = ~~(duration / 3600);
+		let mins = ~~((duration % 3600) / 60);
+		let secs = ~~duration % 60;
+
+		let ret = "";
+
+		if (hrs > 0) {
+			ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+		}
+
+		ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+		ret += "" + secs;
+		return ret;
+	}
+
 	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
@@ -45,36 +64,41 @@ module.exports = class extends Command {
 		// if live stream, return error
 		if (videoInfo.videoDetails.isLiveContent) return message.reply({ content: `⛔ **Cannot seek in live stream!**`, allowedMentions: { repliedUser: false } });
 
-		// seek time
-		const time = args[0];
+		// input time
+		let time = args[0];
 		// check if time is in seconds or minutes:seconds or hours:minutes:seconds
-		let seekTime = 0;
+		let inputTime = 0;
 		if (time.includes(":")) {
 			const timeArr = time.split(":");
 			if (timeArr.length === 3) {
 				const hours = parseInt(timeArr[0]);
 				const minutes = parseInt(timeArr[1]);
 				const seconds = parseInt(timeArr[2]);
-				seekTime = hours * 3600 + minutes * 60 + seconds;
+				inputTime = hours * 3600 + minutes * 60 + seconds;
 			} else if (timeArr.length === 2) {
 				const minutes = parseInt(timeArr[0]);
 				const seconds = parseInt(timeArr[1]);
-				seekTime = minutes * 60 + seconds;
+				inputTime = minutes * 60 + seconds;
 			}
 		} else {
-			seekTime = parseInt(time);
+			inputTime = parseInt(time);
 		}
 
-		if (seekTime > parseInt(videoInfo.videoDetails.lengthSeconds)) return message.reply({ content: `⛔ **Time cannot exceed video time!**`, allowedMentions: { repliedUser: false } });
+		// checks
+		if (isNaN(inputTime)) return message.reply({ content: `⛔ **Invalid time!**`, allowedMentions: { repliedUser: false } }); // if not a number
+		if (inputTime < 0) return message.reply({ content: `⛔ **Time cannot be negative!**`, allowedMentions: { repliedUser: false } }); // if input is negative
 
-		if (seekTime < 0) return message.reply({ content: `⛔ **Time cannot be negative!**`, allowedMentions: { repliedUser: false } });
+		// total forward
+		let forwardTime = playerObj.seekTime + ~~(playerObj.player.state.playbackDuration / 1000) + inputTime;
+		if (forwardTime > parseInt(videoInfo.videoDetails.lengthSeconds))
+			return message.reply({ content: `⛔ **Cannot skip past the duration of video time!**`, allowedMentions: { repliedUser: false } }); // if time is greater than video time
 
-		// seek
-		const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000, seek: seekTime });
+		// seek forward
+		const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000, seek: forwardTime });
 		const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
-		playerObj.seekTime = seekTime;
+		playerObj.seekTime = forwardTime;
 		playerObj.player.play(resource);
 
-		return message.reply({ content: `✅ **Seeked to ${seekTime} seconds!**`, allowedMentions: { repliedUser: false } });
+		return message.reply({ content: `⏩ **Fast forwarded to ${this.fancyTimeFormat(forwardTime)}!**`, allowedMentions: { repliedUser: false } });
 	}
 };
