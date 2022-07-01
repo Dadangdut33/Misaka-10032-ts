@@ -72,19 +72,26 @@ module.exports = class extends Command {
 			const videoInfo = await ytdl.getInfo(playerObj.currentUrl);
 			const total = parseInt(videoInfo.videoDetails.lengthSeconds);
 			const current = ~~(playerObj.player.state.playbackDuration / 1000);
-			const loadBar = splitBar(total, current, 33);
-			// remove last array element
-			loadBar.pop();
+
+			let loadBar: string[] = [];
+			if (!videoInfo.videoDetails.isLiveContent) {
+				loadBar = splitBar(total, current, 33);
+				loadBar.pop(); // remove last array element (its a number thingy)
+			}
 
 			return message.reply({
 				embeds: [
 					{
-						author: { name: `🎶 ${playerObj.currentTitle}`, url: playerObj.currentUrl },
-						description: `${this.fancyTimeFormatMs(playerObj.player.state.playbackDuration)}/${this.fancyTimeFormat(total)}\n[${loadBar.join("")}]`,
+						author: { name: `🎶 ${playerObj.currentTitle} ${!videoInfo.videoDetails.isLiveContent ? "🎵" : "(📺 Live)"}`, url: playerObj.currentUrl },
+						description: `${
+							!videoInfo.videoDetails.isLiveContent
+								? `${this.fancyTimeFormatMs(playerObj.player.state.playbackDuration)}/${this.fancyTimeFormat(total)}\n[${loadBar.join("")}]`
+								: `Has been running for ${this.fancyTimeFormatMs(playerObj.player.state.playbackDuration)}`
+						} `,
 						fields: [
 							{
-								name: "Live",
-								value: `${videoInfo.videoDetails.isLiveContent ? "Yes" : "No"}`,
+								name: "Uploader",
+								value: `[${videoInfo.videoDetails.author.name}](${videoInfo.videoDetails.ownerProfileUrl})`,
 								inline: true,
 							},
 							{
