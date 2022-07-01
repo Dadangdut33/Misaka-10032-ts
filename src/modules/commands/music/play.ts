@@ -1,8 +1,8 @@
 import { Message, VoiceBasedChannel, Guild } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioResource } from "@discordjs/voice";
-import ytdl from "ytdl-core";
-import play from "play-dl";
+import { getInfo, validateURL, videoInfo } from "ytdl-core";
+import { stream, search } from "play-dl";
 import { edit_DB, find_DB_Return, insert_DB_One } from "../../../utils";
 
 module.exports = class extends Command {
@@ -31,12 +31,7 @@ module.exports = class extends Command {
 		}
 	}
 
-	async getVideoResource(link: string) {
-		const stream = await play.stream(link, { quality: 1250, precache: 1000 })!;
-		return createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
-	}
-
-	sendVideoInfo(message: Message, title: string, videoInfo: ytdl.videoInfo) {
+	sendVideoInfo(message: Message, title: string, videoInfo: videoInfo) {
 		message.channel.send({
 			embeds: [
 				{
@@ -68,6 +63,11 @@ module.exports = class extends Command {
 		});
 	}
 
+	async getVideoResource(link: string) {
+		const streamInfo = await stream(link, { quality: 1250, precache: 1000 })!;
+		return createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
+	}
+
 	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const radioDict: any = {
 			"[lofi]": "https://youtu.be/5qap5aO4i9A",
@@ -88,9 +88,9 @@ module.exports = class extends Command {
 		if (radioDict[args[0]]) link = radioDict[args[0]];
 		else {
 			// check if link or not
-			if (ytdl.validateURL(args[0])) link = args[0];
+			if (validateURL(args[0])) link = args[0];
 			else {
-				const res = await play.search(args.join(" "), { limit: 5, source: { youtube: "video" } });
+				const res = await search(args.join(" "), { limit: 5, source: { youtube: "video" } });
 
 				if (!res) return message.reply({ content: "⛔ **No results found!**", allowedMentions: { repliedUser: false } });
 
@@ -147,7 +147,7 @@ module.exports = class extends Command {
 
 		const mReply = await message.reply({ content: `🎶 **Loading** \`${link}\``, allowedMentions: { repliedUser: false } });
 		try {
-			const videoInfo = await ytdl.getInfo(link);
+			const videoInfo = await getInfo(link);
 			mReply.edit({ content: `🎶 **Loading** \`${videoInfo.videoDetails.title}\`` });
 
 			// get video resource
@@ -159,6 +159,7 @@ module.exports = class extends Command {
 
 			playerObj.currentTitle = queueItem.title;
 			playerObj.currentUrl = queueItem.link;
+			playerObj.seekTime = 0;
 
 			// 1st play
 			if (playerObj.player.state.status !== "playing") {

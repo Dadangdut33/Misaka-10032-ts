@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { splitBar } from "string-progressbar";
-import ytdl from "ytdl-core";
+import { getInfo } from "ytdl-core";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -69,22 +69,29 @@ module.exports = class extends Command {
 		}
 		// check playing status
 		if (playerObj.player.state.status === "playing") {
-			const videoInfo = await ytdl.getInfo(playerObj.currentUrl);
+			const videoInfo = await getInfo(playerObj.currentUrl);
 			const total = parseInt(videoInfo.videoDetails.lengthSeconds);
-			const current = ~~(playerObj.player.state.playbackDuration / 1000);
-			const loadBar = splitBar(total, current, 33);
-			// remove last array element
-			loadBar.pop();
+			const current = playerObj.seekTime + ~~(playerObj.player.state.playbackDuration / 1000);
+
+			let loadBar: string[] = [];
+			if (!videoInfo.videoDetails.isLiveContent) {
+				loadBar = splitBar(total, current, 33);
+				loadBar.pop(); // remove last array element (its a number thingy)
+			}
 
 			return message.reply({
 				embeds: [
 					{
-						author: { name: `🎶 ${playerObj.currentTitle}`, url: playerObj.currentUrl },
-						description: `${this.fancyTimeFormatMs(playerObj.player.state.playbackDuration)}/${this.fancyTimeFormat(total)}\n[${loadBar.join("")}]`,
+						author: { name: `🎶 ${playerObj.currentTitle} ${!videoInfo.videoDetails.isLiveContent ? "🎵" : "(📺 Live)"}`, url: playerObj.currentUrl },
+						description: `${
+							!videoInfo.videoDetails.isLiveContent
+								? `${this.fancyTimeFormat(current)}/${this.fancyTimeFormat(total)}\n[${loadBar.join("")}]`
+								: `Has been running for ${this.fancyTimeFormatMs(playerObj.player.state.playbackDuration)}`
+						} `,
 						fields: [
 							{
-								name: "Live",
-								value: `${videoInfo.videoDetails.isLiveContent ? "Yes" : "No"}`,
+								name: "Uploader",
+								value: `[${videoInfo.videoDetails.author.name}](${videoInfo.videoDetails.ownerProfileUrl})`,
 								inline: true,
 							},
 							{

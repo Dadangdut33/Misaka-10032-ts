@@ -1,12 +1,12 @@
 import { Client, MessageEmbed, Message, TextChannel, Guild } from "discord.js";
 import { createAudioPlayer, createAudioResource, NoSubscriberBehavior } from "@discordjs/voice";
 import { Feature } from "./Feature";
-import { Command, musicSettingsInterface, playerObject } from "./Command";
+import { Command, musicSettingsInterface } from "./Command";
 import { BotEvent } from "./BotEvent";
 import { Utils } from "./FileUtils";
 import { prefix } from "../config.json";
 import { find_DB_Return, edit_DB, insert_DB_One } from "../utils";
-import play from "play-dl";
+import { stream } from "play-dl";
 
 export interface handlerLoadOptionsInterface {
 	client: Client;
@@ -212,6 +212,7 @@ export class Handler {
 			}),
 			currentTitle: "",
 			currentUrl: "",
+			seekTime: 0,
 			loop: false,
 			volume: 100, // not used but kept for future use
 		});
@@ -235,28 +236,31 @@ export class Handler {
 						// if not loop check if queue is empty or not
 						if (queue.length > 0) {
 							const nextSong = queue.shift();
-							const stream = await play.stream(nextSong.link, { quality: 1250, precache: 1000 })!;
-							const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
+							const streamInfo = await stream(nextSong.link, { quality: 1250, precache: 1000 })!;
+							const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
 							playerObj.player.play(resource);
 							playerMaps.get(guild.id)!.currentTitle = nextSong.title;
 							playerMaps.get(guild.id)!.currentUrl = nextSong.link;
+							playerMaps.get(guild.id)!.seekTime = 0;
 							edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
 
 							// send message to channel
 							textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 						} else {
 							edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
+							playerMaps.get(guild.id)!.seekTime = 0;
 
 							// send message telling finished playing all songs
 							textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
 						}
 					} else {
 						// loop mode
-						const stream = await play.stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
-						const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
+						const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
+						const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
 						playerObj.player.play(resource);
+						playerMaps.get(guild.id)!.seekTime = 0;
 
 						// send message to channel
 						textChannel.send({
