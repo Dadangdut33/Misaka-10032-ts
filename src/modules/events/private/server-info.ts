@@ -10,17 +10,7 @@ module.exports = class extends BotEvent {
 		// this.disable();
 	}
 
-	embedStats(
-		client: Client,
-		guild: Guild,
-		channelID: string,
-		id_embed_serverInfo: string,
-		rulesChannelID: string,
-		modRolesID: string,
-		totalBots: number,
-		onlineUsers: number,
-		age: number
-	) {
+	embedStats(client: Client, guild: Guild, channelID: string, id_embed_serverInfo: string, rulesChannelID: string, modRolesID: string, totalBots: number, onlineUsers: number, age: number) {
 		client.channels.fetch(channelID).then((channel) => {
 			// First fetch channel from client
 			(channel as TextChannel).messages.fetch(id_embed_serverInfo).then((msg) => {
@@ -109,10 +99,7 @@ module.exports = class extends BotEvent {
 			(channel as TextChannel).messages.fetch(jumpChannelID).then((msg) => {
 				let goTop = `https://discord.com/channels/${guildID}/${channelID}/${id_embed_serverInfo}`;
 				// Then fetch the message
-				let embed = new MessageEmbed()
-					.setTitle("Quick Links")
-					.setDescription(`[\[Go To The Top\]](${goTop}) | <#${jumpToGeneral}> | <#${vcGeneral}> | <#${publicStage}>`)
-					.setColor("RANDOM");
+				let embed = new MessageEmbed().setTitle("Quick Links").setDescription(`[\[Go To The Top\]](${goTop}) | <#${jumpToGeneral}> | <#${vcGeneral}> | <#${publicStage}>`).setColor("RANDOM");
 
 				msg.edit({ embeds: [embed] });
 			});

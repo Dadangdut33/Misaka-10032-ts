@@ -47,9 +47,7 @@ module.exports = class extends Command {
 				const pages: MessageEmbed[] = [];
 
 				for (let i = 0; i < shows.length; i += 25) {
-					let pageAdd = new MessageEmbed()
-						.setAuthor({ name: `Click For Web View`, url: `https://ricklancee.github.io/currently-airing-anime/` })
-						.setTitle(`Current Season's Anime`);
+					let pageAdd = new MessageEmbed().setAuthor({ name: `Click For Web View`, url: `https://ricklancee.github.io/currently-airing-anime/` }).setTitle(`Current Season's Anime`);
 
 					for (let j = 0; j < 25; j++) {
 						try {
@@ -82,9 +80,7 @@ module.exports = class extends Command {
 					next()
 						?.then(({ shows }) => {
 							for (let i = 0; i < shows.length; i += 25) {
-								let pageAdd = new MessageEmbed()
-									.setAuthor({ name: `Click For Web View`, url: `https://ricklancee.github.io/currently-airing-anime/` })
-									.setTitle(`Current Season's Anime`);
+								let pageAdd = new MessageEmbed().setAuthor({ name: `Click For Web View`, url: `https://ricklancee.github.io/currently-airing-anime/` }).setTitle(`Current Season's Anime`);
 
 								for (let j = 0; j < 25; j++) {
 									try {

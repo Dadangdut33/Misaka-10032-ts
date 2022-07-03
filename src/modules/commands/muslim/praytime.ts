@@ -28,9 +28,7 @@ module.exports = class extends Command {
 	}
 
 	errorCity() {
-		return new MessageEmbed()
-			.setTitle(`Error`)
-			.setDescription(`City not found, maybe you type it wrong? Correct example should be like this\`\`\`css\n${this.prefix}pt city "Mecca"\`\`\``);
+		return new MessageEmbed().setTitle(`Error`).setDescription(`City not found, maybe you type it wrong? Correct example should be like this\`\`\`css\n${this.prefix}pt city "Mecca"\`\`\``);
 	}
 
 	info_tz_coordinates() {
@@ -170,10 +168,7 @@ module.exports = class extends Command {
 
 			//Prevent wrong invalid timezone input
 			if (parseInt(args[4]) > 13 || parseInt(args[4]) < -12) {
-				let embed = new MessageEmbed()
-					.setTitle(`Invalid timezone provided`)
-					.setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`)
-					.setTimestamp();
+				let embed = new MessageEmbed().setTitle(`Invalid timezone provided`).setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`).setTimestamp();
 
 				return message.channel.send({ embeds: [embed] });
 			}
@@ -226,10 +221,7 @@ module.exports = class extends Command {
 
 			//Prevent wrong invalid timezone input
 			if (parseInt(splitted[2]) > 13 || parseInt(splitted[2]) < -12) {
-				let embed = new MessageEmbed()
-					.setTitle(`Invalid timezone provided`)
-					.setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`)
-					.setTimestamp();
+				let embed = new MessageEmbed().setTitle(`Invalid timezone provided`).setDescription(`The valid timezone are range from -12 to +13, that is the rule of physics`).setTimestamp();
 
 				return message.channel.send({ embeds: [embed] });
 			}
@@ -254,9 +246,7 @@ module.exports = class extends Command {
 					new MessageEmbed()
 						.setColor("RANDOM")
 						.setTitle(`Invalid Arguments Provided!`)
-						.setDescription(
-							`For more detailed info please check using the help command. You can enter custom city with custom timezone or custom coordinate with custom timezone`
-						),
+						.setDescription(`For more detailed info please check using the help command. You can enter custom city with custom timezone or custom coordinate with custom timezone`),
 				],
 			});
 		}

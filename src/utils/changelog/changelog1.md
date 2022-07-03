@@ -1,5 +1,5 @@
-**[18/4/2020]** 
-Initial commit with commands : meme, rps, help, ping, spoiler, and say. The initial name was *Da-Dang*
+**[18/4/2020]**
+Initial commit with commands : meme, rps, help, ping, spoiler, and say. The initial name was _Da-Dang_
 **[24/7/2020]**
 Switched hosting server from Heroku to glitch.com. After several tweaks, the bot is now up 24/7 using script from pipedream.com
 **[26/7/2020]**
@@ -29,7 +29,7 @@ Tweaked code on help commands, added praytime, updated timezone, updated embed o
 **[6/1/2021]**
 Added animequote and changed lots of embed style in some commands
 **[7/1/2021]**
-Fixed bug on gday, added randomimage, qr, tempconvert, dictionary, urban and wikipedia 
+Fixed bug on gday, added randomimage, qr, tempconvert, dictionary, urban and wikipedia
 **[8/1/2021]**
 Added serverinfo and fix some bugs
 **[9/1/2021]**

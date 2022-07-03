@@ -237,9 +237,7 @@ ${message.attachments.map((x) => x.url)}
 							embed = msg;
 							(channel as TextChannel).send({ embeds: [embed] }).catch(console.error);
 						} else {
-							console.log(
-								`${description.name} -> The client doesn't have the permission EMBED_LINKS to the configured channel "${channelname}" on server "${guild.name}" (${guild.id})`
-							);
+							console.log(`${description.name} -> The client doesn't have the permission EMBED_LINKS to the configured channel "${channelname}" on server "${guild.name}" (${guild.id})`);
 						}
 					} else {
 						if (debugmode) console.log(`Module: ${description.name} | send - sending embed to ${channel.name}`);

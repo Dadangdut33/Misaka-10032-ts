@@ -78,11 +78,7 @@ module.exports = class extends Command {
 			.setTitle(`\`${data[0].farm_Day}\` Farm Guide`)
 			.setDescription(`**Data are based on game v${Genshin_Ver}**\nBelow are list of characters or weapons that can get materials on the specified days`)
 			.addField(`❯\u2000\Cecilia Garden (${farm_Type_1[0]}) [${cecilia_Garden[0].weapons.length}]:`, cecilia_Garden[0].weapons.map((x: any) => `\`${x}\``).join(", "), false)
-			.addField(
-				`❯\u2000\Hidden Palace of Lianshan Formula (${farm_Type_2[0]}) [${hidden_Palace[0].weapons.length}]:`,
-				hidden_Palace[0].weapons.map((x: any) => `\`${x}\``).join(", "),
-				false
-			)
+			.addField(`❯\u2000\Hidden Palace of Lianshan Formula (${farm_Type_2[0]}) [${hidden_Palace[0].weapons.length}]:`, hidden_Palace[0].weapons.map((x: any) => `\`${x}\``).join(", "), false)
 			.addField(
 				`❯\u2000\Search on Wiki`,
 				`• [${farm_Type_1[0]}](https://genshin-impact.fandom.com/wiki/Special:Search?query=${farm_Type_1[0].replace(/\s/g, "+")})\n• [${

@@ -106,8 +106,7 @@ module.exports = class extends BotEvent {
 							animeStaff = [];
 
 						if (data.staff)
-							if (data.staff.length > 0)
-								for (let i = 0; i < data.staff.length; i++) animeStaff[i] = `• ${data.staff[i].name} - ${data.staff[i].role ? data.staff[i].role : `-`}`;
+							if (data.staff.length > 0) for (let i = 0; i < data.staff.length; i++) animeStaff[i] = `• ${data.staff[i].name} - ${data.staff[i].role ? data.staff[i].role : `-`}`;
 							else animeStaff = [`No staff for this anime have been added to this title.`];
 						else animeStaff = [`No staff for this anime have been added to this title.`];
 
@@ -135,11 +134,7 @@ module.exports = class extends BotEvent {
 							.setColor("#2E51A2")
 							.setAuthor({ name: `${data.englishTitle ? data.englishTitle : data.title} | ${data.type ? data.type : "N/A"}`, iconURL: data.picture, url: data.url })
 							.setDescription(data.synopsis ? data.synopsis : "No synopsis available.")
-							.addField(
-								"Japanese Name",
-								`${(data as AnimeEpisodesDataModel).japaneseTitle ? `${(data as AnimeEpisodesDataModel).japaneseTitle} (${data.title})` : data.title}`,
-								false
-							)
+							.addField("Japanese Name", `${(data as AnimeEpisodesDataModel).japaneseTitle ? `${(data as AnimeEpisodesDataModel).japaneseTitle} (${data.title})` : data.title}`, false)
 							.addField("Synonyms", `${data.synonyms[0] === "" ? "N/A" : data.synonyms.join(" ")}`, false)
 							// @ts-ignore -> genres is not on the interface
 							.addField(`Genres`, `${data.genres ? (data.genres![0] !== "" ? data.genres.join(", ") : "N/A") : "N/A"}`, false)

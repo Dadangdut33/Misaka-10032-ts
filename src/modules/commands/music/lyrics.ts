@@ -40,12 +40,7 @@ module.exports = class extends Command {
 				return message.channel.send({ embeds: [embed] });
 			}
 
-			const edited = new MessageEmbed()
-				.setTitle(songs[0].title)
-				.setURL(songs[0].url)
-				.addField(`Lyrics State`, songs[0].raw.lyrics_state, true)
-				.setImage(songs[0].image)
-				.setColor("YELLOW");
+			const edited = new MessageEmbed().setTitle(songs[0].title).setURL(songs[0].url).addField(`Lyrics State`, songs[0].raw.lyrics_state, true).setImage(songs[0].image).setColor("YELLOW");
 
 			const fetched = await songs[0].fetch();
 			if (fetched.releasedAt) {

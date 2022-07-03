@@ -4,22 +4,7 @@ import { Toggleable } from "./Toggleable";
 
 interface optionsInterface {
 	aliases?: string[];
-	categories:
-		| "action"
-		| "changelog"
-		| "fun"
-		| "info-bot"
-		| "info-server"
-		| "moderation"
-		| "music"
-		| "muslim"
-		| "anime"
-		| "anime-misc"
-		| "genshin"
-		| "info-misc"
-		| "manga"
-		| "text"
-		| "tool";
+	categories: "action" | "changelog" | "fun" | "info-bot" | "info-server" | "moderation" | "music" | "muslim" | "anime" | "anime-misc" | "genshin" | "info-misc" | "manga" | "text" | "tool";
 	usage: string; // "commmand" and "alias" is a reserved word in usage that will replace with the command name and alias
 	info: string;
 	guildOnly: boolean;
