@@ -21,7 +21,7 @@ module.exports = class extends Command {
 			.map((GuildMember) => {
 				let age = moment().tz("Asia/Jakarta").valueOf() - GuildMember.joinedAt!.getTime();
 				index++;
-				return `${index} <t:${~~(moment(GuildMember.joinedAt).tz("Asia/Jakarta").valueOf() / 1000)}:R> - <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
+				return `${index}. <t:${~~(moment(GuildMember.joinedAt).tz("Asia/Jakarta").valueOf() / 1000)}:R> <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
 			});
 
 		let loopAmount = Math.ceil(memberFromOldest.length / 25),
