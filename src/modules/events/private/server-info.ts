@@ -51,7 +51,7 @@ module.exports = class extends BotEvent {
 			(channel as TextChannel).messages.fetch(memberInfoID).then((msg) => {
 				// Then fetch the message
 				let embed = new MessageEmbed()
-					.setTitle("Showing max 10 of")
+					.setTitle("Showing 15 oldest & newest member")
 					.setDescription(`**Oldest Member**\n${onlyTenOldest.join("\n")}\n\n**Newest Member**\n${onlyTenNewest.join("\n")}`)
 					.setFooter({ text: "Last Updated" })
 					.setColor("RANDOM")
@@ -125,13 +125,28 @@ module.exports = class extends BotEvent {
 		return bots;
 	}
 
-	getMember(guild: Guild) {
-		return guild.members.cache.map((GuildMember) => {
-			let today = moment().tz("Asia/Jakarta");
-			let age = today.valueOf() - GuildMember.joinedAt!.getTime();
+	getMemberNewest(guild: Guild) {
+		let index = 0;
 
-			return `${GuildMember.joinedTimestamp} ,, ${moment(GuildMember.joinedAt).tz("Asia/Jakarta").format("DD/MM/YYYY HH:mm:ss")} - <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
-		});
+		return guild.members.cache
+			.sort((a, b) => b.joinedTimestamp! - a.joinedTimestamp!)
+			.map((GuildMember) => {
+				let age = moment().tz("Asia/Jakarta").valueOf() - GuildMember.joinedAt!.getTime();
+				index++;
+				return `${index} <t:${~~(moment(GuildMember.joinedAt).tz("Asia/Jakarta").valueOf() / 1000)}:R> - <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
+			});
+	}
+
+	getMemberOldest(guild: Guild) {
+		let index = 0;
+
+		return guild.members.cache
+			.sort((a, b) => a.joinedTimestamp! - b.joinedTimestamp!)
+			.map((GuildMember) => {
+				let age = moment().tz("Asia/Jakarta").valueOf() - GuildMember.joinedAt!.getTime();
+				index++;
+				return `${index} <t:${~~(moment(GuildMember.joinedAt).tz("Asia/Jakarta").valueOf() / 1000)}:R> - <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
+			});
 	}
 
 	startServerInfoPoll(
@@ -157,15 +172,8 @@ module.exports = class extends BotEvent {
 
 			// ------------
 			// member
-			let onlyTenOldest: string[] = this.getMember(guild)
-					.sort()
-					.slice(0, 10)
-					.map((data, i) => data.replace(/[0-9]+\s,,/g, `[${i + 1}]`)),
-				onlyTenNewest: string[] = this.getMember(guild)
-					.sort()
-					.reverse()
-					.slice(0, 10)
-					.map((data, i) => data.replace(/[0-9]+\s,,/g, `[${i + 1}]`));
+			let oldest: string[] = this.getMemberNewest(guild).slice(0, 15),
+				newest: string[] = this.getMemberOldest(guild).slice(0, 15);
 
 			// ------------
 			// emojis
@@ -196,7 +204,7 @@ module.exports = class extends BotEvent {
 			this.embedStats(client, guild, channelID, id_embed_serverInfo, rulesChannelID, modRolesID, this.totalBots(guild), this.OnlineUsers(guild), age);
 			this.embedNonAnimatedEmojis(client, channelID, id_embed_nonanimatedEmojis, nonAnimated);
 			this.embedAnimatedEmojis(client, channelID, id_embed_animatedEmojis, Animated);
-			this.embedMember(client, channelID, memberInfoID, onlyTenOldest, onlyTenNewest);
+			this.embedMember(client, channelID, memberInfoID, oldest, newest);
 			this.jump(client, guildID, channelID, id_embed_serverInfo, jumpChannelID, jumpToGeneral, vcGeneral, publicStage);
 		} catch (error) {
 			console.log(error);
