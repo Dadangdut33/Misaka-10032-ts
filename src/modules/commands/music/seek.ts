@@ -65,9 +65,10 @@ module.exports = class extends Command {
 			seekTime = parseInt(time);
 		}
 
-		if (seekTime > parseInt(videoInfo.videoDetails.lengthSeconds)) return message.reply({ content: `⛔ **Time cannot exceed video time!**`, allowedMentions: { repliedUser: false } });
-
-		if (seekTime < 0) return message.reply({ content: `⛔ **Time cannot be negative!**`, allowedMentions: { repliedUser: false } });
+		// checks
+		if (isNaN(seekTime)) return message.reply({ content: `⛔ **Incorrect format!** Check for the correct format using help command.`, allowedMentions: { repliedUser: false } }); // format incorrect
+		if (seekTime > parseInt(videoInfo.videoDetails.lengthSeconds)) return message.reply({ content: `⛔ **Time cannot exceed video time!**`, allowedMentions: { repliedUser: false } }); // time exceeds video time
+		if (seekTime < 0) return message.reply({ content: `⛔ **Time cannot be negative!**`, allowedMentions: { repliedUser: false } }); // time is negative
 
 		// seek
 		const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000, seek: seekTime });

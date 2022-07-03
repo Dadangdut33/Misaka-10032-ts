@@ -94,30 +94,44 @@ module.exports = class extends Command {
 
 				if (!res) return message.reply({ content: "⛔ **No results found!**", allowedMentions: { repliedUser: false } });
 
-				message.channel.send({
+				const embedList = await message.channel.send({
 					embeds: [
 						{
 							color: 0x00ff00,
-							author: { name: "Please choose from the list (⏳30)" },
+							author: { name: "📑 Please choose from the list (⏳30 seconds)" },
 							description: res.map((data, index) => `${index + 1}. [${data.title}](${data.url})`).join("\n"),
-							footer: { text: "Type the number of the video you want to play.Type 'cancel' to cancel" },
+							footer: { text: "Type the number of the video you want to play. Type 'cancel' to cancel." },
 						},
 					],
 				});
 
 				try {
-					const m = await message.channel.awaitMessages({ filter: (m: Message) => m.author.id === message.author.id, max: 1, time: 30000, errors: ["time"] }).catch();
+					const m = await message.channel.awaitMessages({ filter: (m: Message) => m.author.id === message.author.id, max: 1, time: 30000, errors: ["time"] });
 
 					if (!m.first()) return message.reply({ content: "⛔ **Cancelled because input not provided by user!**", allowedMentions: { repliedUser: false } });
 					const num = parseInt(m.first()!.content);
-					if (isNaN(num))
-						return message.reply({ content: num.toString().includes("cancel") ? "⛔ **Cancelled!**" : "⛔ **Incorrect input!**", allowedMentions: { repliedUser: false } });
+					if (isNaN(num)) {
+						if (m.first()!.content.toLowerCase().includes("cancel")) {
+							embedList.delete(); // delete only if user cancel
+							m.first()!.delete();
+						}
 
-					if (num > res.length || num < 1) return message.reply({ content: "⛔ **Incorrect input!**", allowedMentions: { repliedUser: false } });
-					link = res[num - 1].url;
+						return message.reply({
+							content: m.first()!.content.toLowerCase().includes("cancel") ? "**Cancelled by user!**" : "⛔ **Incorrect input!**",
+							allowedMentions: { repliedUser: false },
+						}); // not a number
+					}
+
+					if (num > res.length || num < 1) return message.reply({ content: "⛔ **Incorrect input!**", allowedMentions: { repliedUser: false } }); // out of range
+
+					// delete m
+					embedList.delete();
+					m.first()!.delete();
+
+					link = res[num - 1].url; // get link
 				} catch (error) {
-					message.reply({ content: `⛔ **Cancelled because input not provided by user!**\n`, allowedMentions: { repliedUser: false } });
-					return;
+					embedList.delete();
+					return message.reply({ content: `⛔ **Cancelled because input not provided by user!**\n`, allowedMentions: { repliedUser: false } });
 				}
 			}
 		}

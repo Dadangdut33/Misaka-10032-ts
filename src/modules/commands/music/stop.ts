@@ -36,7 +36,7 @@ module.exports = class extends Command {
 		if (playerObj.player.state.status === "playing") {
 			playerObj.player.stop();
 
-			return message.reply({ content: `⏹ **Stopped.** currently played radio is now stopped`, allowedMentions: { repliedUser: false } });
+			return message.reply({ content: `⏹ **Stopped radio.**`, allowedMentions: { repliedUser: false } });
 		} else {
 			return message.reply({ content: `⛔ **Radio is not playing anything!**`, allowedMentions: { repliedUser: false } });
 		}
