@@ -169,6 +169,7 @@ module.exports = class extends Command {
 				type: videoInfo.videoDetails.isLiveContent ? "live" : "video",
 				title: videoInfo.videoDetails.title,
 				link: link,
+				query: args.join(" "),
 			};
 
 			playerObj.currentTitle = queueItem.title;
@@ -181,8 +182,9 @@ module.exports = class extends Command {
 				const resource = await this.getVideoResource(link);
 				voiceConnection!.subscribe(playerObj.player);
 				playerObj.player.play(resource);
+				playerObj.query = args.join(" ");
 
-				// check exist in db or not
+				// check db set or not
 				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
 				if (checkExist.length === 0) insert_DB_One("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [] });
 				else edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
@@ -192,7 +194,7 @@ module.exports = class extends Command {
 				mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			} else {
 				// add to queue
-				// check exist in db or not
+				// check db set or not
 				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
 				if (!checkExist) insert_DB_One("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [queueItem] });
 				else edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });

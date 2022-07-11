@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, handlerLoadOptionsInterface } from "../../../handler";
+import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { getVoiceConnection } from "@discordjs/voice";
 
 module.exports = class extends Command {
@@ -13,7 +13,7 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message: Message, args: string[]) {
+	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
 
@@ -32,6 +32,14 @@ module.exports = class extends Command {
 		// leave vc
 		if (getVoiceConnection(guild.id)) getVoiceConnection(guild.id)!.destroy();
 		else guild.me?.voice.disconnect();
+
+		// stop player
+		let playerObj = musicP.get(guild.id)!;
+		if (!playerObj) {
+			addNewPlayer(guild, musicP, message.client);
+			playerObj = musicP.get(guild.id)!;
+		}
+		playerObj.player.stop();
 
 		return message.reply({ content: `👌 **Left** \`${vc.name}\``, allowedMentions: { repliedUser: false } });
 	}

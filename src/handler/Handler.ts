@@ -212,6 +212,7 @@ export class Handler {
 			}),
 			currentTitle: "",
 			currentUrl: "",
+			query: "",
 			seekTime: 0,
 			loop: false,
 			volume: 100, // not used but kept for future use
@@ -243,6 +244,7 @@ export class Handler {
 							playerMaps.get(guild.id)!.currentTitle = nextSong.title;
 							playerMaps.get(guild.id)!.currentUrl = nextSong.link;
 							playerMaps.get(guild.id)!.seekTime = 0;
+							playerMaps.get(guild.id)!.query = nextSong.query;
 							edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
 
 							// send message to channel

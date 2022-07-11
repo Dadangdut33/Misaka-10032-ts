@@ -17,6 +17,7 @@ export interface playerObject {
 	player: AudioPlayer;
 	currentTitle: string;
 	currentUrl: string;
+	query: string;
 	seekTime: number;
 	loop: boolean;
 	volume: number;
