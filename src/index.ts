@@ -1,6 +1,5 @@
-// keep alive by setting up a server and pinging it (if not premium)
-import { Request, Response } from "express";
-const express = require("express");
+import mongoose from "mongoose"; // db
+import express, { Request, Response } from "express"; // keep alive by setting up a server and pinging it (if not premium)
 const app = express();
 const port = process.env.PORT || 10032;
 
@@ -11,6 +10,7 @@ app.listen(port, () => console.log(`Server listening at http://localhost:${port}
 import path from "path";
 import { Client } from "discord.js";
 import { Handler } from "./handler";
+import { prefix, build, repo_link } from "./config.json";
 require("dotenv").config();
 
 // --------
@@ -21,33 +21,31 @@ const client = new Client({ intents: 32767, allowedMentions: { parse: ["users", 
 // v12
 // const client = new Client({ disableMentions: "none", partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
 
-// load client to handler
-import { prefix, build, repo_link } from "./config.json";
-const handler = new Handler(client);
-handler.load(path.join(__dirname, "./modules"), {
-	client: client,
-	commandHandler: handler,
-	prefix: prefix,
-	build: build,
-	repo_link: repo_link,
-});
+(async () => {
+	if (process.env.conn_db !== "false") {
+		await mongoose
+			.connect(process.env.MONGODB_SRV!, {
+				useNewUrlParser: true,
+				useUnifiedTopology: true,
+				useFindAndModify: false,
+			})
+			.then(() => {
+				console.log(`Connected to database!`);
+			})
+			.catch((err: any) => {
+				console.log(err);
+			});
+	}
 
-// Database
-import mongoose from "mongoose";
+	// load client to handler
+	const handler = new Handler(client);
+	handler.load(path.join(__dirname, "./modules"), {
+		client: client,
+		commandHandler: handler,
+		prefix: prefix,
+		build: build,
+		repo_link: repo_link,
+	});
 
-if (process.env.conn_db !== "false") {
-	mongoose
-		.connect(process.env.MONGODB_SRV!, {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-			useFindAndModify: false,
-		})
-		.then(() => {
-			console.log(`Connected to database!`);
-		})
-		.catch((err: any) => {
-			console.log(err);
-		});
-}
-
-client.login(process.env.TOKEN);
+	client.login(process.env.TOKEN);
+})();
