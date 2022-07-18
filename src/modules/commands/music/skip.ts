@@ -60,13 +60,17 @@ module.exports = class extends Command {
 					textChannel.send({ embeds: [{ title: `⏩ Skipped current song!`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 				} else {
 					// check if state is playing the stop player
-					if (playerObj.player.state.status === "playing") playerObj.player.stop();
+					const wasLoop = playerObj.loop;
+					if (playerObj.player.state.status === "playing") {
+						playerObj.player.stop();
+						playerObj.loop = false;
+					}
 
 					// update queue data
 					edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } });
 
 					// send message telling finished playing all songs
-					textChannel.send({ embeds: [{ description: "Queue empty", color: "RANDOM" }] });
+					textChannel.send({ embeds: [{ title: `⏩ Skipped current song!`, description: `Queue is now empty${wasLoop ? `. Loop mode disabled automatically` : `.`}`, color: "RANDOM" }] });
 				}
 			} else {
 				// queue not set in db

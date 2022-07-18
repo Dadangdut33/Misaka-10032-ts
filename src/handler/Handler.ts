@@ -1,5 +1,5 @@
 import { Client, MessageEmbed, Message, TextChannel, Guild } from "discord.js";
-import { createAudioPlayer, createAudioResource, NoSubscriberBehavior } from "@discordjs/voice";
+import { createAudioPlayer, createAudioResource, getVoiceConnection, NoSubscriberBehavior } from "@discordjs/voice";
 import { Feature } from "./Feature";
 import { Command, musicSettingsInterface } from "./Command";
 import { BotEvent } from "./BotEvent";
@@ -97,7 +97,7 @@ export class Handler {
 		 *
 		 * After that We store the instances as a map of each module
 		 */
-
+		console.log(`Loading handler...`);
 		// Find and require all JavaScript/Typescript files
 		const nodes = Utils.readdirSyncRecursive(directory)
 			.filter((file: string) => file.endsWith(".js") || file.endsWith(".ts"))
@@ -216,62 +216,73 @@ export class Handler {
 			seekTime: 0,
 			loop: false,
 			volume: 100, // not used but kept for future use
+			timeOutIdle: setTimeout(() => {}),
 		});
 
 		// set events for the set player
 		const playerObj = playerMaps.get(guild.id)!;
 		playerObj.player.on("stateChange", async () => {
-			// if stopped
-			if (playerObj.player.state.status === "idle") {
-				// get queue data
-				const queueData = await find_DB_Return("music_state", { gid: guild.id });
+			// verify if idle or stopped
+			if (playerObj.player.state.status !== "idle") return;
 
-				// verify if guild is registered or not
-				if (queueData.length > 0) {
-					const queue = queueData[0].queue;
+			// get queue data & verify if guild is registered or not
+			const queueData = await find_DB_Return("music_state", { gid: guild.id });
+			if (queueData.length === 0) return insert_DB_One("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] });
 
-					const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
+			// Get text channel if registered
+			const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
 
-					// check loop or not
-					if (!playerObj.loop) {
-						// if not loop check if queue is empty or not
-						if (queue.length > 0) {
-							const nextSong = queue.shift();
-							const streamInfo = await stream(nextSong.link, { quality: 1250, precache: 1000 })!;
-							const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
+			// *if loop
+			if (playerObj.loop) {
+				const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
+				const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
-							playerObj.player.play(resource);
-							playerMaps.get(guild.id)!.currentTitle = nextSong.title;
-							playerMaps.get(guild.id)!.currentUrl = nextSong.link;
-							playerMaps.get(guild.id)!.seekTime = 0;
-							playerMaps.get(guild.id)!.query = nextSong.query;
-							edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
+				playerObj.player.play(resource);
+				playerMaps.get(guild.id)!.seekTime = 0;
 
-							// send message to channel
-							textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
-						} else {
-							edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
-							playerMaps.get(guild.id)!.seekTime = 0;
+				// send message to channel
+				textChannel.send({
+					embeds: [{ title: `▶ Looping current song`, description: `Now playing: [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }],
+				});
 
-							// send message telling finished playing all songs
-							textChannel.send({ embeds: [{ description: "Finished playing all songs", color: "RANDOM" }] });
-						}
-					} else {
-						// loop mode
-						const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
-						const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
+				return;
+			}
 
-						playerObj.player.play(resource);
-						playerMaps.get(guild.id)!.seekTime = 0;
+			// *if not loop check if queue is empty or not
+			const queue = queueData[0].queue;
+			if (queue.length > 0) {
+				// *if queue is not empty
+				const nextSong = queue.shift();
+				const streamInfo = await stream(nextSong.link, { quality: 1250, precache: 1000 })!;
+				const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
-						// send message to channel
-						textChannel.send({
-							embeds: [{ title: `▶ Looping current song`, description: `Now playing: [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }],
-						});
-					}
-				} else {
-					insert_DB_One("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] }); // create queue data
-				}
+				playerObj.player.play(resource);
+				playerMaps.get(guild.id)!.currentTitle = nextSong.title;
+				playerMaps.get(guild.id)!.currentUrl = nextSong.link;
+				playerMaps.get(guild.id)!.seekTime = 0;
+				playerMaps.get(guild.id)!.query = nextSong.query;
+				edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
+
+				// send message to channel
+				textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
+			} else {
+				// *if queue is empty
+				edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
+				playerMaps.get(guild.id)!.seekTime = 0;
+
+				// send message telling finished playing all songs
+				textChannel.send({
+					embeds: [{ title: "Finished playing all songs", footer: { text: "Bot will automatically leave the VC in 5 minutes if no more song is playing." }, color: "RANDOM" }],
+				});
+
+				// start timeout
+				playerObj.timeOutIdle = setTimeout(() => {
+					if (getVoiceConnection(guild.id)) getVoiceConnection(guild.id)?.destroy();
+					else guild.me?.voice.disconnect();
+
+					// stop player
+					playerObj.player.stop();
+				}, 300000); // 5 minutes
 			}
 		});
 	}

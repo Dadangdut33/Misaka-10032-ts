@@ -34,9 +34,11 @@ module.exports = class extends Command {
 
 		// stop current music
 		if (playerObj.player.state.status === "playing") {
+			const wasLoop = playerObj.loop;
 			playerObj.player.stop();
+			playerObj.loop = false;
 
-			return message.reply({ content: `⏹ **Stopped radio.**`, allowedMentions: { repliedUser: false } });
+			return message.reply({ content: `⏹ **Stopped radio.**${wasLoop ? ` Loop mode disabled automatically` : ``}`, allowedMentions: { repliedUser: false } });
 		} else {
 			return message.reply({ content: `⛔ **Radio is not playing anything!**`, allowedMentions: { repliedUser: false } });
 		}

@@ -4,13 +4,13 @@
 	"description": "A once private discord bot repository. This is a fork of the original bot rewriten in TypeScript.",
 	"main": "./src/index.ts",
 	"scripts": {
+		"start": "node prod/index.js",
 		"build": "tsc",
 		"build-run": "rimraf prod && tsc && node prod/index.js",
 		"start-build": "node prod/index.js",
 		"dev": "ts-node src/index.ts",
 		"tsc": "./node_modules/typescript/bin/tsc",
-		"postinstall": "npm run tsc",
-		"start": "node prod/index.js"
+		"postinstall": "npm run tsc"
 	},
 	"license": "MIT",
 	"dependencies": {

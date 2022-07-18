@@ -175,6 +175,7 @@ module.exports = class extends Command {
 			playerObj.currentTitle = queueItem.title;
 			playerObj.currentUrl = queueItem.link;
 			playerObj.seekTime = 0;
+			clearTimeout(playerObj.timeOutIdle);
 
 			// 1st play
 			if (playerObj.player.state.status !== "playing") {

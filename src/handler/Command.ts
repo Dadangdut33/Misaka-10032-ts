@@ -21,6 +21,7 @@ export interface playerObject {
 	seekTime: number;
 	loop: boolean;
 	volume: number;
+	timeOutIdle: NodeJS.Timeout;
 }
 
 interface extraArgsInterface {
