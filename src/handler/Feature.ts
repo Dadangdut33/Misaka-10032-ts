@@ -51,10 +51,10 @@ export class Feature extends Toggleable {
 
 	/**
 	 * @description Toggle this Feature and it's commands and events
-	 * @returns {undefined}
+	 * @returns {void}
 	 * @override
 	 */
-	toggle() {
+	toggle(): void {
 		if (this.isEnabled) {
 			this.disable();
 		} else {
@@ -64,10 +64,10 @@ export class Feature extends Toggleable {
 
 	/**
 	 * @description Enable this Feature and it's commands and events
-	 * @returns {undefined}
+	 * @returns {void}
 	 * @override
 	 */
-	enable() {
+	enable(): void {
 		super.enable();
 
 		this.commands.forEach((command) => command.enable());
@@ -76,10 +76,10 @@ export class Feature extends Toggleable {
 
 	/**
 	 * @description Disable this Feature and it's commands and events
-	 * @returns {undefined}
+	 * @returns {void}
 	 * @override
 	 */
-	disable() {
+	disable(): void {
 		super.disable();
 
 		this.commands.forEach((command) => command.disable());

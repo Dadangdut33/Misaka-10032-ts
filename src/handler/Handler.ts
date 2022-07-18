@@ -272,7 +272,13 @@ export class Handler {
 
 				// send message telling finished playing all songs
 				textChannel.send({
-					embeds: [{ title: "Finished playing all songs", footer: { text: "Bot will automatically leave the VC in 5 minutes if no more song is playing." }, color: "RANDOM" }],
+					embeds: [
+						{
+							author: { name: "Finished playing all songs" },
+							description: "Bot will automatically leave the VC in 5 minutes if no more song is playing.",
+							color: "RANDOM",
+						},
+					],
 				});
 
 				// start timeout
@@ -359,7 +365,7 @@ export class Handler {
 				// log time
 				console.log(`[${new Date().toLocaleString()}]`);
 				console.error(err);
-				let embed = new MessageEmbed().setTitle(`Error └[∵┌]└[ ∵ ]┘[┐∵]┘`).setDescription(`**Error Details**\n\`\`\`js\n${err}\`\`\``).setColor("#000000");
+				let embed = new MessageEmbed().setAuthor({ name: "└[∵┌]└[ ∵ ]┘[┐∵]┘" }).setTitle(`Error!!`).setDescription(`**Error Details**\n\`\`\`js\n${err}\`\`\``).setColor("#000000");
 
 				message.reply({ embeds: [embed] });
 			}

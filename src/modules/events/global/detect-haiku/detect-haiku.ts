@@ -6,7 +6,7 @@ export const detect = (msg: string) => {
 };
 
 export const format = (msg: string) => {
-	if (msg.length > 250) {
+	if (msg.length > 300) {
 		// Bail out to avoid wrecking the CPU with syllable; I'm happy to bump this number if there's reason
 		// Longest 1 syllable word is 12, (12 + 1)*(5+7+5) = 221; 17 longest words spaced out + 30 characters
 		return [];

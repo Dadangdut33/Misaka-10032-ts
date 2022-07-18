@@ -14,6 +14,10 @@ export const activity: activityInterface[] = [
 	},
 	{
 		type: "PLAYING",
+		desc: "Typescript is awesome",
+	},
+	{
+		type: "PLAYING",
 		desc: "In another world",
 	},
 	{
@@ -106,19 +110,7 @@ export const activity: activityInterface[] = [
 	},
 	{
 		type: "PLAYING",
-		desc: "Genshin impact",
-	},
-	{
-		type: "PLAYING",
 		desc: "An illusion is not real",
-	},
-	{
-		type: "PLAYING",
-		desc: "CS:GO",
-	},
-	{
-		type: "PLAYING",
-		desc: "Apex Legends",
 	},
 	{
 		type: "PLAYING",
@@ -131,10 +123,6 @@ export const activity: activityInterface[] = [
 	{
 		type: "PLAYING",
 		desc: "Speedrunning life",
-	},
-	{
-		type: "PLAYING",
-		desc: "Browsing google on How to speedrun life",
 	},
 	{
 		type: "PLAYING",
