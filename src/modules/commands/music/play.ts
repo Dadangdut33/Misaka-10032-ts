@@ -10,7 +10,7 @@ module.exports = class extends Command {
 		super("play", {
 			aliases: ["p"],
 			categories: "music",
-			info: "Play a yt video/live stream. Available predefined radio ('[' and ']' is mandatory):\n- [**[lofi]**](https://youtu.be/5qap5aO4i9A) - lofi hip hop radio - beats to relax/study to\n- [**[animelofi]**](https://youtu.be/WDXPJWIgX-o) - anime lofi hip hop radio - 24/7 chill lofi remixes of anime\n- [**[piano]**](https://youtu.be/xWRHTpqQMGM) - Beautiful Piano Music 24/7 - Study Music, Relaxing Music, Sleep Music, Meditation Music\n- [**[phonk]**](https://youtu.be/Ax4Y5n4f5K8) - 24/7 TRAPPIN IN JAPAN // phonk / lofi hip hop / vapor trap Radio.\n\n**Note:** Bot will not leave unless prompted to leave.",
+			info: "Play a yt video/live stream. Available predefined radio ('[' and ']' is mandatory):\n- [**[lofi]**](https://youtu.be/5qap5aO4i9A) - lofi hip hop radio - beats to relax/study to\n- [**[animelofi]**](https://youtu.be/WDXPJWIgX-o) - anime lofi hip hop radio - 24/7 chill lofi remixes of anime\n- [**[piano]**](https://youtu.be/xWRHTpqQMGM) - Beautiful Piano Music 24/7 - Study Music, Relaxing Music, Sleep Music, Meditation Music\n- [**[phonk]**](https://youtu.be/Ax4Y5n4f5K8) - 24/7 TRAPPIN IN JAPAN // phonk / lofi hip hop / vapor trap Radio.\n\n**Note:** Bot will automatically leave vc if idle (not playing anything)for 5 minutes.",
 			usage: `\`${prefix}command <search YT video name/valid YT Link/[lofi]/[animelofi]/[piano]/[phonk]>\``,
 			guildOnly: true,
 		});
