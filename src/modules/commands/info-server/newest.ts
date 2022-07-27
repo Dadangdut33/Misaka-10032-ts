@@ -2,49 +2,41 @@ import { MessageEmbed, Message } from "discord.js";
 import moment from "moment-timezone";
 import prettyMilliseconds from "pretty-ms";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
+import { paginationEmbed } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("newest", {
-			aliases: [],
 			categories: "info-server",
-			info: "List the newest member (Max 25)",
-			usage: `\`${prefix}newest\``,
+			info: "List member from the newest member (25 per embeds)",
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 	}
 
 	async run(message: Message, args: string[]) {
-		if (!args[0]) {
-			//Get data
-			let memberList: string[] = getMember();
+		let index = 0;
+		const memberFromNewest = message
+			.guild!.members.cache.sort((a, b) => b.joinedTimestamp! - a.joinedTimestamp!)
+			.map((GuildMember) => {
+				let age = moment().tz("Asia/Jakarta").valueOf() - GuildMember.joinedAt!.getTime();
+				index++;
+				return `${index}. <t:${~~(moment(GuildMember.joinedAt).tz("Asia/Jakarta").valueOf() / 1000)}:R> <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
+			});
 
-			//Sort it and reverse it
-			memberList.sort().reverse();
+		let loopAmount = Math.ceil(memberFromNewest.length / 25),
+			embedList = [];
 
-			for (let i = 0; i < (memberList.length > 25 ? 25 : memberList.length); i++) {
-				memberList[i] = memberList[i].replace(/[0-9]+\s,,/g, `[${i + 1}]`);
-			}
-
+		for (let i = 0; i < loopAmount; i++) {
 			let embed = new MessageEmbed()
-				.setTitle(`Showing newest member in ${message.guild!.name} (Max shown 25)`)
-				.setDescription(`${memberList.join("\n")}`)
+				.setTitle(`Showing newest member in ${message.guild!.name}`)
+				.setDescription(`${memberFromNewest.slice(i * 25, (i + 1) * 25).join("\n")}`)
 				.setAuthor({ name: message.guild!.name, iconURL: message.guild!.iconURL({ format: "jpg", size: 2048 })!, url: `https://discord.com/channels/${message.guild!.id}` })
-				.setFooter({ text: `Format date D-M-Y • Time are in GMT + 7` })
 				.setTimestamp();
 
-			return message.channel.send({ embeds: [embed] });
+			embedList.push(embed);
 		}
 
-		function getMember() {
-			return message.guild!.members.cache.map((GuildMember) => {
-				let today = moment().tz("Asia/Jakarta");
-				let age = today.valueOf() - GuildMember.joinedAt!.getTime();
-
-				return `${GuildMember.joinedTimestamp} ,, ${moment(GuildMember.joinedAt).tz("Asia/Jakarta").format("DD/MM/YYYY HH:mm:ss")} - <@${GuildMember.id}> (${prettyMilliseconds(
-					age
-				)})`;
-			});
-		}
+		paginationEmbed(message, embedList);
 	}
 };

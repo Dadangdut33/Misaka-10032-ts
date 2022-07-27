@@ -23,7 +23,8 @@ module.exports = class extends Command {
 			)
 			.addFields({
 				name: "Spoiler (Bahasa Indonesia: Beberan)",
-				value: "Adalah tulisan atau keterangan mengenai suatu cerita, yang membeberkan jalan cerita tersebut. Membaca beberan dari suatu cerita dapat menyebabkan berkurangnya kesenangan membaca cerita itu, karena kesenangan membaca sebuah cerita biasanya tergantung kepada dramatisasi atau ketegangan yang ditimbulkan oleh cerita tersebut. Biasanya dalam media massa maupun Internet, beberan disembunyikan dengan cara tertentu, sehingga hanya terbaca oleh yang ingin melihat beberan tersebut. -wikipedia.org",
+				value:
+					"Adalah tulisan atau keterangan mengenai suatu cerita, yang membeberkan jalan cerita tersebut. Membaca beberan dari suatu cerita dapat menyebabkan berkurangnya kesenangan membaca cerita itu, karena kesenangan membaca sebuah cerita biasanya tergantung kepada dramatisasi atau ketegangan yang ditimbulkan oleh cerita tersebut. Biasanya dalam media massa maupun Internet, beberan disembunyikan dengan cara tertentu, sehingga hanya terbaca oleh yang ingin melihat beberan tersebut. -wikipedia.org",
 			})
 			.setImage("https://cdn.discordapp.com/attachments/651015913080094724/700999319326556171/1456118167-bcaf5c2f41b07564f965bfb17b16a0e2.png")
 			.setTimestamp();

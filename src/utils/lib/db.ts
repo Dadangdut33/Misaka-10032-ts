@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 
 export function find_DB(tablename: string, query: any, cb: any) {
-	mongoose.connection.db.collection(tablename, function (err, collection) {
+	mongoose.connection.db.collection(tablename, function (err: any, collection: any) {
 		collection.find(query).toArray(cb);
 	});
 }
 
 export function find_DB_Return(tablename: string, query: any): Promise<any> {
 	return new Promise((resolve, reject) => {
-		mongoose.connection.db.collection(tablename, function (err, collection) {
-			collection.find(query).toArray(function (err, result) {
+		mongoose.connection.db.collection(tablename, function (err: any, collection: any) {
+			collection.find(query).toArray(function (err: any, result: any) {
 				if (err) reject(err);
 				resolve(result);
 			});

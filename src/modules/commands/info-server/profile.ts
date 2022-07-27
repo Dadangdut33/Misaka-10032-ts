@@ -17,6 +17,7 @@ module.exports = class extends Command {
 	async run(message: Message, args: string[]) {
 		let embed = new MessageEmbed();
 		let roles: string[] = [];
+		// author
 		if (!message.mentions.users.first()) {
 			message.member!.roles.cache.forEach((role) => {
 				roles.push(`\`${role.name}\``);
@@ -71,6 +72,7 @@ module.exports = class extends Command {
 
 			return message.channel.send({ embeds: [embed] });
 		} else {
+			// other user
 			let User = message.mentions.members!.first();
 			if (!User) return message.channel.send(`User not found!`);
 

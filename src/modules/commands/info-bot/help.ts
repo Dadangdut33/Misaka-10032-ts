@@ -64,10 +64,7 @@ module.exports = class extends Command {
 
 			// loop the categories
 			for (let category of allCategories) {
-				embed.addField(
-					`${this.capitalizeFirstLetter(category)} [${this.countACategory(this.commandHandler.commands, category)}]`,
-					this.mapCommands(this.commandHandler.commands, category)
-				);
+				embed.addField(`${this.capitalizeFirstLetter(category)} [${this.countACategory(this.commandHandler.commands, category)}]`, this.mapCommands(this.commandHandler.commands, category));
 			}
 
 			// last info
@@ -118,11 +115,7 @@ module.exports = class extends Command {
 				.addField(`Guild Only`, `${command.guildOnly}`, false)
 				.addField(`Description`, `${command.info}`)
 				.addField(`Usage`, `${command.usage}`)
-				.addField(
-					`Command's Source Code`,
-					`[Click Here](https://github.com/Dadangdut33/Misaka-10032-ts/blob/master/src/modules/commands/${command.categories}/${command.name}.ts)`,
-					true
-				)
+				.addField(`Command's Source Code`, `[Click Here](https://github.com/Dadangdut33/Misaka-10032-ts/blob/master/src/modules/commands/${command.categories}/${command.name}.ts)`, true)
 				.addField(`Bot's Repository`, `[GitHub](${this.repo_link})`, true);
 
 			return message.channel.send({ embeds: [embed] });

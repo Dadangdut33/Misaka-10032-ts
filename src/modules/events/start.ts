@@ -14,18 +14,14 @@ module.exports = class extends BotEvent {
 		console.log(`Logged in as ${client.user!.tag} at ${moment(client.readyAt).tz("Asia/Jakarta").format("dddd DD MMMM YYYY HH:mm:ss")}`);
 		console.log(`Managing ${client.guilds.cache.size} Guilds, ${client.channels.cache.size} Channels, and ${client.users.cache.size} Members`);
 
-		// Presence at start
-		client.user!.setPresence({
-			status: "online",
-			activities: [
-				{
-					name: `${prefix}help | ${moment(client.readyAt).tz("Asia/Jakarta").format("HH:mm:ss")} Booting up... Managing ${client.guilds.cache.size} Guilds, ${
-						client.channels.cache.size
-					} Channels, and ${client.users.cache.size} Members`,
-					type: "PLAYING",
-					url: repo_link,
-				},
-			],
+		// Status and presence at start
+		client.user?.setStatus("online");
+		client.user?.setActivity({
+			name: `${prefix}help | ${moment(client.readyAt).tz("Asia/Jakarta").format("HH:mm:ss")} Booting up... Managing ${client.guilds.cache.size} Guilds, ${
+				client.channels.cache.size
+			} Channels, and ${client.users.cache.size} Members`,
+			type: "PLAYING",
+			url: repo_link,
 		});
 
 		// Bot Activity

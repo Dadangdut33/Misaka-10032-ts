@@ -7,7 +7,7 @@ export class Utils {
 	 * @param {string} directory - The directory to read
 	 * @returns {Array<string>} All the paths to the files
 	 */
-	static readdirSyncRecursive(directory: string) {
+	static readdirSyncRecursive(directory: string): Array<string> {
 		let files: string[] = [];
 
 		fs.readdirSync(directory).forEach((file: string) => {
@@ -29,7 +29,7 @@ export class Utils {
 	 * @param {boolean} bool - The boolean to stringify.
 	 * @returns {string} Boolean as Yes or No, accordingly.
 	 */
-	static boolToString(bool: boolean) {
+	static boolToString(bool: boolean): string {
 		if (typeof bool === "boolean") {
 			return bool ? "Yes" : "No";
 		}

@@ -35,9 +35,7 @@ module.exports = class extends Command {
 			.addField(`Day to Farm`, data.farm_Day, true)
 			.addField(
 				`❯\u2000\External Links`,
-				`• [Wiki (Direct Link)](https://genshin-impact.fandom.com/wiki/${args.join("_")})\n• [Wiki (Search)](https://genshin-impact.fandom.com/wiki/Special:Search?query=${args.join(
-					"+"
-				)})`
+				`• [Wiki (Direct Link)](https://genshin-impact.fandom.com/wiki/${args.join("_")})\n• [Wiki (Search)](https://genshin-impact.fandom.com/wiki/Special:Search?query=${args.join("+")})`
 			);
 
 		return embed;

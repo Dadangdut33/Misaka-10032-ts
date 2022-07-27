@@ -10,7 +10,7 @@ module.exports = class extends Command {
 		super("play", {
 			aliases: ["p"],
 			categories: "music",
-			info: "Play a yt video/live stream. Available predefined radio ('[' and ']' is mandatory):\n- [**[lofi]**](https://youtu.be/5qap5aO4i9A) - lofi hip hop radio - beats to relax/study to\n- [**[animelofi]**](https://youtu.be/WDXPJWIgX-o) - anime lofi hip hop radio - 24/7 chill lofi remixes of anime\n- [**[piano]**](https://youtu.be/xWRHTpqQMGM) - Beautiful Piano Music 24/7 - Study Music, Relaxing Music, Sleep Music, Meditation Music\n- [**[phonk]**](https://youtu.be/Ax4Y5n4f5K8) - 24/7 TRAPPIN IN JAPAN // phonk / lofi hip hop / vapor trap Radio.\n\n**Note:** Bot will not leave unless prompted to leave.",
+			info: "Play a yt video/live stream. Available predefined radio ('[' and ']' is mandatory):\n- [**[lofi]**](https://youtu.be/5qap5aO4i9A) - lofi hip hop radio - beats to relax/study to\n- [**[animelofi]**](https://youtu.be/WDXPJWIgX-o) - anime lofi hip hop radio - 24/7 chill lofi remixes of anime\n- [**[piano]**](https://youtu.be/xWRHTpqQMGM) - Beautiful Piano Music 24/7 - Study Music, Relaxing Music, Sleep Music, Meditation Music\n- [**[phonk]**](https://youtu.be/Ax4Y5n4f5K8) - 24/7 TRAPPIN IN JAPAN // phonk / lofi hip hop / vapor trap Radio.\n\n**Note:** Bot will automatically leave vc if idle (not playing anything)for 5 minutes.",
 			usage: `\`${prefix}command <search YT video name/valid YT Link/[lofi]/[animelofi]/[piano]/[phonk]>\``,
 			guildOnly: true,
 		});
@@ -94,30 +94,44 @@ module.exports = class extends Command {
 
 				if (!res) return message.reply({ content: "⛔ **No results found!**", allowedMentions: { repliedUser: false } });
 
-				message.channel.send({
+				const embedList = await message.channel.send({
 					embeds: [
 						{
 							color: 0x00ff00,
-							author: { name: "Please choose from the list (⏳30)" },
+							author: { name: "📑 Please choose from the list (⏳30 seconds)" },
 							description: res.map((data, index) => `${index + 1}. [${data.title}](${data.url})`).join("\n"),
-							footer: { text: "Type the number of the video you want to play.Type 'cancel' to cancel" },
+							footer: { text: "Type the number of the video you want to play. Type 'cancel' to cancel." },
 						},
 					],
 				});
 
 				try {
-					const m = await message.channel.awaitMessages({ filter: (m: Message) => m.author.id === message.author.id, max: 1, time: 30000, errors: ["time"] }).catch();
+					const m = await message.channel.awaitMessages({ filter: (m: Message) => m.author.id === message.author.id, max: 1, time: 30000, errors: ["time"] });
 
 					if (!m.first()) return message.reply({ content: "⛔ **Cancelled because input not provided by user!**", allowedMentions: { repliedUser: false } });
 					const num = parseInt(m.first()!.content);
-					if (isNaN(num))
-						return message.reply({ content: num.toString().includes("cancel") ? "⛔ **Cancelled!**" : "⛔ **Incorrect input!**", allowedMentions: { repliedUser: false } });
+					if (isNaN(num)) {
+						if (m.first()!.content.toLowerCase().includes("cancel")) {
+							embedList.delete(); // delete only if user cancel
+							m.first()!.delete();
+						}
 
-					if (num > res.length || num < 1) return message.reply({ content: "⛔ **Incorrect input!**", allowedMentions: { repliedUser: false } });
-					link = res[num - 1].url;
+						return message.reply({
+							content: m.first()!.content.toLowerCase().includes("cancel") ? "**Cancelled by user!**" : "⛔ **Incorrect input!**",
+							allowedMentions: { repliedUser: false },
+						}); // not a number
+					}
+
+					if (num > res.length || num < 1) return message.reply({ content: "⛔ **Incorrect input!**", allowedMentions: { repliedUser: false } }); // out of range
+
+					// delete m
+					embedList.delete();
+					m.first()!.delete();
+
+					link = res[num - 1].url; // get link
 				} catch (error) {
-					message.reply({ content: `⛔ **Cancelled because input not provided by user!**\n`, allowedMentions: { repliedUser: false } });
-					return;
+					embedList.delete();
+					return message.reply({ content: `⛔ **Cancelled because input not provided by user!**\n`, allowedMentions: { repliedUser: false } });
 				}
 			}
 		}
@@ -155,11 +169,13 @@ module.exports = class extends Command {
 				type: videoInfo.videoDetails.isLiveContent ? "live" : "video",
 				title: videoInfo.videoDetails.title,
 				link: link,
+				query: args.join(" "),
 			};
 
 			playerObj.currentTitle = queueItem.title;
 			playerObj.currentUrl = queueItem.link;
 			playerObj.seekTime = 0;
+			clearTimeout(playerObj.timeOutIdle);
 
 			// 1st play
 			if (playerObj.player.state.status !== "playing") {
@@ -167,8 +183,9 @@ module.exports = class extends Command {
 				const resource = await this.getVideoResource(link);
 				voiceConnection!.subscribe(playerObj.player);
 				playerObj.player.play(resource);
+				playerObj.query = args.join(" ");
 
-				// check exist in db or not
+				// check db set or not
 				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
 				if (checkExist.length === 0) insert_DB_One("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [] });
 				else edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
@@ -178,7 +195,7 @@ module.exports = class extends Command {
 				mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 			} else {
 				// add to queue
-				// check exist in db or not
+				// check db set or not
 				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
 				if (!checkExist) insert_DB_One("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [queueItem] });
 				else edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });

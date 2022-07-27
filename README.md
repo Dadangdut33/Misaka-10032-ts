@@ -13,7 +13,7 @@ A Personal discord bot that I code and use for my private discord server. Now us
 
 # 📌 Getting Started
 
-First clone the repo and install all the packages by doing `npm install` or `npm ci` Then run the bot by doing `npm run tsnode`.
+First clone the repo and install all the packages by doing `npm install` or `npm ci` Then run the bot by doing `npm run dev`.
 
 Alternatively, you can build/compile the bot to js by doing `npm run build`. You can also start the builded version by doing `npm run start-build`. Or you can build and run the file directly by running `npm run build-run`.
 

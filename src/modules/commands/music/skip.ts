@@ -48,6 +48,10 @@ module.exports = class extends Command {
 					const resource = createAudioResource(stream.stream, { inlineVolume: true, inputType: stream.type });
 
 					playerObj.player.play(resource);
+					playerObj.currentTitle = nextSong.title;
+					playerObj.currentUrl = nextSong.link;
+					playerObj.seekTime = 0;
+					playerObj.query = nextSong.query;
 
 					// update queue data
 					edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } });
@@ -56,15 +60,20 @@ module.exports = class extends Command {
 					textChannel.send({ embeds: [{ title: `⏩ Skipped current song!`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 				} else {
 					// check if state is playing the stop player
-					if (playerObj.player.state.status === "playing") playerObj.player.stop();
+					const wasLoop = playerObj.loop;
+					if (playerObj.player.state.status === "playing") {
+						playerObj.player.stop();
+						playerObj.loop = false;
+					}
 
 					// update queue data
 					edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } });
 
 					// send message telling finished playing all songs
-					textChannel.send({ embeds: [{ description: "Queue empty", color: "RANDOM" }] });
+					textChannel.send({ embeds: [{ title: `⏩ Skipped current song!`, description: `Queue is now empty${wasLoop ? `. Loop mode disabled automatically` : `.`}`, color: "RANDOM" }] });
 				}
 			} else {
+				// queue not set in db
 				insert_DB_One("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
 			}
 		} else {

@@ -33,8 +33,7 @@ module.exports = class extends Command {
 		let regex = /(["])(?:(?=(\\?))\2.)*?\1/g,
 			msg = args.join(" ").match(regex);
 
-		if (!msg)
-			return message.channel.send(`**Invalid Arguments Provided!** Please check the help commands if unsure ${message.author}`).then((msg) => setTimeout(() => msg.delete(), 5000));
+		if (!msg) return message.channel.send(`**Invalid Arguments Provided!** Please check the help commands if unsure ${message.author}`).then((msg) => setTimeout(() => msg.delete(), 5000));
 
 		for (let i = 0; i < msg.length; i++) {
 			msg[i] = msg[i].replace(/"/g, "");

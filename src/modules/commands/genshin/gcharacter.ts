@@ -44,10 +44,7 @@ module.exports = class extends Command {
 	}
 
 	embedCard(data: any) {
-		let embed = new MessageEmbed()
-			.setColor(data.color)
-			.setTitle(`**Data are based on game v${Genshin_Ver}**\n:arrow_down: Tips for ${data.name[0]} ${data.stars}`)
-			.setImage(data.pic_Card);
+		let embed = new MessageEmbed().setColor(data.color).setTitle(`**Data are based on game v${Genshin_Ver}**\n:arrow_down: Tips for ${data.name[0]} ${data.stars}`).setImage(data.pic_Card);
 
 		return embed;
 	}
