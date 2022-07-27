@@ -32,7 +32,6 @@ export class Handler {
 	/**
 	 * @description Create a new handler instance
 	 * @param {Client} client - The discord.js client
-	 * @param {string} prefix - The prefix of the bot
 	 */
 	constructor(client: Client) {
 		/**

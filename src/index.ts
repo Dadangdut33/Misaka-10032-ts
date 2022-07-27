@@ -3,7 +3,7 @@ import express, { Request, Response } from "express"; // keep alive by setting u
 const app = express();
 const port = process.env.PORT || 10032;
 
-app.get("/", (req: Request, res: Response) => res.send("<h1>Hello World!</h1>"));
+app.get("/", (_req: Request, res: Response) => res.send("<h1>Hello World!</h1>"));
 app.listen(port, () => console.log(`Server listening at http://localhost:${port}`));
 
 // --------
@@ -22,11 +22,27 @@ const client = new Client({ intents: 32767, allowedMentions: { parse: ["users", 
 // const client = new Client({ disableMentions: "none", partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
 
 (async () => {
+	// verify env
+	if (!process.env.TOKEN) throw new Error("ERROR!!! Token is not set");
+	// warn
+	if (!process.env.Server_invite) console.warn("WARNING!!! Server invite is not set");
+	if (!process.env.RapidKey) console.warn("WARNING!!! Rapid API key is not set");
+	if (!process.env.Mangadex_Username) console.warn("WARNING!!! Mangadex username is not set");
+	if (!process.env.Mangadex_Password) console.warn("WARNING!!! Mangadex password is not set");
+	if (!process.env.validatePhone) console.warn("WARNING!!! Abstract API validatephone key is not set");
+	if (!process.env.validateMail) console.warn("WARNING!!! Abstract API validateemail key is not set");
+	if (!process.env.Genius_Key) console.warn("WARNING!!! Genius API key is not set");
+	if (!process.env.SAUCENAO_API_KEY) console.warn("WARNING!!! SauceNao API key is not set");
+
 	if (process.env.conn_db !== "false") {
+		// needed
+		if (!process.env.MONGODB_SRV) throw new Error("ERROR!!! MONGODB_SRV is not defined");
+
 		await mongoose
 			.connect(process.env.MONGODB_SRV!, {
 				useNewUrlParser: true,
 				useUnifiedTopology: true,
+				useCreateIndex: true,
 				useFindAndModify: false,
 			})
 			.then(() => {
