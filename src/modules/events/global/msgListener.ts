@@ -1,4 +1,4 @@
-import { MessageEmbed, Client, Message } from "discord.js";
+import { MessageEmbed, Client, Message, HexColorString } from "discord.js";
 import malScraper, { AnimeEpisodesDataModel } from "mal-scraper";
 import moment from "moment-timezone";
 import { BotEvent } from "../../../handler";
@@ -67,15 +67,21 @@ module.exports = class extends BotEvent {
 					haikuGet[index] = capitalizeFirstLetter(item);
 				});
 
+				const rgb = ("#" + Math.floor(Math.random() * 16777215).toString(16)) as HexColorString;
 				message.reply({
 					embeds: [
 						{
-							description:
-								`*${haikuGet.join("\n\n").replace(/[\*\`\"]/g, "")}*\n\n- ${message.author.username}` +
-								`\n__　　　　　　　　　　　　　__\n[ᴴᵃᶦᵏᵘ](https://en.wikipedia.org/wiki/Haiku) ᵈᵉᵗᵉᶜᵗᵉᵈ ⁻ ˢᵒᵐᵉᵗᶦᵐᵉˢ ˢᵘᶜᶜᵉˢˢᶠᵘᶫᶫʸ`,
-							color: `RANDOM`,
+							description: `*${haikuGet.join("\n\n").replace(/[\*\`\"]/g, "")}*`,
+							footer: { text: "- " + message.author.username },
+							color: rgb,
+						},
+						{
+							description: `[Haiku](https://en.wikipedia.org/wiki/Haiku) detected`,
+							footer: { text: "Sometimes successfully" },
+							color: rgb,
 						},
 					],
+					allowedMentions: { repliedUser: false },
 				});
 			}
 		}
