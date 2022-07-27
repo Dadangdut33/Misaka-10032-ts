@@ -15,175 +15,181 @@ module.exports = class extends BotEvent {
 	}
 
 	checkIfStaff(toBeCheck: string) {
-		if (["Director", "Original Creator", "Producer", "Music", "Sound Director", "Series Composition"].includes(toBeCheck)) return true;
-		else return false;
+		return ["Director", "Original Creator", "Producer", "Music", "Sound Director", "Series Composition"].includes(toBeCheck);
 	}
 
 	crosspost = (message: Message) => {
 		const time = moment.tz("Asia/Jakarta").format("HH:mm:ss");
 		const { channel } = message;
 
-		if (channel.type === "GUILD_NEWS") {
-			message.crosspost(); // crosspost automatically
-			console.log(`News Published at ${time}`);
+		try {
+			if (channel.type === "GUILD_NEWS") {
+				message.crosspost(); // crosspost automatically
+				console.log(`News Published at ${time}`);
+			}
+		} catch (error) {
+			console.log(`Fail to publish news: ${error}`);
 		}
 	};
 
 	checkGeh = (message: Message) => {
-		if (!message.content.startsWith(prefix) && message.channel.type !== "DM") {
-			if (message.content.includes("!geh")) {
-				const toSend = resGeh[Math.floor(Math.random() * resGeh.length)];
-				message.channel.send(toSend);
-			}
+		if (message.content.startsWith(prefix) || message.channel.type === "DM") return;
+
+		if (message.content.includes("!geh")) {
+			const toSend = resGeh[Math.floor(Math.random() * resGeh.length)];
+			message.channel.send(toSend);
 		}
 	};
 
 	detectHaiku = (message: Message) => {
 		const regexEmojiHaiku = /(:[^:\s]+:|<:[^:\s]+:[0-9]+>|<a:[^:\s]+:[0-9]+>)/g;
 
-		if (!message.content.startsWith(prefix) && message.channel.type !== "DM") {
-			// Mention, Emoji, Link
-			if (
-				!message.mentions.members!.first() && // Mention member
-				!message.mentions.channels.first() && // Mention channel
-				!regexEmojiHaiku.test(message.content) && // Emoji
-				!hasNumber(message.content) && // Number
-				!new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(message.content) // Links
-			) {
-				// To Prevent Error
-				if (!message.content.startsWith("||") && !message.content.endsWith("||") && !message.author.bot) {
-					// Make sure it's not a spoiler and not a bot
-					if (detect(message.content)) {
-						let haikuGet = [];
-						let toHaikued = message.content.replace(/(\n)/g, " "); // Remove new line
+		// rejected format
+		if (
+			message.content.startsWith(prefix) || // if message starts with prefix
+			message.channel.type === "DM" || // if message is in DM
+			message.mentions.members!.first() || // if message mentions someone
+			message.mentions.channels.first() || // if message mentions a channel
+			regexEmojiHaiku.test(message.content) || // if message contains emoji
+			hasNumber(message.content) || // if message contains number
+			new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(message.content) || // if message contains link
+			message.content.startsWith("||") ||
+			message.content.endsWith("||") ||
+			message.author.bot
+		)
+			return;
 
-						haikuGet = format(toHaikued);
-						if (haikuGet[0] !== undefined) {
-							for (let i = 0; i < haikuGet.length; i++) haikuGet[i] = capitalizeFirstLetter(haikuGet[i]);
+		// Make sure it's not a spoiler and not a bot
+		if (detect(message.content)) {
+			let haikuGet = format(message.content.replace(/(\n)/g, " "));
+			if (haikuGet[0]) {
+				haikuGet.forEach((item, index) => {
+					haikuGet[index] = capitalizeFirstLetter(item);
+				});
 
-							const embed = new MessageEmbed()
-								.setDescription(
-									`*${haikuGet.join("\n\n").replace(/[\*\`\"]/g, "")}*\n\n- ${message.author.username}` +
-										`\n__　　　　　　　　　　　　　__\n[ᴴᵃᶦᵏᵘ](https://en.wikipedia.org/wiki/Haiku) ᵈᵉᵗᵉᶜᵗᵉᵈ ⁻ ˢᵒᵐᵉᵗᶦᵐᵉˢ ˢᵘᶜᶜᵉˢˢᶠᵘᶫᶫʸ`
-								)
-								.setColor(`RANDOM`);
-
-							message.reply({ embeds: [embed] });
-						}
-					}
-				}
+				message.reply({
+					embeds: [
+						{
+							description:
+								`*${haikuGet.join("\n\n").replace(/[\*\`\"]/g, "")}*\n\n- ${message.author.username}` +
+								`\n__　　　　　　　　　　　　　__\n[ᴴᵃᶦᵏᵘ](https://en.wikipedia.org/wiki/Haiku) ᵈᵉᵗᵉᶜᵗᵉᵈ ⁻ ˢᵒᵐᵉᵗᶦᵐᵉˢ ˢᵘᶜᶜᵉˢˢᶠᵘᶫᶫʸ`,
+							color: `RANDOM`,
+						},
+					],
+				});
 			}
 		}
 	};
 
 	detectAnimeSearch = async (message: Message) => {
-		if (!message.content.startsWith(prefix) && message.channel.type !== "DM") {
-			// regex for words surrounded by {{}}. Ex: {{anime}}
-			const regexAnimeSearch = /\{\{([^\{\}]*)\}\}/g;
+		if (message.content.startsWith(prefix) || message.channel.type === "DM") return;
 
-			// check if there is a match
-			if (regexAnimeSearch.test(message.content)) {
-				// get the match
-				const match = message.content.match(regexAnimeSearch)!;
-				const matches = match.map((m) => m.replace(/\{\{|\}\}/g, "").trim()); // array of matches
+		// regex for words surrounded by {{}}. Ex: {{anime}}
+		const regexAnimeSearch = /\{\{([^\{\}]*)\}\}/g;
 
-				// search anime
-				for (let toSearch of matches) {
-					if (toSearch === "") return; // Must contain something
+		// check if there is a match
+		if (regexAnimeSearch.test(message.content)) {
+			// get the match
+			const match = message.content.match(regexAnimeSearch)!;
+			const matches = match.map((m) => m.replace(/\{\{|\}\}/g, "").trim()); // array of matches
 
-					const msg = await message.channel.send(`Fetching data...`);
-					try {
-						const data = await malScraper.getInfoFromName(toSearch);
+			// search anime
+			for (let toSearch of matches) {
+				if (toSearch === "") return; // Must contain something
 
-						if (!data) {
-							msg.delete();
-							return message.channel.send(`No results found for **${toSearch}**!`);
-						}
+				const msg = await message.channel.send(`Fetching data...`);
+				try {
+					const data = await malScraper.getInfoFromName(toSearch);
 
-						// -----------------------------
-						// get chars and staff
-						let animeChar = [],
-							animeStaff = [];
-
-						if (data.staff)
-							if (data.staff.length > 0) for (let i = 0; i < data.staff.length; i++) animeStaff[i] = `• ${data.staff[i].name} - ${data.staff[i].role ? data.staff[i].role : `-`}`;
-							else animeStaff = [`No staff for this anime have been added to this title.`];
-						else animeStaff = [`No staff for this anime have been added to this title.`];
-
-						if (data.characters)
-							if (data.characters.length > 0)
-								for (let i = 0; i < data.characters.length; i++)
-									animeChar[i] = `• ${data.characters[i].name} (${data.characters[i].role}) VA: ${data.characters[i].seiyuu.name ? data.characters[i].seiyuu.name : `-`}`;
-							else animeChar = ["No characters or voice actors have been added to this title."];
-						else animeChar = ["No characters or voice actors have been added to this title."];
-
-						// No Staff, sometimes the char is the staff
-						if (data.characters && data.characters[0] && data.staff && data.staff[0]) {
-							if (data.characters[0].name === data.staff[0].name && (data.staff[0].role === "Main" || data.staff![0].role === "Supporting") && animeStaff.length === 1)
-								animeStaff = [`No staff for this anime have been added to this title.`];
-
-							// No Character, sometimes the staff is the char
-							if (data.characters[0].name === data.staff[0].name && this.checkIfStaff(data.staff[0].role!) && animeChar.length === 1)
-								animeChar = [`No characters or voice actors have been added to this title.`];
-						}
-
-						// -----------------------------
+					if (!data) {
 						msg.delete();
-
-						let embed = new MessageEmbed()
-							.setColor("#2E51A2")
-							.setAuthor({ name: `${data.englishTitle ? data.englishTitle : data.title} | ${data.type ? data.type : "N/A"}`, iconURL: data.picture, url: data.url })
-							.setDescription(data.synopsis ? data.synopsis : "No synopsis available.")
-							.addField("Japanese Name", `${(data as AnimeEpisodesDataModel).japaneseTitle ? `${(data as AnimeEpisodesDataModel).japaneseTitle} (${data.title})` : data.title}`, false)
-							.addField("Synonyms", `${data.synonyms[0] === "" ? "N/A" : data.synonyms.join(" ")}`, false)
-							// @ts-ignore -> genres is not on the interface
-							.addField(`Genres`, `${data.genres ? (data.genres![0] !== "" ? data.genres.join(", ") : "N/A") : "N/A"}`, false)
-							.addField(`Age Rating`, `${data.rating ? data.rating : "N/A"}`, true)
-							.addField(`Source`, ` ${data.source ? data.source : "N/A"}`, true)
-							.addField(`Status`, `${data.status ? data.status : "N/A"}`, true)
-							.addField(`User Count/Favorite`, `${data.members ? data.members : "N/A"}/${data.favorites ? data.favorites : "N/A"}`, true)
-							.addField(`Average Score`, `${data.score ? data.score : "N/A"} (${data.scoreStats ? data.scoreStats : "N/A"})`, true)
-							.addField(`Rating Rank/Popularity Rank`, `${data.ranked ? data.ranked : "N/A"}/${data.popularity ? data.popularity : "N/A"}`, true)
-							.addField(`Episodes/Duration`, `${data.episodes ? data.episodes : "N/A"}/${data.duration ? data.duration : "N/A"}`, true)
-							.addField(`Broadcast Date`, `${data.aired ? data.aired : "N/A"}`, true)
-							.addField(`Studios`, `${data.studios!.length > 0 ? data.studios!.join(", ") : "N/A"}`, true)
-							.addField(`Producers`, `${data.producers!.length > 0 ? data.producers!.join(", ") : "N/A"}`, true)
-							.addField(`Staff`, `${animeStaff.join("\n")}`, false)
-							.addField(`Characters`, `${animeChar.join("\n")}`, false)
-							.addFields(
-								{
-									name: "❯\u2000Search Online",
-									// prettier-ignore
-									value: `•\u2000\[Gogoanime](https://www1.gogoanime.pe//search.html?keyword=${data.title.replace(/ /g, "%20")})\n•\u2000\[AnimixPlay](https://animixplay.to/?q=${data.title.replace(/ /g,"%20")})`,
-									inline: true,
-								},
-								{
-									name: "❯\u2000PV",
-									value: `${data.trailer ? `•\u2000\[Click Here!](${data.trailer})` : "No PV available."}`,
-									inline: true,
-								},
-								{
-									name: "❯\u2000MAL Link",
-									value: `•\u2000\[Click Title or Here](${data.url})`,
-									inline: true,
-								}
-							)
-							.setFooter({ text: `Data Fetched From Myanimelist.net` })
-							.setTimestamp()
-							.setThumbnail(data.picture ? data.picture : ``);
-
-						message.reply({ embeds: [embed] });
-					} catch (error) {
-						console.log(error);
-						msg.delete();
-						message.channel.send(`Error fetching data for ${toSearch}.\nDetails: ${error}`);
+						return message.channel.send(`No results found for **${toSearch}**!`);
 					}
+
+					// -----------------------------
+					// get chars and staff
+					let animeChar = [],
+						animeStaff = [];
+
+					if (data.staff)
+						if (data.staff.length > 0) for (let i = 0; i < data.staff.length; i++) animeStaff[i] = `• ${data.staff[i].name} - ${data.staff[i].role ? data.staff[i].role : `-`}`;
+						else animeStaff = [`No staff for this anime have been added to this title.`];
+					else animeStaff = [`No staff for this anime have been added to this title.`];
+
+					if (data.characters)
+						if (data.characters.length > 0)
+							for (let i = 0; i < data.characters.length; i++)
+								animeChar[i] = `• ${data.characters[i].name} (${data.characters[i].role}) VA: ${data.characters[i].seiyuu.name ? data.characters[i].seiyuu.name : `-`}`;
+						else animeChar = ["No characters or voice actors have been added to this title."];
+					else animeChar = ["No characters or voice actors have been added to this title."];
+
+					// No Staff, sometimes the char is the staff
+					if (data.characters && data.characters[0] && data.staff && data.staff[0]) {
+						if (data.characters[0].name === data.staff[0].name && (data.staff[0].role === "Main" || data.staff![0].role === "Supporting") && animeStaff.length === 1)
+							animeStaff = [`No staff for this anime have been added to this title.`];
+
+						// No Character, sometimes the staff is the char
+						if (data.characters[0].name === data.staff[0].name && this.checkIfStaff(data.staff[0].role!) && animeChar.length === 1)
+							animeChar = [`No characters or voice actors have been added to this title.`];
+					}
+
+					// -----------------------------
+					msg.delete();
+
+					let embed = new MessageEmbed()
+						.setColor("#2E51A2")
+						.setAuthor({ name: `${data.englishTitle ? data.englishTitle : data.title} | ${data.type ? data.type : "N/A"}`, iconURL: data.picture, url: data.url })
+						.setDescription(data.synopsis ? data.synopsis : "No synopsis available.")
+						.addField("Japanese Name", `${(data as AnimeEpisodesDataModel).japaneseTitle ? `${(data as AnimeEpisodesDataModel).japaneseTitle} (${data.title})` : data.title}`, false)
+						.addField("Synonyms", `${data.synonyms[0] === "" ? "N/A" : data.synonyms.join(" ")}`, false)
+						.addField(`Genres`, `${data.genres ? (data.genres![0].length > 0 ? data.genres.join(", ") : "N/A") : "N/A"}`, false)
+						.addField(`Age Rating`, `${data.rating ? data.rating : "N/A"}`, true)
+						.addField(`Source`, ` ${data.source ? data.source : "N/A"}`, true)
+						.addField(`Status`, `${data.status ? data.status : "N/A"}`, true)
+						.addField(`User Count/Favorite`, `${data.members ? data.members : "N/A"}/${data.favorites ? data.favorites : "N/A"}`, true)
+						.addField(`Average Score`, `${data.score ? data.score : "N/A"} (${data.scoreStats ? data.scoreStats : "N/A"})`, true)
+						.addField(`Rating Rank/Popularity Rank`, `${data.ranked ? data.ranked : "N/A"}/${data.popularity ? data.popularity : "N/A"}`, true)
+						.addField(`Episodes/Duration`, `${data.episodes ? data.episodes : "N/A"}/${data.duration ? data.duration : "N/A"}`, true)
+						.addField(`Broadcast Date`, `${data.aired ? data.aired : "N/A"}`, true)
+						.addField(`Studios`, `${data.studios!.length > 0 ? data.studios!.join(", ") : "N/A"}`, true)
+						.addField(`Producers`, `${data.producers!.length > 0 ? data.producers!.join(", ") : "N/A"}`, true)
+						.addField(`Staff`, `${animeStaff.join("\n")}`, false)
+						.addField(`Characters`, `${animeChar.join("\n")}`, false)
+						.addFields(
+							{
+								name: "❯\u2000Search Online",
+								// prettier-ignore
+								value: `•\u2000\[Gogoanime](https://www1.gogoanime.pe//search.html?keyword=${data.title.replace(/ /g, "%20")})\n•\u2000\[AnimixPlay](https://animixplay.to/?q=${data.title.replace(/ /g,"%20")})`,
+								inline: true,
+							},
+							{
+								name: "❯\u2000PV",
+								value: `${data.trailer ? `•\u2000\[Click Here!](${data.trailer})` : "No PV available."}`,
+								inline: true,
+							},
+							{
+								name: "❯\u2000MAL Link",
+								value: `•\u2000\[Click Title or Here](${data.url})`,
+								inline: true,
+							}
+						)
+						.setFooter({ text: `Data Fetched From Myanimelist.net` })
+						.setTimestamp()
+						.setThumbnail(data.picture ? data.picture : ``);
+
+					message.reply({ embeds: [embed] });
+				} catch (error) {
+					console.log(error);
+					msg.delete();
+					message.channel.send(`Error fetching data for ${toSearch}.\nDetails: ${error}`);
 				}
 			}
 		}
 	};
 
 	detectMangaSearch = async (message: Message) => {
+		if (message.content.startsWith(prefix) || message.channel.type === "DM") return;
+
 		// regex for words surrounded by <<>>
 		const regexMangaSearch = /<<(.*?)>>/g;
 
@@ -258,14 +264,10 @@ module.exports = class extends BotEvent {
 	};
 
 	botIsMentioned = (client: Client, message: Message) => {
-		// if mention everyone return
-		if (message.mentions.everyone) return;
+		if (message.mentions.everyone || message.reference || message.content.startsWith(prefix) || message.author.bot) return;
 
-		// check if message mentions bot and it's not a command and also not from a bot
-		if (message.mentions.has(client.user!) && !message.author.bot && !message.content.startsWith(prefix) && message.reference === null) {
-			// reply with hello and prefix
-			message.channel.send(`Hello there! My prefix is \`${prefix}\``);
-		}
+		// reply with hello and prefix
+		if (message.mentions.has(client.user!)) message.channel.send(`Hello there! My prefix is \`${prefix}\``);
 	};
 
 	run(client: Client, message: Message) {
