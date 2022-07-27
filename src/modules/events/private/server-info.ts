@@ -129,7 +129,7 @@ module.exports = class extends BotEvent {
 		let index = 0;
 
 		return guild.members.cache
-			.sort((a, b) => b.joinedTimestamp! - a.joinedTimestamp!)
+			.sort((a, b) => a.joinedTimestamp! - b.joinedTimestamp!)
 			.map((GuildMember) => {
 				let age = moment().tz("Asia/Jakarta").valueOf() - GuildMember.joinedAt!.getTime();
 				index++;
@@ -141,7 +141,7 @@ module.exports = class extends BotEvent {
 		let index = 0;
 
 		return guild.members.cache
-			.sort((a, b) => a.joinedTimestamp! - b.joinedTimestamp!)
+			.sort((a, b) => b.joinedTimestamp! - a.joinedTimestamp!)
 			.map((GuildMember) => {
 				let age = moment().tz("Asia/Jakarta").valueOf() - GuildMember.joinedAt!.getTime();
 				index++;
