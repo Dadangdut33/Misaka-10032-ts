@@ -1,0 +1,97 @@
+import { Client, MessageEmbed, TextChannel } from "discord.js";
+import Parser from "rss-parser";
+import { BotEvent } from "../../../handler";
+import { find_DB_Return, insert_collection, updateOne_Collection } from "../../../utils";
+import { private_Events_Info } from "../../../config.json";
+const parser = new Parser();
+
+module.exports = class extends BotEvent {
+	constructor() {
+		super("ready");
+		// this.disable();
+	}
+
+	async run_nyaa(guild_ID: string, channel: TextChannel) {
+		const feed = await parser.parseURL("https://nyaa.si/?page=rss");
+
+		// check if guild is registered in db
+		const check = await find_DB_Return("nyaa", { gId: guild_ID });
+		if (check.length === 0) {
+			// if not, insert it
+			await insert_collection("nyaa", { gId: guild_ID, last_Nyaa: feed.items[0].link });
+
+			// reverese feed
+			feed.items.reverse();
+		} else {
+			// cut feed from 0 to last found
+			const last_Nyaa = check[0].last_Nyaa;
+
+			// get index of last found
+			const index = feed.items.findIndex((item) => item.link === last_Nyaa);
+
+			// if index is -1, then last found is not found in feed which means no cut
+			// slice feed from 0 to last found
+			if (index !== -1) {
+				// update db
+				await updateOne_Collection("nyaa", { gId: guild_ID }, { $set: { last_Nyaa: feed.items[0].link } });
+
+				feed.items = feed.items.slice(0, index);
+				feed.items.reverse(); // reverse it first so it will be in correct order
+			}
+		}
+
+		// if feed is empty, then no new item
+		if (feed.items.length === 0) return;
+
+		// iterate through feed and send rss info
+		for (const item of feed.items) {
+			const embed = new MessageEmbed()
+				.setAuthor({ name: "Nyaa.si", url: "https://nyaa.si/", iconURL: "https://media.discordapp.net/attachments/799595012005822484/1002247072738705499/fH1dmIuo_400x400.jpg" })
+				.setTitle(item.title ? item.title : "Title not found")
+				.setURL(item.guid!)
+				.setDescription(item.contentSnippet ? item.contentSnippet : "Contentsnippet not found")
+				.addField("Download", `[Torrent](${item.link})`, true)
+				.addField("Published at", item.pubDate ? item.pubDate : item.isoDate ? item.isoDate : "Date published at not found", true)
+				.setColor("#0099ff")
+				.setFooter({ text: `${feed.title}` })
+				.setTimestamp();
+
+			channel.send({ embeds: [embed] });
+		}
+	}
+
+	// spotlight a message from a guild in any channel
+	async run(client: Client) {
+		const guild_ID = private_Events_Info.personalServer.id,
+			highlightChannel = private_Events_Info.personalServer.channel_nyaa;
+
+		// get guild by id
+		const guild = client.guilds.cache.get(guild_ID);
+		if (!guild) return console.log("Invalid guild for Nyaa rss feed");
+
+		// get channel by id
+		const channel = guild.channels.cache.get(highlightChannel) as TextChannel;
+		if (!channel) return console.log("Invalid channel Nyaa rss feed");
+
+		console.log(`Module: Nyaa rss feed | Guild: ${guild.name}`);
+		console.log(`Module: Nyaa rss feed | Loading feed`);
+		// run nyaa on startup
+		try {
+			await this.run_nyaa(guild_ID, channel);
+		} catch (e) {
+			console.log(`[${new Date().toLocaleString()}] [ERROR] [nyaa] startup fail to run nyaa rss feed`);
+			console.log(e);
+		}
+		// interval every .5 hour
+		setInterval(async () => {
+			try {
+				await this.run_nyaa(guild_ID, channel);
+			} catch (e) {
+				console.log(`[${new Date().toLocaleString()}] [ERROR] [nyaa]`);
+				console.log(e);
+			}
+		}, 1800000);
+
+		console.log(`Module: Nyaa rss feed | Feed loaded`);
+	}
+};
