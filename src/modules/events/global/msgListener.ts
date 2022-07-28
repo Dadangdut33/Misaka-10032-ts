@@ -84,7 +84,7 @@ module.exports = class extends BotEvent {
 					},
 					{
 						description: `[Haiku](https://en.wikipedia.org/wiki/Haiku) detected`,
-						footer: { text: `Sometimes successfully. You have created\na total of ${checkExist.length === 0 ? 1 : checkExist[0].count + 1} haiku(s) in this server` },
+						footer: { text: `Sometimes successfully. \nYou have created a total of ${checkExist.length === 0 ? 1 : checkExist[0].count + 1} haiku(s) in this server` },
 						color: rgb,
 					},
 				],
