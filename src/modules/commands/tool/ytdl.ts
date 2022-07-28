@@ -31,14 +31,14 @@ module.exports = class extends Command {
 			.setColor("RANDOM")
 			.setAuthor({ name: `Requested by ${message.author.username}`, iconURL: message.author.displayAvatarURL({ format: "png", size: 2048 }) })
 			.setTitle(`Info Get`)
-			.setDescription(`mimeType: \`${vFormat.mimeType}\``)
-			.addField("Video ID/Original Link", `\`${getVideoID(url)}\`/${url}`, true)
+			.setDescription(`Original Link: ${url}\nmimeType: \`${vFormat.mimeType}\``)
+			.addField("Video ID", `\`${getVideoID(url)}\``, true)
 			.addField("FPS", `${vFormat.fps}`, true)
 			.addField("Bitrate", `${vFormat.bitrate}`, true)
 			.addField("Audio Bitrate", `${vFormat.audioBitrate}`, true)
 			.addField("Resolution", `${vFormat.width}x${vFormat.height}`, true)
 			.addField("Video Format", `${vFormat.container}`, true)
-			.addField(`Download link [${vFormat.quality}]`, `[Download](${vFormat.url})`, false)
+			.addField(`Download link [${vFormat.quality}/${vFormat.qualityLabel}]`, `[Download](${vFormat.url})`, false)
 			.setColor("#FF0000")
 			.setTimestamp();
 

@@ -37,7 +37,7 @@ module.exports = class extends Command {
 			totalHaikus += data.count;
 		});
 
-		if (loopAmount === 1) {
+		if (getData.length > 25) {
 			for (let i = 0; i < loopAmount; i++) {
 				const poetData = getData.slice(i * 25, (i + 1) * 25).map((value, i) => {
 					return `${i + 1}. <@${value.author}> (${value.count} haiku)`;
