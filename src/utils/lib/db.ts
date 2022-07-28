@@ -1,12 +1,16 @@
 import mongoose from "mongoose";
 
-export function find_DB(tablename: string, query: any, cb: any) {
-	mongoose.connection.db.collection(tablename, function (err: any, collection: any) {
+interface anyInterface extends mongoose.Document {
+	[key: string]: any;
+}
+
+export function find_DB_CB(collection: string, query: any, cb: any) {
+	mongoose.connection.db.collection(collection, function (err: any, collection: any) {
 		collection.find(query).toArray(cb);
 	});
 }
 
-export function find_DB_Return(tablename: string, query: any): Promise<any> {
+export function find_DB_Return(tablename: string, query: any): Promise<anyInterface[]> {
 	return new Promise((resolve, reject) => {
 		mongoose.connection.db.collection(tablename, function (err: any, collection: any) {
 			collection.find(query).toArray(function (err: any, result: any) {
@@ -17,18 +21,18 @@ export function find_DB_Return(tablename: string, query: any): Promise<any> {
 	});
 }
 
-export function insert_DB_One(tableName: string, data: any) {
-	mongoose.connection.db.collection(tableName).insertOne(data);
+export async function insert_collection(collection: string, doc: any) {
+	return mongoose.connection.db.collection(collection).insertOne(doc);
 }
 
-export function edit_DB_One(tableName: string, query: any, data: any) {
-	mongoose.connection.db.collection(tableName).updateOne(query, { $set: data });
+export async function updateOne_Collection(collection: string, query: any, doc: any) {
+	return mongoose.connection.db.collection(collection).updateOne(query, doc);
 }
 
-export function delete_DB_One(tableName: string, query: any) {
-	mongoose.connection.db.collection(tableName).deleteOne(query);
+export async function updateMany_Collection(collection: string, query: any, doc: any) {
+	return mongoose.connection.db.collection(collection).updateMany(query, doc);
 }
 
-export function edit_DB(tableName: string, query: any, editQuery: any) {
-	mongoose.connection.db.collection(tableName).updateMany(query, editQuery);
+export async function deleteOne_Collection(collection: string, query: any) {
+	return mongoose.connection.db.collection(collection).deleteOne(query);
 }

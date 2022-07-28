@@ -5,7 +5,7 @@ import { Command, musicSettingsInterface } from "./Command";
 import { BotEvent } from "./BotEvent";
 import { Utils } from "./FileUtils";
 import { prefix } from "../config.json";
-import { find_DB_Return, edit_DB, insert_DB_One } from "../utils";
+import { find_DB_Return, updateOne_Collection, insert_collection } from "../utils";
 import { stream } from "play-dl";
 
 export interface handlerLoadOptionsInterface {
@@ -226,7 +226,10 @@ export class Handler {
 
 			// get queue data & verify if guild is registered or not
 			const queueData = await find_DB_Return("music_state", { gid: guild.id });
-			if (queueData.length === 0) return insert_DB_One("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] });
+			if (queueData.length === 0) {
+				insert_collection("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] });
+				return;
+			}
 
 			// Get text channel if registered
 			const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
@@ -260,13 +263,13 @@ export class Handler {
 				playerMaps.get(guild.id)!.currentUrl = nextSong.link;
 				playerMaps.get(guild.id)!.seekTime = 0;
 				playerMaps.get(guild.id)!.query = nextSong.query;
-				edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
+				updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
 
 				// send message to channel
 				textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 			} else {
 				// *if queue is empty
-				edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
+				updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
 				playerMaps.get(guild.id)!.seekTime = 0;
 
 				// send message telling finished playing all songs

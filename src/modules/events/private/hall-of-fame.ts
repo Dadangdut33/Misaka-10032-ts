@@ -1,6 +1,6 @@
 import { Client, MessageEmbed, TextChannel } from "discord.js";
 import { BotEvent } from "../../../handler";
-import { find_DB_Return, insert_DB_One } from "../../../utils";
+import { find_DB_Return, insert_collection } from "../../../utils";
 import { private_Events_Info } from "../../../config.json";
 
 module.exports = class extends BotEvent {
@@ -79,7 +79,7 @@ module.exports = class extends BotEvent {
 				if (db_Data.length > 0) return; // if already in db, return
 
 				// insert to db if not already in db
-				insert_DB_One("hall_of_fame", data);
+				insert_collection("hall_of_fame", data);
 
 				// -------------------------------------
 				// random footer

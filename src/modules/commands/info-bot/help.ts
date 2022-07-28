@@ -1,5 +1,5 @@
 import { MessageEmbed, Message } from "discord.js";
-import { Command, Handler, handlerLoadOptionsInterface } from "../../../handler";
+import { Command, handlerLoadOptionsInterface } from "../../../handler";
 
 module.exports = class extends Command {
 	commandHandler;

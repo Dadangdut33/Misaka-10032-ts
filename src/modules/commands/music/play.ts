@@ -3,7 +3,7 @@ import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPla
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioResource } from "@discordjs/voice";
 import { getInfo, validateURL, videoInfo } from "ytdl-core";
 import { stream, search } from "play-dl";
-import { edit_DB, find_DB_Return, insert_DB_One } from "../../../utils";
+import { updateOne_Collection, find_DB_Return, insert_collection } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -55,7 +55,7 @@ module.exports = class extends Command {
 						},
 					],
 					color: 0x00ff00,
-					image: {
+					thumbnail: {
 						url: `https://img.youtube.com/vi/${videoInfo.videoDetails.videoId}/hqdefault.jpg`,
 					},
 				},
@@ -70,7 +70,8 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const radioDict: any = {
-			"[lofi]": "https://youtu.be/5qap5aO4i9A",
+			"[lofi]": "https://youtu.be/jfKfPfyJRdk",
+			"[lofisleep]": "https://youtu.be/rUxyKA_-grg",
 			"[animelofi]": "https://youtu.be/WDXPJWIgX-o",
 			"[piano]": "https://youtu.be/xWRHTpqQMGM",
 			"[phonk]": "https://youtu.be/Ax4Y5n4f5K8",
@@ -88,11 +89,12 @@ module.exports = class extends Command {
 		if (radioDict[args[0]]) link = radioDict[args[0]];
 		else {
 			// check if link or not
-			if (validateURL(args[0])) link = args[0];
-			else {
+			if (validateURL(args[0])) {
+				link = args[0];
+			} else {
 				const res = await search(args.join(" "), { limit: 5, source: { youtube: "video" } });
 
-				if (!res) return message.reply({ content: "⛔ **No results found!**", allowedMentions: { repliedUser: false } });
+				if (res.length === 0) return message.reply({ content: "⛔ **No results found!**", allowedMentions: { repliedUser: false } });
 
 				const embedList = await message.channel.send({
 					embeds: [
@@ -187,8 +189,8 @@ module.exports = class extends Command {
 
 				// check db set or not
 				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
-				if (checkExist.length === 0) insert_DB_One("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [] });
-				else edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
+				if (checkExist.length === 0) insert_collection("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [] });
+				else updateOne_Collection("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
 
 				// send info
 				this.sendVideoInfo(message, "Now Playing", videoInfo);
@@ -197,8 +199,8 @@ module.exports = class extends Command {
 				// add to queue
 				// check db set or not
 				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
-				if (!checkExist) insert_DB_One("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [queueItem] });
-				else edit_DB("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
+				if (!checkExist) insert_collection("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [queueItem] });
+				else updateOne_Collection("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
 
 				this.sendVideoInfo(message, "Added to queue", videoInfo);
 				mReply.edit({ content: `🎶 **Added to queue** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });

@@ -14,6 +14,7 @@ module.exports = class extends Command {
 	}
 
 	async run(message: Message, args: string[]) {
+		/*
 		let regex = /\[(.*?)\]/g; // Regex to find options in square bracket []
 		let options = args.join(" ").match(regex)!; // Match the regex put it into options
 
@@ -77,12 +78,11 @@ module.exports = class extends Command {
 		];
 
 		const forceEndPollEmoji = "\u2705"; // This is check mark emoji
-
+		*/
 		// Call the pollembed function
 		// pollEmbed(message, title, options, timeout, emojiList, forceEndPollEmoji).catch((error: any) => {
 		// 	// Catch error if there is any error
 		// 	console.log(error);
-
 		// 	return message.channel.send({
 		// 		embeds: [
 		// 			{

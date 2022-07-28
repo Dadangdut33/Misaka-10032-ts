@@ -1,4 +1,4 @@
-import { MessageEmbed, Message, GuildMember, Guild } from "discord.js";
+import { MessageEmbed, Message, Guild } from "discord.js";
 import moment from "moment-timezone";
 import prettyMilliseconds from "pretty-ms";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";

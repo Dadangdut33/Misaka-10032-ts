@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { getVoiceConnection } from "@discordjs/voice";
-import { edit_DB_One, find_DB_Return, insert_DB_One } from "../../../utils";
+import { updateOne_Collection, find_DB_Return, insert_collection } from "../../../utils";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -37,8 +37,8 @@ module.exports = class extends Command {
 		if (playerObj.player.state.status === "playing" || playerObj.player.state.status === "paused") {
 			let queueData = await find_DB_Return("music_state", { gid: guild.id });
 
-			if (queueData.length === 0) insert_DB_One("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
-			else edit_DB_One("music_state", { gid: guild.id }, { queue: [] });
+			if (queueData.length === 0) insert_collection("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
+			else updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: [] } });
 
 			return message.reply({ content: `⏹ **Queue Cleared.**`, allowedMentions: { repliedUser: false } });
 		} else {
