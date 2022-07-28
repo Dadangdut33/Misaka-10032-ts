@@ -5,7 +5,7 @@ import { BotEvent } from "../../../handler";
 import { resGeh } from "./random-response/meme-response";
 import { detect, format } from "./detect-haiku/detect-haiku";
 import { prefix } from "../../../config.json";
-import { capitalizeFirstLetter, hasNumber } from "../../../utils";
+import { capitalizeFirstLetter, find_DB_Return, hasNumber, insert_collection, updateOne_Collection } from "../../../utils";
 
 module.exports = class extends BotEvent {
 	constructor() {
@@ -41,7 +41,7 @@ module.exports = class extends BotEvent {
 		}
 	};
 
-	detectHaiku = (message: Message) => {
+	detectHaiku = async (message: Message) => {
 		const regexEmojiHaiku = /(:[^:\s]+:|<:[^:\s]+:[0-9]+>|<a:[^:\s]+:[0-9]+>)/g;
 
 		// rejected format
@@ -62,28 +62,34 @@ module.exports = class extends BotEvent {
 		// Make sure it's not a spoiler and not a bot
 		if (detect(message.content)) {
 			let haikuGet = format(message.content.replace(/(\n)/g, " "));
-			if (haikuGet[0]) {
-				haikuGet.forEach((item, index) => {
-					haikuGet[index] = capitalizeFirstLetter(item);
-				});
+			if (haikuGet.length === 0) return;
 
-				const rgb = ("#" + Math.floor(Math.random() * 16777215).toString(16)) as HexColorString;
-				message.reply({
-					embeds: [
-						{
-							description: `*${haikuGet.join("\n\n").replace(/[\*\`\"]/g, "")}*`,
-							footer: { text: "- " + message.author.username },
-							color: rgb,
-						},
-						{
-							description: `[Haiku](https://en.wikipedia.org/wiki/Haiku) detected`,
-							footer: { text: "Sometimes successfully" },
-							color: rgb,
-						},
-					],
-					allowedMentions: { repliedUser: false },
-				});
-			}
+			const { author, guild } = message;
+			// find in db
+			const checkExist = await find_DB_Return("haiku", { author: author.id, guildId: guild?.id });
+			if (checkExist.length === 0) insert_collection("haiku", { author: author.id, guildId: guild?.id, count: 1 });
+			else updateOne_Collection("haiku", { author: author.id, guildId: guild?.id }, { $set: { count: checkExist[0].count + 1 } });
+
+			haikuGet.forEach((item, index) => {
+				haikuGet[index] = capitalizeFirstLetter(item);
+			});
+
+			const rgb = ("#" + Math.floor(Math.random() * 16777215).toString(16)) as HexColorString;
+			message.reply({
+				embeds: [
+					{
+						description: `*${haikuGet.join("\n\n").replace(/[\*\`\"]/g, "")}*`,
+						footer: { text: "- " + message.author.username },
+						color: rgb,
+					},
+					{
+						description: `[Haiku](https://en.wikipedia.org/wiki/Haiku) detected`,
+						footer: { text: `Sometimes successfully. You have created\na total of ${checkExist.length === 0 ? 1 : checkExist[0].count + 1} haiku(s) in this server` },
+						color: rgb,
+					},
+				],
+				allowedMentions: { repliedUser: false },
+			});
 		}
 	};
 
@@ -277,11 +283,16 @@ module.exports = class extends BotEvent {
 	};
 
 	run(client: Client, message: Message) {
-		this.checkGeh(message);
-		this.detectHaiku(message);
-		this.detectAnimeSearch(message);
-		this.detectMangaSearch(message);
-		this.crosspost(message);
-		this.botIsMentioned(client, message);
+		try {
+			this.checkGeh(message);
+			this.detectHaiku(message);
+			this.detectAnimeSearch(message);
+			this.detectMangaSearch(message);
+			this.crosspost(message);
+			this.botIsMentioned(client, message);
+		} catch (e) {
+			console.log(`[${new Date().toLocaleString()}] [ERROR] [msgListener]`);
+			console.log(e);
+		}
 	}
 };

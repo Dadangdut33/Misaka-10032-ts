@@ -116,9 +116,8 @@ module.exports = class extends BotEvent {
 				// if a video but embedded because it is a link 🚀
 				if (msg.embeds.length > 0) if (msg.embeds[0].video) channel.send(msg.embeds[0].video.url!);
 			} catch (e) {
-				console.log(`[${new Date().toLocaleString()}]`);
+				console.log(`[${new Date().toLocaleString()}] [ERROR] [hall-of-fame]`);
 				console.log(e);
-				channel.send(`**Error**\n${e}`);
 			}
 		});
 

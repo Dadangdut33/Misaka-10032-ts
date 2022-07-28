@@ -13,7 +13,7 @@ module.exports = class extends Command {
 			aliases: ["h"],
 			categories: "info-bot",
 			info: "Get all commands or one specific command info.",
-			usage: `\`${prefix}help [command] or ${prefix}alias [command]\``,
+			usage: `\`${prefix}command/alias [command]\``,
 			guildOnly: true,
 		});
 		this.commandHandler = commandHandler;
