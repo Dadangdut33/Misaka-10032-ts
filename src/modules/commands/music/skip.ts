@@ -1,7 +1,7 @@
 import { Message, TextChannel } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { createAudioResource, getVoiceConnection } from "@discordjs/voice";
-import { edit_DB, find_DB_Return, insert_DB_One } from "../../../utils";
+import { updateOne_Collection, find_DB_Return, insert_collection } from "../../../utils";
 import play from "play-dl";
 
 module.exports = class extends Command {
@@ -54,7 +54,7 @@ module.exports = class extends Command {
 					playerObj.query = nextSong.query;
 
 					// update queue data
-					edit_DB("music_state", { gid: guild.id }, { $set: { queue: queue } });
+					updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: queue } });
 
 					// send message to channel
 					textChannel.send({ embeds: [{ title: `⏩ Skipped current song!`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
@@ -67,14 +67,14 @@ module.exports = class extends Command {
 					}
 
 					// update queue data
-					edit_DB("music_state", { gid: guild.id }, { $set: { queue: [] } });
+					updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: [] } });
 
 					// send message telling finished playing all songs
 					textChannel.send({ embeds: [{ title: `⏩ Skipped current song!`, description: `Queue is now empty${wasLoop ? `. Loop mode disabled automatically` : `.`}`, color: "RANDOM" }] });
 				}
 			} else {
 				// queue not set in db
-				insert_DB_One("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
+				insert_collection("music_state", { gid: guild.id, vc_id: user.voice.channel.id, tc_id: message.channel.id, queue: [] });
 			}
 		} else {
 			return message.reply({ content: `⛔ **No radio is playing!**`, allowedMentions: { repliedUser: false } });

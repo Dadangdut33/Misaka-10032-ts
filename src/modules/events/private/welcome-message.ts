@@ -64,6 +64,7 @@ module.exports = class extends BotEvent {
 
 			console.log(`Module: Welcome-message Loaded | Loaded from local module | For guild ${personalGuild.name}`);
 		} catch (e) {
+			console.log(`[${new Date().toLocaleString()}] [ERROR] [welcome-message]`);
 			console.log(e);
 		}
 	}

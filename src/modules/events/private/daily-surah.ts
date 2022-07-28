@@ -94,7 +94,8 @@ module.exports = class extends BotEvent {
 
 			console.log(`Module: Daily-Surah Loaded | Loaded from local module`);
 		} catch (e) {
-			console.log(`[${moment().tz("Asia/Jakrta").format("DD/MM/YYYY HH:mm:ss")}] [ERROR] [daily-surah] ${e}`);
+			console.log(`[${new Date().toLocaleString()}] [ERROR] [daily-surah]`);
+			console.log(e);
 		}
 	}
 };

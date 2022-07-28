@@ -33,7 +33,7 @@ module.exports = class extends BotEvent {
 
 			console.log(`Module: Member-Count Loaded | Loaded from local module | Now waiting for new members...`);
 		} catch (e) {
-			console.log(`[${new Date().toLocaleString()}]`);
+			console.log(`[${new Date().toLocaleString()}] [ERROR] [member-count]`);
 			console.log(e);
 		}
 	}

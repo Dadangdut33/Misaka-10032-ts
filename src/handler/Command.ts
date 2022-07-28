@@ -1,5 +1,5 @@
 import { Client, Guild, Message, PermissionString } from "discord.js";
-import { AudioPlayer, AudioResource } from "@discordjs/voice";
+import { AudioPlayer } from "@discordjs/voice";
 import { Toggleable } from "./Toggleable";
 
 interface optionsInterface {

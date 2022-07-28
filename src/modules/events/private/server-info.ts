@@ -133,7 +133,7 @@ module.exports = class extends BotEvent {
 			.map((GuildMember) => {
 				let age = moment().tz("Asia/Jakarta").valueOf() - GuildMember.joinedAt!.getTime();
 				index++;
-				return `${index} <t:${~~(moment(GuildMember.joinedAt).tz("Asia/Jakarta").valueOf() / 1000)}:R> <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
+				return `${index}. <t:${~~(moment(GuildMember.joinedAt).tz("Asia/Jakarta").valueOf() / 1000)}:R> <@${GuildMember.id}> (${prettyMilliseconds(age)})`;
 			});
 	}
 
@@ -207,6 +207,7 @@ module.exports = class extends BotEvent {
 			this.embedMember(client, channelID, memberInfoID, oldest, newest);
 			this.jump(client, guildID, channelID, id_embed_serverInfo, jumpChannelID, jumpToGeneral, vcGeneral, publicStage);
 		} catch (error) {
+			console.log(`[${new Date().toLocaleString()}] [ERROR] [server-info]`);
 			console.log(error);
 			success = false;
 		} finally {
@@ -269,6 +270,7 @@ module.exports = class extends BotEvent {
 				console.log("Fail to load server info module");
 			}
 		} catch (e) {
+			console.log(`[${new Date().toLocaleString()}] [ERROR] [server-info] runtime`);
 			console.log(e);
 		}
 	}

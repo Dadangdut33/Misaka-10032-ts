@@ -60,8 +60,7 @@ module.exports = class extends Command {
 		const msg = await message.channel.send(`Searching for \`${args.join(" ")}\`...`);
 
 		const oldMethodSearch = args.join(" ").match(/\[(.*?)\]/g); // If regex match then old method
-		let query = args.join(" "),
-			url = "";
+		let query = args.join(" ");
 
 		if (oldMethodSearch) {
 			if (oldMethodSearch[0].toLowerCase().includes("kitsu")) query = args.join(" ").replace(/\[(.*?)\]/g, "");
@@ -70,7 +69,6 @@ module.exports = class extends Command {
 			const data = await this.getNameAndUrlReturn(args.join(" "));
 			if (!data) return message.edit("No results found! try to use the old kitsu method");
 
-			url = data.URL;
 			query = data.name;
 		}
 

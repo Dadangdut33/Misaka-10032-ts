@@ -9,7 +9,7 @@ module.exports = class extends Command {
 		super("uptime", {
 			categories: "info-bot",
 			info: "Get info of bot's uptime",
-			usage: `\`${prefix}uptime\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 		this.build = build;

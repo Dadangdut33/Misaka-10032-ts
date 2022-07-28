@@ -6,7 +6,7 @@ module.exports = class extends Command {
 		super("ping", {
 			categories: "info-bot",
 			info: "Get the ping of the bot",
-			usage: `\`${prefix}ping or ${prefix}alias\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: false,
 		});
 	}

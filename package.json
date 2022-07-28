@@ -3,12 +3,14 @@
 	"version": "5.0.0",
 	"description": "A once private discord bot repository. This is a fork of the original bot rewriten in TypeScript.",
 	"main": "./src/index.ts",
+	"private": true,
 	"scripts": {
 		"start": "node prod/index.js",
 		"build": "tsc",
-		"build-run": "rimraf prod && tsc && node prod/index.js",
-		"start-build": "node prod/index.js",
-		"dev": "ts-node src/index.ts",
+		"build:run": "node prod/index.js",
+		"build:watch": "nodemon prod/index.js",
+		"dev": "rimraf prod && tsc && node prod/index.js",
+		"dev:ts": "ts-node src/index.ts",
 		"tsc": "./node_modules/typescript/bin/tsc",
 		"postinstall": "npm run tsc"
 	},
@@ -67,7 +69,8 @@
 		"@types/express": "^4.17.13",
 		"@types/mongoose": "^5.10.5",
 		"@types/node": "^17.0.22",
-		"node": "16.14.0",
+		"node": "16.16.0",
+		"nodemon": "^2.0.19",
 		"rimraf": "^3.0.2",
 		"ts-node": "^10.7.0",
 		"typescript": "^4.6.2"

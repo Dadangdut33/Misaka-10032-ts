@@ -13,23 +13,25 @@ module.exports = class extends BotEvent {
 		client.guilds.cache.forEach((guild) => {
 			// register slash command
 			// @ts-ignore
-			// prettier-ignore
-			client.api.applications(client.user!.id).guilds(guild.id)
+			client.api
+				.applications(client.user!.id)
+				.guilds(guild.id)
 				.commands.post({
 					data: {
 						name: "prefix",
 						description: "Get bot prefix",
-					}, 
+					},
 				});
 
 			// @ts-ignore
-			// prettier-ignore
-			client.api.applications(client.user!.id).guilds(guild.id)
+			client.api
+				.applications(client.user!.id)
+				.guilds(guild.id)
 				.commands.post({
 					data: {
 						name: "ping",
 						description: "Get bot ping",
-					}, 
+					},
 				});
 		});
 

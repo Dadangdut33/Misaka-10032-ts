@@ -9,7 +9,7 @@ module.exports = class extends Command {
 		super("about", {
 			categories: "info-bot",
 			info: "Shows what the bot is about. This include the bot's status & description",
-			usage: `\`${prefix}about\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 		this.build = build;
