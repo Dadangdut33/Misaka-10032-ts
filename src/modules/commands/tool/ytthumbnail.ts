@@ -4,7 +4,7 @@ import { Command, handlerLoadOptionsInterface } from "../../../handler";
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
 		super("ytthumbnail", {
-			aliases: ["thumbnail", "thumb"],
+			aliases: ["thumbnail", "thumb", "ytth"],
 			categories: "tool",
 			info: "Get thumbnails links in letying quality of a yt link",
 			usage: `\`${prefix}command/alias <video link>\``,

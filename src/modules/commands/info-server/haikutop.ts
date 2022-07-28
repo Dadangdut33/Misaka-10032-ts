@@ -32,11 +32,34 @@ module.exports = class extends Command {
 		let loopAmount = Math.ceil(getData.length / 25),
 			embedList: MessageEmbed[] = [];
 
-		for (let i = 0; i < loopAmount; i++) {
-			const poetData = getData.slice(i * 25, (i + 1) * 25).map((value, i) => {
+		let totalHaikus = 0;
+		getData.forEach((data) => {
+			totalHaikus += data.count;
+		});
+
+		if (loopAmount === 1) {
+			for (let i = 0; i < loopAmount; i++) {
+				const poetData = getData.slice(i * 25, (i + 1) * 25).map((value, i) => {
+					return `${i + 1}. <@${value.author}> (${value.count} haiku)`;
+				});
+
+				let embed = new MessageEmbed()
+					.setAuthor({
+						name: `Top haiku poet(s) in ${message.guild!.name}`,
+						iconURL: message.guild!.iconURL({ format: "jpg", size: 2048 })!,
+						url: `https://discord.com/channels/${message.guild!.id}`,
+					})
+					.setDescription(`${poetData.join("\n")}`)
+					.setFooter({ text: `Page ${i + 1}/${loopAmount} | There are a total of ${getData.length} poet(s) and ${totalHaikus} accidental Haiku created in this server` });
+
+				embedList.push(embed);
+			}
+
+			paginationEmbed(message, embedList, ["⏪", "⏩", "❌"], 300000, true);
+		} else {
+			const poetData = getData.map((value, i) => {
 				return `${i + 1}. <@${value.author}> (${value.count} haiku)`;
 			});
-
 			let embed = new MessageEmbed()
 				.setAuthor({
 					name: `Top haiku poet(s) in ${message.guild!.name}`,
@@ -44,11 +67,9 @@ module.exports = class extends Command {
 					url: `https://discord.com/channels/${message.guild!.id}`,
 				})
 				.setDescription(`${poetData.join("\n")}`)
-				.setFooter({ text: `Page ${i + 1}/${loopAmount} | There are a total of ${getData.length} poet(s) in this server` });
+				.setFooter({ text: `There are a total of ${getData.length} poet(s) and ${totalHaikus} accidental Haiku created in this server` });
 
 			embedList.push(embed);
 		}
-
-		paginationEmbed(message, embedList, ["⏪", "⏩", "❌"], 300000, true);
 	}
 };
