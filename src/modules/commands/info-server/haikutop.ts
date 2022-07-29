@@ -69,7 +69,7 @@ module.exports = class extends Command {
 				.setDescription(`${poetData.join("\n")}`)
 				.setFooter({ text: `There are a total of ${getData.length} poet(s) and ${totalHaikus} accidental Haiku created in this server` });
 
-			embedList.push(embed);
+			message.channel.send({ embeds: [embed] });
 		}
 	}
 };
