@@ -39,6 +39,7 @@
 		"html-to-text": "^8.1.0",
 		"isnumber": "^1.0.0",
 		"kitsu.js": "^2.0.0",
+		"libsodium-wrappers": "^0.7.10",
 		"mal-scraper": "^2.11.4",
 		"mangadex-full-api": "^5.8.0",
 		"moment-timezone": "^0.5.32",
