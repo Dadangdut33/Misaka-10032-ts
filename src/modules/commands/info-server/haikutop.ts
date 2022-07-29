@@ -37,6 +37,9 @@ module.exports = class extends Command {
 			totalHaikus += data.count;
 		});
 
+		// sort by count
+		getData.sort((a, b) => b.count - a.count);
+
 		if (getData.length > 25) {
 			for (let i = 0; i < loopAmount; i++) {
 				const poetData = getData.slice(i * 25, (i + 1) * 25).map((value, i) => {
