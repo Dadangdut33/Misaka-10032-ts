@@ -18,23 +18,34 @@ module.exports = class extends BotEvent {
 		const check = await find_DB_Return("nyaa", { gId: guild_ID });
 		if (check.length === 0) {
 			// if not, insert it
-			await insert_collection("nyaa", { gId: guild_ID, last_Nyaa: feed.items[0].link });
+			await insert_collection("nyaa", { gId: guild_ID, last_Nyaa: feed.items[0].guid });
 
 			// reverese feed
 			feed.items.reverse();
 		} else {
 			// cut feed from 0 to last found
 			const last_Nyaa = check[0].last_Nyaa;
+			let limit = 15,
+				index = -1,
+				counter = 0;
+			const splittedNyaa = last_Nyaa.split("/");
+			const baseLink = splittedNyaa.slice(0, splittedNyaa.length - 1).join("/");
 
-			// get index of last found
-			const index = feed.items.findIndex((item) => item.link === last_Nyaa);
+			while (index === -1) {
+				// get index of last found
+				// in a while loop because item can sometimes already removed from feed
+				index = feed.items.findIndex((item) => item.guid === baseLink + "/" + `${parseInt(splittedNyaa[splittedNyaa.length - 1]) - counter}`);
+
+				counter++;
+				if (counter === limit) break;
+			}
+
+			// update db
+			await updateOne_Collection("nyaa", { gId: guild_ID }, { $set: { last_Nyaa: feed.items[0].guid } });
 
 			// if index is -1, then last found is not found in feed which means no cut
 			// slice feed from 0 to last found
 			if (index !== -1) {
-				// update db
-				await updateOne_Collection("nyaa", { gId: guild_ID }, { $set: { last_Nyaa: feed.items[0].link } });
-
 				feed.items = feed.items.slice(0, index);
 				feed.items.reverse(); // reverse it first so it will be in correct order
 			}
@@ -43,6 +54,7 @@ module.exports = class extends BotEvent {
 		// if feed is empty, then no new item
 		if (feed.items.length === 0) return;
 
+		let embedList = [];
 		// iterate through feed and send rss info
 		for (const item of feed.items) {
 			const embed = new MessageEmbed()
@@ -56,7 +68,16 @@ module.exports = class extends BotEvent {
 				.setFooter({ text: `${feed.title}` })
 				.setTimestamp();
 
-			channel.send({ embeds: [embed] });
+			embedList.push(embed);
+
+			if (embedList.length === 10) {
+				channel.send({ embeds: embedList });
+				embedList = [];
+			}
+		}
+
+		if (embedList.length > 0) {
+			channel.send({ embeds: embedList });
 		}
 	}
 
