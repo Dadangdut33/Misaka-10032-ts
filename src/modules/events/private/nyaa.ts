@@ -17,23 +17,20 @@ module.exports = class extends BotEvent {
 		// check if guild is registered in db
 		const check = await find_DB_Return("nyaa", { gId: guild_ID });
 		if (check.length === 0) {
-			// if not, insert it
+			// if not, insert/register it and no need to slice the feed
 			await insert_collection("nyaa", { gId: guild_ID, last_Nyaa: feed.items[0].guid });
-
-			// reverese feed
-			feed.items.reverse();
 		} else {
 			// cut feed from 0 to last found
-			const last_Nyaa = check[0].last_Nyaa;
 			let limit = 15,
 				index = -1,
 				counter = 0;
-			const splittedNyaa = last_Nyaa.split("/");
-			const baseLink = splittedNyaa.slice(0, splittedNyaa.length - 1).join("/");
+			const last_Nyaa = check[0].last_Nyaa,
+				splittedNyaa = last_Nyaa.split("/"),
+				baseLink = splittedNyaa.slice(0, splittedNyaa.length - 1).join("/");
 
+			// get index of last found
+			// in a while loop because item can sometimes already removed from feed
 			while (index === -1) {
-				// get index of last found
-				// in a while loop because item can sometimes already removed from feed
 				index = feed.items.findIndex((item) => item.guid === baseLink + "/" + `${parseInt(splittedNyaa[splittedNyaa.length - 1]) - counter}`);
 
 				counter++;
@@ -45,14 +42,11 @@ module.exports = class extends BotEvent {
 
 			// if index is -1, then last found is not found in feed which means no cut
 			// slice feed from 0 to last found
-			if (index !== -1) {
-				feed.items = feed.items.slice(0, index);
-				feed.items.reverse(); // reverse it first so it will be in correct order
-			}
+			if (index !== -1) feed.items = feed.items.slice(0, index);
 		}
 
-		// if feed is empty, then no new item
-		if (feed.items.length === 0) return;
+		feed.items.reverse(); // reverse it first so it will be in correct order
+		if (feed.items.length === 0) return; // if feed is empty, then no new item and no need to send message
 
 		let embedList = [];
 		// iterate through feed and send rss info
