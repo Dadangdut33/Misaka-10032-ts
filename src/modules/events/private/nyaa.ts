@@ -57,7 +57,7 @@ module.exports = class extends BotEvent {
 				.setURL(item.guid!)
 				.setDescription(item.contentSnippet ? item.contentSnippet : "Contentsnippet not found")
 				.addField("Download", `[Torrent](${item.link})`, true)
-				.addField("Published at", item.pubDate ? item.pubDate : item.isoDate ? item.isoDate : "Date published at not found", true)
+				.addField("Published at", item.isoDate ? new Date(item.isoDate).toString() : item.pubDate ? item.pubDate : "Date published at not found", true)
 				.setColor("#0099ff")
 				.setFooter({ text: `${feed.title}` })
 				.setTimestamp();
