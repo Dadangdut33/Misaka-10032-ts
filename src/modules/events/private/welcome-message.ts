@@ -32,7 +32,7 @@ const responseTxt_ole = [
 module.exports = class extends BotEvent {
 	constructor() {
 		super("ready");
-		// this.disable();
+		this.disable();
 	}
 
 	run(client: Client) {
