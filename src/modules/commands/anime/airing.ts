@@ -1,9 +1,13 @@
-import { Message, MessageEmbed } from "discord.js";
-import currentlyAiringAnime from "currently-airing-anime";
+import { EmbedFieldData, Message, MessageEmbed } from "discord.js";
+import currentlyAiringAnime, { AiringAnime, Media } from "currently-airing-anime";
 import { Command, handlerLoadOptionsInterface } from "../../../handler";
 import { paginationEmbed } from "../../../utils";
 const fetch = require("node-fetch");
 global.fetch = fetch;
+
+interface MediaExtended extends Media {
+	format: string;
+}
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
@@ -41,79 +45,72 @@ module.exports = class extends Command {
 		return dDisplay + "+ " + h + ":" + m + ":" + s;
 	}
 
+	async getCurrentlyAiringAnime(pagesDataArr: any[], airingData?: AiringAnime) {
+		let pagesData = pagesDataArr;
+		const data = airingData ? airingData : await currentlyAiringAnime();
+
+		pagesData = pagesData.concat(data.shows.map((data) => data));
+		if (data.next) pagesData = pagesData.concat(await this.getCurrentlyAiringAnime(pagesData, await data.next()!));
+
+		return pagesData;
+	}
+
 	async run(message: Message, args: string[]) {
-		currentlyAiringAnime()
-			.then(({ shows, next }) => {
-				const pages: MessageEmbed[] = [];
+		const msg = await message.channel.send("Fetching data...");
 
-				for (let i = 0; i < shows.length; i += 25) {
-					let pageAdd = new MessageEmbed().setAuthor({ name: `Click For Web View`, url: `https://ricklancee.github.io/currently-airing-anime/` }).setTitle(`Current Season's Anime`);
+		const pagesData: MediaExtended[] = [...new Set(await this.getCurrentlyAiringAnime([]))]; // remove dupe
+		const pages: MessageEmbed[] = [],
+			pagesFields: EmbedFieldData[][] = [];
+		const statusHierarchy = ["RELEASING", "FINISHED", "CANCELLED", "NOT_YET_RELEASED"];
+		const formatHierarchy = ["TV", "TV_SHORT", "OVA", "ONA", "SPECIAL", "MOVIE", "MUSIC", "MANGA", "NOVEL", "NONE"];
 
-					for (let j = 0; j < 25; j++) {
-						try {
-							pageAdd.addField(
-								// @ts-ignore
-								`${shows[i + j].title.romaji} ${shows[i + j].episodes ? `(${shows[i + j].episodes} ep) ` : ` `}[${shows[i + j].format}]`, // field title
-
-								// content
-								`[MAL Link](https://myanimelist.net/anime/${shows[i + j].idMal}) | ${this.statusReplace(shows[i + j].status)} | Next Ep in: ${
-									shows[i + j].nextAiringEpisode ? this.secondsToDhms(shows[i + j].nextAiringEpisode.timeUntilAiring) : "-"
-								}`
-							);
-						} catch (error) {
-							// off limit
-							break;
-						}
-					}
-					pages.push(pageAdd);
-				}
-
-				// no next
-				if (!next) {
-					// add footer to each embed pages
-					pages.forEach((page, index) => {
-						page.setFooter({ text: `Page ${index + 1} / ${pages.length}\nStatus:\n🟡 = RELEASING | 🔵 = FINISHED | 🔴 = CANCELLED | ⌛ = NOT_YET_RELEASED` });
-					});
-					paginationEmbed(message, pages, [], 300000, true); // 5 Minutes
-				} else {
-					// next
-					next()
-						?.then(({ shows }) => {
-							for (let i = 0; i < shows.length; i += 25) {
-								let pageAdd = new MessageEmbed().setAuthor({ name: `Click For Web View`, url: `https://ricklancee.github.io/currently-airing-anime/` }).setTitle(`Current Season's Anime`);
-
-								for (let j = 0; j < 25; j++) {
-									try {
-										pageAdd.addField(
-											// @ts-ignore
-											`${shows[i + j].title.romaji} ${shows[i + j].episodes ? `(${shows[i + j].episodes} ep) ` : ` `}[${shows[i + j].format}]`, // field title
-
-											// content
-											`[MAL Link](https://myanimelist.net/anime/${shows[i + j].idMal}) | ${this.statusReplace(shows[i + j].status)} | Next Ep in: ${
-												shows[i + j].nextAiringEpisode ? this.secondsToDhms(shows[i + j].nextAiringEpisode.timeUntilAiring) : "-"
-											}`
-										);
-									} catch (error) {
-										// off limit
-										break;
-									}
-								}
-								pages.push(pageAdd);
-							}
-
-							// add footer to each embed pages
-							pages.forEach((page, index) => {
-								page.setFooter({ text: `Page ${index + 1} / ${pages.length}\nStatus:\n🟡 = RELEASING | 🔵 = FINISHED | 🔴 = CANCELLED | ⌛ = NOT_YET_RELEASED` });
-							});
-							paginationEmbed(message, pages, [], 300000, true);
-						})
-						.catch((err) => {
-							console.log(err);
-						});
-				}
+		// sort by date (time until airing) first, then format, then status
+		msg.edit("Sorting data...");
+		pagesData
+			.sort((a, b) => {
+				return (a.nextAiringEpisode ? a.nextAiringEpisode.timeUntilAiring : 0) - (b.nextAiringEpisode ? b.nextAiringEpisode.timeUntilAiring : 0);
 			})
-			.catch((err) => {
-				console.log(err);
+			.sort((a, b) => {
+				return formatHierarchy.indexOf(a.format) - formatHierarchy.indexOf(b.format);
+			})
+			.sort((a, b) => {
+				return statusHierarchy.indexOf(a.status) - statusHierarchy.indexOf(b.status);
 			});
+
+		msg.edit("Creating embeds...");
+		for (let i = 0; i < pagesData.length; i += 25) {
+			let pageAdd: EmbedFieldData[] = [];
+
+			for (let j = i; j < i + 25; j++) {
+				try {
+					pageAdd.push({
+						name: `${pagesData[j].title.romaji} ${pagesData[j].episodes ? `(${pagesData[j].episodes} ep) ` : ` `}[${pagesData[j].format}]`,
+						value: `[MAL](https://myanimelist.net/anime/${pagesData[j].idMal}) | ${this.statusReplace(pagesData[j].status)} | Next Ep in: ${
+							pagesData[j].nextAiringEpisode ? this.secondsToDhms(pagesData[j].nextAiringEpisode.timeUntilAiring) : "-"
+						}`,
+					});
+				} catch (error) {
+					break;
+				}
+			}
+
+			pagesFields.push(pageAdd);
+		}
+
+		pagesFields.forEach((fields, i) => {
+			pages.push(
+				new MessageEmbed()
+					.setTitle(`Current Season's Anime`)
+					.setDescription("**Status**:\n🟡 = RELEASING\n🔵 = FINISHED\n🔴 = CANCELLED\n⌛ = NOT_YET_RELEASED\n====================")
+					.setFields(fields)
+			);
+		});
+
+		msg.edit("Data fetched! Sending...");
+		setTimeout(() => {
+			msg.delete();
+		}, 1000);
+
+		return paginationEmbed(message, pages, [], 300000); // 5 Minutes
 	}
 };
