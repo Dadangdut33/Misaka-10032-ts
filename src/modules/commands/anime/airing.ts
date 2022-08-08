@@ -85,8 +85,9 @@ module.exports = class extends Command {
 				try {
 					pageAdd.push({
 						name: `${pagesData[j].title.romaji} ${pagesData[j].episodes ? `(${pagesData[j].episodes} ep) ` : ` `}[${pagesData[j].format}]`,
-						value: `[MAL](https://myanimelist.net/anime/${pagesData[j].idMal}) | ${this.statusReplace(pagesData[j].status)} | Next Ep in: ${
-							pagesData[j].nextAiringEpisode ? this.secondsToDhms(pagesData[j].nextAiringEpisode.timeUntilAiring) : "-"
+						value: `[MAL](https://myanimelist.net/anime/${pagesData[j].idMal}) | ${this.statusReplace(pagesData[j].status)} | Next Ep ${
+							// pagesData[j].nextAiringEpisode ? this.secondsToDhms(pagesData[j].nextAiringEpisode.timeUntilAiring) : "-"
+							pagesData[j].nextAiringEpisode ? `<t:${Math.floor(new Date().valueOf() / 1000 + pagesData[j].nextAiringEpisode.timeUntilAiring)}:R> ` : "-"
 						}`,
 					});
 				} catch (error) {

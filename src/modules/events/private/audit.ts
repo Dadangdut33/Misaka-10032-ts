@@ -30,14 +30,16 @@ function AuditLog(client: Client, options: optionsInterface) {
 		let embed: MessageEmbedOptions = {
 			description: `
 **Author : ** <@${message.author!.id}> - *${message.author!.tag}*
-**Date : ** ${message.createdAt}
+**Date : ** <t:${message.createdAt.valueOf() / 1000}:R>
 **Channel : ** <#${message.channel.id}> - *${message.channel.name}*
 
 **Deleted Image : **
-${message.attachments.map((x) => x.url)}
+Original: \n${message.attachments.map((x) => x.url).join("\n")}
+
+Proxy: \n${message.attachments.map((x) => x.proxyURL).join("\n")}
 `,
 			image: {
-				url: message.attachments.map((x) => x.url)[0],
+				url: message.attachments.map((x) => x.url)[0] || message.attachments.map((x) => x.proxyURL)[0] || "",
 			},
 			color: 0x000,
 			timestamp: new Date(),
@@ -187,7 +189,7 @@ ${message.attachments.map((x) => x.url)}
 							color: 0x000,
 							timestamp: new Date(),
 							footer: {
-								text: `Old avatar might not show up sometimes`,
+								text: `Old avatar might not show up`,
 							},
 							thumbnail: {
 								url: newUser.displayAvatarURL({ format: "png", size: 2048 }),
@@ -197,7 +199,7 @@ ${message.attachments.map((x) => x.url)}
 								icon_url: "https://cdn.discordapp.com/emojis/435119382910337024.png",
 							},
 							image: {
-								url: oldUser.displayAvatarURL({ format: "png", size: 2048 }),
+								url: oldUser.displayAvatarURL({ format: "png", size: 2048 }) || oldUser.avatarURL({ format: "png", size: 2048 }) || "",
 							},
 						};
 					}
