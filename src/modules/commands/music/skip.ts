@@ -1,6 +1,6 @@
 import { Message, TextChannel } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
-import { createAudioResource, getVoiceConnection } from "@discordjs/voice";
+import { AudioPlayerStatus, createAudioResource, getVoiceConnection } from "@discordjs/voice";
 import { updateOne_Collection, find_DB_Return, insert_collection } from "../../../utils";
 import play from "play-dl";
 
@@ -36,6 +36,13 @@ module.exports = class extends Command {
 
 		// skip current music
 		if (playerObj.player.state.status === "playing" || playerObj.player.state.status === "paused") {
+			// if on auto
+			if (playerObj.auto) {
+				// set player state as idle
+				playerObj.player.state = { status: AudioPlayerStatus.Idle }; // this will be handled in handler to play next song
+				return;
+			}
+
 			// get queue data
 			const queueData = await find_DB_Return("music_state", { gid: guild.id });
 			if (queueData.length > 0) {
@@ -59,7 +66,7 @@ module.exports = class extends Command {
 					// send message to channel
 					textChannel.send({ embeds: [{ title: `⏩ Skipped current song!`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 				} else {
-					// check if state is playing the stop player
+					// check if state is playing then stop player
 					const wasLoop = playerObj.loop;
 					if (playerObj.player.state.status === "playing") {
 						playerObj.player.stop();

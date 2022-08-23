@@ -7,6 +7,7 @@ import { Utils } from "./FileUtils";
 import { prefix } from "../config.json";
 import { find_DB_Return, updateOne_Collection, insert_collection } from "../utils";
 import { stream } from "play-dl";
+import { getInfo } from "ytdl-core";
 
 export interface handlerLoadOptionsInterface {
 	client: Client;
@@ -252,7 +253,65 @@ export class Handler {
 				return;
 			}
 
-			// *if not loop check if queue is empty or not
+			// *if auto
+			if (playerObj.auto) {
+				if (!playerObj.related_video) {
+					// send message to channel
+					textChannel.send({
+						embeds: [{ title: `❌ No related video found`, description: `No related video found for [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }],
+					});
+
+					return;
+				}
+
+				const urlGet = "https://www.youtube.com/watch?v=" + playerObj.related_video?.id;
+
+				const videoInfo = await getInfo(urlGet);
+				const streamData = await stream(urlGet, { quality: 1250, precache: 1000 })!;
+				const resource = createAudioResource(streamData.stream, { inlineVolume: true, inputType: streamData.type });
+
+				playerObj.player.play(resource);
+				playerMaps.get(guild.id)!.currentTitle = videoInfo.videoDetails.title;
+				playerMaps.get(guild.id)!.currentUrl = urlGet;
+				playerMaps.get(guild.id)!.seekTime = 0;
+				playerMaps.get(guild.id)!.related_video = videoInfo.related_videos[0] || null;
+
+				// send message to channel
+				textChannel.send({
+					embeds: [
+						{
+							author: { name: "▶ Autoplaying next song" },
+							title: `${videoInfo.videoDetails.title} ${!videoInfo.videoDetails.isLiveContent ? "🎵" : "📺"}`,
+							description: `**[${videoInfo.videoDetails.title}](${videoInfo.videoDetails.video_url})** by [${videoInfo.videoDetails.author.name}](${videoInfo.videoDetails.ownerProfileUrl})`,
+							fields: [
+								{
+									name: "Live / Duration",
+									value: `${videoInfo.videoDetails.isLiveContent ? "Yes" : "No"} / ${videoInfo.videoDetails.lengthSeconds} seconds`,
+									inline: true,
+								},
+								{
+									name: "Views / Likes",
+									value: `${parseInt(videoInfo.videoDetails.viewCount).toLocaleString()} / ${videoInfo.videoDetails.likes ? videoInfo.videoDetails.likes.toLocaleString() : 0}`,
+									inline: true,
+								},
+								{
+									name: "Upload date",
+									value: `${videoInfo.videoDetails.uploadDate}`,
+									inline: true,
+								},
+							],
+							color: 0x00ff00,
+							thumbnail: {
+								url: `https://img.youtube.com/vi/${videoInfo.videoDetails.videoId}/hqdefault.jpg`,
+							},
+						},
+					],
+				});
+
+				return;
+			}
+
+			// *if not loop and auto check if queue is empty or not
 			const queue = queueData[0].queue;
 			if (queue.length > 0) {
 				// *if queue is not empty
