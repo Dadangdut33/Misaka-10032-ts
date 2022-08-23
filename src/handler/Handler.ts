@@ -216,6 +216,7 @@ export class Handler {
 			loop: false,
 			volume: 100, // not used but kept for future use
 			timeOutIdle: setTimeout(() => {}),
+			related_video: null,
 		});
 
 		// set events for the set player
