@@ -31,12 +31,7 @@ module.exports = class extends Command {
 			playerObj = musicP.get(guild.id)!;
 		}
 
-		if (!playerObj.loop) {
-			playerObj.loop = true;
-			return message.reply({ content: `🔃 **Loop mode enabled**`, allowedMentions: { repliedUser: false } });
-		} else {
-			playerObj.loop = false;
-			return message.reply({ content: `👌 **Loop mode disabled**`, allowedMentions: { repliedUser: false } });
-		}
+		playerObj.loop = !playerObj.loop;
+		return message.reply({ content: `${playerObj.loop ? "🔃" : "👌"} **Loop mode ${playerObj.loop ? "enabled" : "disabled"}**`, allowedMentions: { repliedUser: false } });
 	}
 };

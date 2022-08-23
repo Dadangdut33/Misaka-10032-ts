@@ -214,6 +214,7 @@ export class Handler {
 			query: "",
 			seekTime: 0,
 			loop: false,
+			auto: false,
 			volume: 100, // not used but kept for future use
 			timeOutIdle: setTimeout(() => {}),
 			related_video: null,

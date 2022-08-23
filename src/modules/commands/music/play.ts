@@ -177,6 +177,7 @@ module.exports = class extends Command {
 			playerObj.currentTitle = queueItem.title;
 			playerObj.currentUrl = queueItem.link;
 			playerObj.seekTime = 0;
+			playerObj.related_video = videoInfo.related_videos[0] ? videoInfo.related_videos[0] : null;
 			clearTimeout(playerObj.timeOutIdle);
 
 			// 1st play

@@ -1,27 +1,26 @@
 import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
-import { getVoiceConnection } from "@discordjs/voice";
 
 module.exports = class extends Command {
 	constructor({ prefix }: handlerLoadOptionsInterface) {
-		super("stop", {
+		super("auto", {
 			categories: "music",
-			info: "Stop and clear current radio queue",
+			info: "Enable/disable auto mode for the player. Auto mode will automatically play the next recommended video.",
 			usage: `\`${prefix}command/alias\``,
 			guildOnly: true,
 		});
 	}
-
 	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const user = message.member!;
 		const guild = message.guild!;
+
 		// check if user is in vc or not
 		if (!user.voice.channel) {
 			return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
 		}
 
 		// check if bot is in vc or not
-		if (!getVoiceConnection(guild.id)) {
+		if (!guild.me?.voice.channel) {
 			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 		}
 
@@ -32,16 +31,7 @@ module.exports = class extends Command {
 			playerObj = musicP.get(guild.id)!;
 		}
 
-		// stop current music
-		if (playerObj.player.state.status === "playing") {
-			const wasLoop = playerObj.loop;
-			playerObj.player.stop();
-			playerObj.auto = false;
-			playerObj.loop = false;
-
-			return message.reply({ content: `⏹ **Stopped radio.**${wasLoop ? ` Loop mode disabled automatically` : ``}`, allowedMentions: { repliedUser: false } });
-		} else {
-			return message.reply({ content: `⛔ **Radio is not playing anything!**`, allowedMentions: { repliedUser: false } });
-		}
+		playerObj.auto = !playerObj.auto;
+		return message.reply({ content: `${playerObj.auto ? "🪄" : "👌"} **Auto mode ${playerObj.auto ? "enabled" : "disabled"}**`, allowedMentions: { repliedUser: false } });
 	}
 };

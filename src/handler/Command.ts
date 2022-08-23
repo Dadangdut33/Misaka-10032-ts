@@ -21,6 +21,7 @@ export interface playerObject {
 	query: string;
 	seekTime: number;
 	loop: boolean;
+	auto: boolean;
 	volume: number;
 	timeOutIdle: NodeJS.Timeout;
 	related_video: relatedVideo | null;
