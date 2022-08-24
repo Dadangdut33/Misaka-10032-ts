@@ -8,6 +8,7 @@ import { prefix } from "../config.json";
 import { find_DB_Return, updateOne_Collection, insert_collection } from "../utils";
 import { stream } from "play-dl";
 import { getInfo } from "ytdl-core";
+import { Scraper } from "@sirubot/yt-related-scraper";
 
 export interface handlerLoadOptionsInterface {
 	client: Client;
@@ -29,6 +30,7 @@ export class Handler {
 	aliases: Map<string, Command>;
 	commandEvents: Map<string, BotEvent[]>;
 	radioPlayerMaps: musicSettingsInterface;
+	ytRecommendScrapper: Scraper = new Scraper();
 
 	/**
 	 * @description Create a new handler instance
@@ -218,7 +220,7 @@ export class Handler {
 			auto: false,
 			volume: 100, // not used but kept for future use
 			timeOutIdle: setTimeout(() => {}),
-			related_video: null,
+			currentId: "",
 		});
 
 		// set events for the set player
@@ -255,29 +257,33 @@ export class Handler {
 
 			// *if auto
 			if (playerObj.auto) {
-				if (!playerObj.related_video) {
-					// send message to channel
-					textChannel.send({
-						embeds: [{ title: `❌ No related video found`, description: `No related video found for [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }],
-					});
+				const embedLoading = await textChannel.send({
+					embeds: [{ title: `⏳ Loading next auto song`, description: `Please wait...`, color: "RANDOM" }],
+				});
 
+				const relatedGet = await this.ytRecommendScrapper.scrape(playerObj.currentId);
+
+				if (!relatedGet) {
+					embedLoading.edit({
+						embeds: [{ title: `⏳ No related songs found`, description: `Please try again later`, color: "RANDOM" }],
+					});
+					playerObj.auto = false;
 					return;
 				}
 
-				const urlGet = "https://www.youtube.com/watch?v=" + playerObj.related_video?.id;
-
+				const urlGet = "https://www.youtube.com/watch?v=" + relatedGet[0].videoId;
 				const videoInfo = await getInfo(urlGet);
 				const streamData = await stream(urlGet, { quality: 1250, precache: 1000 })!;
 				const resource = createAudioResource(streamData.stream, { inlineVolume: true, inputType: streamData.type });
 
 				playerObj.player.play(resource);
+				playerMaps.get(guild.id)!.currentId = videoInfo.videoDetails.videoId;
 				playerMaps.get(guild.id)!.currentTitle = videoInfo.videoDetails.title;
 				playerMaps.get(guild.id)!.currentUrl = urlGet;
 				playerMaps.get(guild.id)!.seekTime = 0;
-				playerMaps.get(guild.id)!.related_video = videoInfo.related_videos[0] || null;
 
-				// send message to channel
-				textChannel.send({
+				// edit embed
+				embedLoading.edit({
 					embeds: [
 						{
 							author: { name: "▶ Autoplaying next song" },
@@ -320,6 +326,7 @@ export class Handler {
 				const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
 				playerObj.player.play(resource);
+				playerMaps.get(guild.id)!.currentId = nextSong.id;
 				playerMaps.get(guild.id)!.currentTitle = nextSong.title;
 				playerMaps.get(guild.id)!.currentUrl = nextSong.link;
 				playerMaps.get(guild.id)!.seekTime = 0;

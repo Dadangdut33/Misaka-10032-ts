@@ -168,16 +168,17 @@ module.exports = class extends Command {
 
 			// get video resource
 			const queueItem = {
+				id: videoInfo.videoDetails.videoId,
 				type: videoInfo.videoDetails.isLiveContent ? "live" : "video",
 				title: videoInfo.videoDetails.title,
 				link: link,
 				query: args.join(" "),
 			};
 
+			playerObj.currentId = queueItem.id;
 			playerObj.currentTitle = queueItem.title;
 			playerObj.currentUrl = queueItem.link;
 			playerObj.seekTime = 0;
-			playerObj.related_video = videoInfo.related_videos[0] || null;
 			clearTimeout(playerObj.timeOutIdle);
 
 			// 1st play

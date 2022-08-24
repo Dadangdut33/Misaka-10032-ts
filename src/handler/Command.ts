@@ -1,6 +1,5 @@
 import { Client, Guild, Message, PermissionString } from "discord.js";
 import { AudioPlayer } from "@discordjs/voice";
-import { relatedVideo } from "ytdl-core";
 import { Toggleable } from "./Toggleable";
 
 interface optionsInterface {
@@ -16,6 +15,7 @@ export type musicSettingsInterface = Map<string, playerObject>;
 export type addNewPlayerArgsInterface = (guild: Guild, playerMaps: musicSettingsInterface, client: Client) => void;
 export interface playerObject {
 	player: AudioPlayer;
+	currentId: string;
 	currentTitle: string;
 	currentUrl: string;
 	query: string;
@@ -24,7 +24,6 @@ export interface playerObject {
 	auto: boolean;
 	volume: number;
 	timeOutIdle: NodeJS.Timeout;
-	related_video: relatedVideo | null;
 }
 
 interface extraArgsInterface {
