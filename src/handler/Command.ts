@@ -23,7 +23,10 @@ export interface playerObject {
 	loop: boolean;
 	auto: boolean;
 	volume: number;
+	/** Bot leave timeout, will reset everytime new song is added by play command */
 	timeOutIdle: NodeJS.Timeout;
+	/** Store related video that has been played this session. Will reset everytime bot stop playing music */
+	relatedIdTakenThisSession: string[];
 }
 
 interface extraArgsInterface {

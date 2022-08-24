@@ -69,6 +69,7 @@ module.exports = class extends Command {
 					// check if state is playing then stop player
 					const wasLoop = playerObj.loop;
 					if (playerObj.player.state.status === "playing") {
+						playerObj.relatedIdTakenThisSession = [];
 						playerObj.player.stop();
 						playerObj.loop = false;
 					}

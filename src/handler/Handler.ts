@@ -7,8 +7,8 @@ import { Utils } from "./FileUtils";
 import { prefix } from "../config.json";
 import { find_DB_Return, updateOne_Collection, insert_collection } from "../utils";
 import { stream } from "play-dl";
-import { getInfo } from "ytdl-core";
-import { Scraper } from "@sirubot/yt-related-scraper";
+import { Client as ytClient, PlaylistCompact, VideoCompact } from "youtubei";
+const searchClient = new ytClient();
 
 export interface handlerLoadOptionsInterface {
 	client: Client;
@@ -30,7 +30,6 @@ export class Handler {
 	aliases: Map<string, Command>;
 	commandEvents: Map<string, BotEvent[]>;
 	radioPlayerMaps: musicSettingsInterface;
-	ytRecommendScrapper: Scraper = new Scraper();
 
 	/**
 	 * @description Create a new handler instance
@@ -212,6 +211,7 @@ export class Handler {
 					noSubscriber: NoSubscriberBehavior.Play,
 				},
 			}),
+			currentId: "",
 			currentTitle: "",
 			currentUrl: "",
 			query: "",
@@ -220,145 +220,159 @@ export class Handler {
 			auto: false,
 			volume: 100, // not used but kept for future use
 			timeOutIdle: setTimeout(() => {}),
-			currentId: "",
+			relatedIdTakenThisSession: [],
 		});
 
 		// set events for the set player
 		const playerObj = playerMaps.get(guild.id)!;
 		playerObj.player.on("stateChange", async () => {
-			// verify if idle or stopped
-			if (playerObj.player.state.status !== "idle") return;
+			try {
+				// verify if idle or stopped
+				if (playerObj.player.state.status !== "idle") return;
 
-			// get queue data & verify if guild is registered or not
-			const queueData = await find_DB_Return("music_state", { gid: guild.id });
-			if (queueData.length === 0) {
-				insert_collection("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] });
-				return;
-			}
-
-			// Get text channel if registered
-			const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
-
-			// *if loop
-			if (playerObj.loop) {
-				const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
-				const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
-
-				playerObj.player.play(resource);
-				playerMaps.get(guild.id)!.seekTime = 0;
-
-				// send message to channel
-				textChannel.send({
-					embeds: [{ title: `▶ Looping current song`, description: `Now playing: [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }],
-				});
-
-				return;
-			}
-
-			// *if auto
-			if (playerObj.auto) {
-				const embedLoading = await textChannel.send({
-					embeds: [{ title: `⏳ Loading next auto song`, description: `Please wait...`, color: "RANDOM" }],
-				});
-
-				const relatedGet = await this.ytRecommendScrapper.scrape(playerObj.currentId);
-
-				if (!relatedGet) {
-					embedLoading.edit({
-						embeds: [{ title: `⏳ No related songs found`, description: `Please try again later`, color: "RANDOM" }],
-					});
-					playerObj.auto = false;
+				// get queue data & verify if guild is registered or not
+				const queueData = await find_DB_Return("music_state", { gid: guild.id });
+				if (queueData.length === 0) {
+					insert_collection("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] });
 					return;
 				}
 
-				const urlGet = "https://www.youtube.com/watch?v=" + relatedGet[0].videoId;
-				const videoInfo = await getInfo(urlGet);
-				const streamData = await stream(urlGet, { quality: 1250, precache: 1000 })!;
-				const resource = createAudioResource(streamData.stream, { inlineVolume: true, inputType: streamData.type });
+				// Get text channel if registered
+				const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
 
-				playerObj.player.play(resource);
-				playerMaps.get(guild.id)!.currentId = videoInfo.videoDetails.videoId;
-				playerMaps.get(guild.id)!.currentTitle = videoInfo.videoDetails.title;
-				playerMaps.get(guild.id)!.currentUrl = urlGet;
-				playerMaps.get(guild.id)!.seekTime = 0;
+				// *if loop
+				if (playerObj.loop) {
+					const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
+					const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
-				// edit embed
-				embedLoading.edit({
-					embeds: [
-						{
-							author: { name: "▶ Autoplaying next song" },
-							title: `${videoInfo.videoDetails.title} ${!videoInfo.videoDetails.isLiveContent ? "🎵" : "📺"}`,
-							description: `**[${videoInfo.videoDetails.title}](${videoInfo.videoDetails.video_url})** by [${videoInfo.videoDetails.author.name}](${videoInfo.videoDetails.ownerProfileUrl})`,
-							fields: [
-								{
-									name: "Live / Duration",
-									value: `${videoInfo.videoDetails.isLiveContent ? "Yes" : "No"} / ${videoInfo.videoDetails.lengthSeconds} seconds`,
-									inline: true,
+					playerObj.player.play(resource);
+					playerMaps.get(guild.id)!.seekTime = 0;
+
+					// send message to channel
+					textChannel.send({
+						embeds: [{ title: `▶ Looping current song`, description: `Now playing: [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }],
+					});
+
+					return;
+				}
+
+				// *if auto
+				if (playerObj.auto) {
+					const embedLoading = await textChannel.send({
+						embeds: [{ title: `⏳ Loading next video in autoplay`, description: `Please wait...`, color: "RANDOM" }],
+					});
+
+					// update related id taken this session
+					playerMaps.get(guild.id)!.relatedIdTakenThisSession.push(playerObj.currentId);
+					// get related videos
+					const relatedGet = await searchClient.getVideo(playerObj.currentId);
+
+					if (!relatedGet) {
+						embedLoading.edit({
+							embeds: [{ title: `⏳ No related video found`, description: `Please try again later`, color: "RANDOM" }],
+						});
+						playerObj.auto = false;
+						return;
+					}
+
+					// filter out related songs that have been played this session
+					let filteredNext = relatedGet.related.items.filter((x) => !playerObj.relatedIdTakenThisSession.includes(x.id)) as (VideoCompact | PlaylistCompact)[];
+					// filter any playListCompact. Playlist compact does not have duration properties
+					// @ts-ignore
+					filteredNext = filteredNext.filter((x) => x.duration);
+					const nextVideo = filteredNext[0] as VideoCompact;
+
+					const urlGet = "https://www.youtube.com/watch?v=" + nextVideo.id;
+					const streamData = await stream(urlGet, { quality: 1250, precache: 1000 })!;
+					const resource = createAudioResource(streamData.stream, { inlineVolume: true, inputType: streamData.type });
+
+					playerObj.player.play(resource);
+					playerMaps.get(guild.id)!.currentId = nextVideo.id;
+					playerMaps.get(guild.id)!.currentTitle = nextVideo.title;
+					playerMaps.get(guild.id)!.currentUrl = urlGet;
+					playerMaps.get(guild.id)!.seekTime = 0;
+
+					// edit embed
+					embedLoading.edit({
+						embeds: [
+							{
+								author: { name: "▶ Autoplaying next song" },
+								title: `Now playing ${!nextVideo.isLive ? "🎵" : "📺"}`,
+								description: `**[${nextVideo.title}](${urlGet})** ${nextVideo.channel ? `by [${nextVideo.channel?.name}](${nextVideo.channel?.url})` : ``}`,
+								fields: [
+									{
+										name: "Live / Duration",
+										value: `${nextVideo.isLive ? "Yes" : "No"} / ${nextVideo.duration} seconds`,
+										inline: true,
+									},
+									{
+										name: "Views",
+										value: nextVideo.viewCount ? `${nextVideo.viewCount.toLocaleString()}` : "Unknown",
+										inline: true,
+									},
+									{
+										name: "Upload date",
+										value: `${nextVideo.uploadDate}`,
+										inline: true,
+									},
+								],
+								color: 0x00ff00,
+								thumbnail: {
+									url: `https://img.youtube.com/vi/${nextVideo.id}/hqdefault.jpg`,
 								},
-								{
-									name: "Views / Likes",
-									value: `${parseInt(videoInfo.videoDetails.viewCount).toLocaleString()} / ${videoInfo.videoDetails.likes ? videoInfo.videoDetails.likes.toLocaleString() : 0}`,
-									inline: true,
-								},
-								{
-									name: "Upload date",
-									value: `${videoInfo.videoDetails.uploadDate}`,
-									inline: true,
-								},
-							],
-							color: 0x00ff00,
-							thumbnail: {
-								url: `https://img.youtube.com/vi/${videoInfo.videoDetails.videoId}/hqdefault.jpg`,
 							},
-						},
-					],
-				});
+						],
+					});
 
-				return;
-			}
+					return;
+				}
 
-			// *if not loop and auto check if queue is empty or not
-			const queue = queueData[0].queue;
-			if (queue.length > 0) {
-				// *if queue is not empty
-				const nextSong = queue.shift();
-				const streamInfo = await stream(nextSong.link, { quality: 1250, precache: 1000 })!;
-				const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
+				// *if not loop and auto check if queue is empty or not
+				const queue = queueData[0].queue;
+				if (queue.length > 0) {
+					// *if queue is not empty
+					const nextSong = queue.shift();
+					const streamInfo = await stream(nextSong.link, { quality: 1250, precache: 1000 })!;
+					const resource = createAudioResource(streamInfo.stream, { inlineVolume: true, inputType: streamInfo.type });
 
-				playerObj.player.play(resource);
-				playerMaps.get(guild.id)!.currentId = nextSong.id;
-				playerMaps.get(guild.id)!.currentTitle = nextSong.title;
-				playerMaps.get(guild.id)!.currentUrl = nextSong.link;
-				playerMaps.get(guild.id)!.seekTime = 0;
-				playerMaps.get(guild.id)!.query = nextSong.query;
-				updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
+					playerObj.player.play(resource);
+					playerMaps.get(guild.id)!.currentId = nextSong.id;
+					playerMaps.get(guild.id)!.currentTitle = nextSong.title;
+					playerMaps.get(guild.id)!.currentUrl = nextSong.link;
+					playerMaps.get(guild.id)!.seekTime = 0;
+					playerMaps.get(guild.id)!.query = nextSong.query;
+					updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
 
-				// send message to channel
-				textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
-			} else {
-				// *if queue is empty
-				updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
-				playerMaps.get(guild.id)!.seekTime = 0;
+					// send message to channel
+					textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
+				} else {
+					// *if queue is empty
+					updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
+					playerMaps.get(guild.id)!.seekTime = 0;
 
-				// send message telling finished playing all songs
-				textChannel.send({
-					embeds: [
-						{
-							author: { name: "Finished playing all songs" },
-							description: "Bot will automatically leave the VC in 5 minutes if no more song is playing.",
-							color: "RANDOM",
-						},
-					],
-				});
+					// send message telling finished playing all songs
+					textChannel.send({
+						embeds: [
+							{
+								author: { name: "Finished playing all songs" },
+								description: "Bot will automatically leave the VC in 5 minutes if no more song is playing.",
+								color: "RANDOM",
+							},
+						],
+					});
 
-				// start timeout
-				playerObj.timeOutIdle = setTimeout(() => {
-					if (getVoiceConnection(guild.id)) getVoiceConnection(guild.id)?.destroy();
-					else guild.me?.voice.disconnect();
+					// start timeout
+					playerObj.timeOutIdle = setTimeout(() => {
+						if (getVoiceConnection(guild.id)) getVoiceConnection(guild.id)?.destroy();
+						else guild.me?.voice.disconnect();
 
-					// stop player
-					playerObj.player.stop();
-				}, 300000); // 5 minutes
+						playerMaps.get(guild.id)!.relatedIdTakenThisSession = []; // reset relatedIdTaken
+						playerObj.player.stop(); // stop player
+					}, 300000); // 5 minutes
+				}
+			} catch (err) {
+				console.log(`[${new Date().toLocaleString()}]`);
+				console.error(err);
 			}
 		});
 	}

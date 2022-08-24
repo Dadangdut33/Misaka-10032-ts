@@ -39,6 +39,7 @@ module.exports = class extends Command {
 			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
+		playerObj.relatedIdTakenThisSession = [];
 		playerObj.player.stop();
 
 		return message.reply({ content: `👌 **Left** \`${vc.name}\``, allowedMentions: { repliedUser: false } });

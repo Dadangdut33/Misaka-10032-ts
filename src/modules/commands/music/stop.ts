@@ -35,11 +35,16 @@ module.exports = class extends Command {
 		// stop current music
 		if (playerObj.player.state.status === "playing") {
 			const wasLoop = playerObj.loop;
-			playerObj.player.stop();
+			const wasAuto = playerObj.auto;
+			playerObj.relatedIdTakenThisSession = [];
 			playerObj.auto = false;
 			playerObj.loop = false;
+			playerObj.player.stop();
 
-			return message.reply({ content: `⏹ **Stopped radio.**${wasLoop ? ` Loop mode disabled automatically` : ``}`, allowedMentions: { repliedUser: false } });
+			return message.reply({
+				content: `⏹ **Stopped radio.**${wasLoop ? ` Loop mode disabled automatically.` : ``} ${wasAuto ? ` Auto mode disabled automatically.` : ``}`,
+				allowedMentions: { repliedUser: false },
+			});
 		} else {
 			return message.reply({ content: `⛔ **Radio is not playing anything!**`, allowedMentions: { repliedUser: false } });
 		}
