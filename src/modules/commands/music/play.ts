@@ -19,7 +19,7 @@ module.exports = class extends Command {
 			- [**[phonk]**](https://youtu.be/dkD5uSz2jvM) - ＣＨＩＬＬ ＰＨＯＮＫ Radio | lofi trap, phonk house, drift phonk, wave @Smooth S o u n d s 🎵.
 			- [**[anisong]**](https://youtu.be/4FBW3mkdKOs) - Anileap アニリープ｜24時間365日アニソンラジオ(βバージョン)｜24/7 anime song live stream beta version\n
 			**Note:** Bot will automatically leave vc if idle (not playing anything) for 5 minutes.`,
-			usage: `\`${prefix}command <search YT video name/valid YT Link/[lofi]/[animelofi]/[piano]/[phonk]>\``,
+			usage: `\`${prefix}command <search YT video name/valid YT Link/[SRB24]/[khb]/[lofi]/[other predefined radio...]>\``,
 			guildOnly: true,
 		});
 	}
