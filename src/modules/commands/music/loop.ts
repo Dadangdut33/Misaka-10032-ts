@@ -6,7 +6,7 @@ module.exports = class extends Command {
 		super("loop", {
 			categories: "music",
 			info: "Enable/disable loop mode to loop current song",
-			usage: `\`${prefix}command/alias\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 	}

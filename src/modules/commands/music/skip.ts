@@ -9,7 +9,7 @@ module.exports = class extends Command {
 		super("skip", {
 			categories: "music",
 			info: "Skip current song",
-			usage: `\`${prefix}command/alias\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 	}

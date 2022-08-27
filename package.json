@@ -61,7 +61,7 @@
 		"vaporwave": "^1.0.4",
 		"weather-js": "^2.0.0",
 		"youtubei": "^1.0.0-rc.5",
-		"ytdl-core": "^4.11.0"
+		"ytdl-core": "^4.11.1"
 	},
 	"engines": {
 		"node": ">=16.x"

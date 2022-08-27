@@ -6,7 +6,7 @@ module.exports = class extends Command {
 		super("auto", {
 			categories: "music",
 			info: "Enable/disable auto mode for the player. Auto mode will automatically play the next recommended video.",
-			usage: `\`${prefix}command/alias\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 	}

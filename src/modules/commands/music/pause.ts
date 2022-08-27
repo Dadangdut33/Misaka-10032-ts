@@ -6,7 +6,7 @@ module.exports = class extends Command {
 		super("pause", {
 			categories: "music",
 			info: "Disconnect from voice channel and stop music",
-			usage: `\`${prefix}command/alias\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 	}

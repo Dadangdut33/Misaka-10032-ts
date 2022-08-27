@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("stop", {
 			categories: "music",
 			info: "Stop and clear current radio queue",
-			usage: `\`${prefix}command/alias\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 	}

@@ -10,7 +10,15 @@ module.exports = class extends Command {
 		super("play", {
 			aliases: ["p"],
 			categories: "music",
-			info: "Play a yt video/live stream. Available predefined radio ('[' and ']' is mandatory):\n- [**[lofi]**](https://youtu.be/5qap5aO4i9A) - lofi hip hop radio - beats to relax/study to\n- [**[animelofi]**](https://youtu.be/WDXPJWIgX-o) - anime lofi hip hop radio - 24/7 chill lofi remixes of anime\n- [**[piano]**](https://youtu.be/xWRHTpqQMGM) - Beautiful Piano Music 24/7 - Study Music, Relaxing Music, Sleep Music, Meditation Music\n- [**[phonk]**](https://youtu.be/Ax4Y5n4f5K8) - 24/7 TRAPPIN IN JAPAN // phonk / lofi hip hop / vapor trap Radio.\n\n**Note:** Bot will automatically leave vc if idle (not playing anything)for 5 minutes.",
+			info: `Play a yt video/live stream. Available predefined radio ('[' and ']' is mandatory):
+			- [**[SRB24]**](https://youtu.be/OK0EInPdATM) - [SRB24 Jam] Siaran 24 Jam
+			- [**[KHB]**](https://youtu.be/wXhTKO9MLy0) - [KHB] Kajian Ilmiah 24/7
+			- [**[lofi]**](https://youtu.be/5qap5aO4i9A) - lofi hip hop radio - beats to relax/study to
+			- [**[animelofi]**](https://youtu.be/WDXPJWIgX-o) - anime lofi hip hop radio - 24/7 chill lofi remixes of anime
+			- [**[piano]**](https://youtu.be/xWRHTpqQMGM) - Beautiful Piano Music 24/7 - Study Music, Relaxing Music, Sleep Music, Meditation Music
+			- [**[phonk]**](https://youtu.be/dkD5uSz2jvM) - ＣＨＩＬＬ ＰＨＯＮＫ Radio | lofi trap, phonk house, drift phonk, wave @Smooth S o u n d s 🎵.
+			- [**[anisong]**](https://youtu.be/4FBW3mkdKOs) - Anileap アニリープ｜24時間365日アニソンラジオ(βバージョン)｜24/7 anime song live stream beta version\n
+			**Note:** Bot will automatically leave vc if idle (not playing anything) for 5 minutes.`,
 			usage: `\`${prefix}command <search YT video name/valid YT Link/[lofi]/[animelofi]/[piano]/[phonk]>\``,
 			guildOnly: true,
 		});
@@ -70,11 +78,14 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const radioDict: any = {
+			"[srb24]": "https://youtu.be/OK0EInPdATM",
+			"[khb]": "https://youtu.be/wXhTKO9MLy0",
 			"[lofi]": "https://youtu.be/jfKfPfyJRdk",
 			"[lofisleep]": "https://youtu.be/rUxyKA_-grg",
 			"[animelofi]": "https://youtu.be/WDXPJWIgX-o",
 			"[piano]": "https://youtu.be/xWRHTpqQMGM",
-			"[phonk]": "https://youtu.be/Ax4Y5n4f5K8",
+			"[phonk]": "https://youtu.be/dkD5uSz2jvM",
+			"[anisong]": "https://youtu.be/4FBW3mkdKOs",
 		};
 
 		// get data
@@ -86,7 +97,7 @@ module.exports = class extends Command {
 
 		let link: string = "";
 		// check if args is a predefined radio
-		if (radioDict[args[0]]) link = radioDict[args[0]];
+		if (radioDict[args[0].toLowerCase()]) link = radioDict[args[0].toLowerCase()];
 		else {
 			// check if link or not
 			if (validateURL(args[0])) {

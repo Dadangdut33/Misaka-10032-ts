@@ -226,20 +226,21 @@ export class Handler {
 		// set events for the set player
 		const playerObj = playerMaps.get(guild.id)!;
 		playerObj.player.on("stateChange", async () => {
+			// verify if idle or stopped
+			if (playerObj.player.state.status !== "idle") return;
+
+			// get queue data & verify if guild is registered or not
+			const queueData = await find_DB_Return("music_state", { gid: guild.id });
+			if (queueData.length === 0) {
+				insert_collection("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] });
+				return;
+			}
+
+			// Get text channel if registered
+			const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
+			const msgInfo = await textChannel.send({ embeds: [{ title: "Loading queue...", color: 0x00ff00 }] });
+
 			try {
-				// verify if idle or stopped
-				if (playerObj.player.state.status !== "idle") return;
-
-				// get queue data & verify if guild is registered or not
-				const queueData = await find_DB_Return("music_state", { gid: guild.id });
-				if (queueData.length === 0) {
-					insert_collection("music_state", { gid: guild.id, vc_id: "", tc_id: "", queue: [] });
-					return;
-				}
-
-				// Get text channel if registered
-				const textChannel = client.channels.cache.get(queueData[0].tc_id) as TextChannel;
-
 				// *if loop
 				if (playerObj.loop) {
 					const streamInfo = await stream(playerObj.currentUrl, { quality: 1250, precache: 1000 })!;
@@ -249,18 +250,14 @@ export class Handler {
 					playerMaps.get(guild.id)!.seekTime = 0;
 
 					// send message to channel
-					textChannel.send({
-						embeds: [{ title: `▶ Looping current song`, description: `Now playing: [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }],
-					});
+					msgInfo.edit({ embeds: [{ title: `▶ Looping current song`, description: `Now playing: [${playerObj.currentTitle}](${playerObj.currentUrl})`, color: "RANDOM" }] });
 
 					return;
 				}
 
 				// *if auto
 				if (playerObj.auto) {
-					const embedLoading = await textChannel.send({
-						embeds: [{ title: `⏳ Loading next video in autoplay`, description: `Please wait...`, color: "RANDOM" }],
-					});
+					msgInfo.edit({ embeds: [{ title: `⏳ Loading next video in autoplay`, description: `Please wait...`, color: "RANDOM" }] });
 
 					// update related id taken this session
 					playerMaps.get(guild.id)!.relatedIdTakenThisSession.push(playerObj.currentId);
@@ -268,9 +265,7 @@ export class Handler {
 					const relatedGet = await searchClient.getVideo(playerObj.currentId);
 
 					if (!relatedGet) {
-						embedLoading.edit({
-							embeds: [{ title: `⏳ No related video found`, description: `Please try again later`, color: "RANDOM" }],
-						});
+						msgInfo.edit({ embeds: [{ title: `⏳ No related video found`, description: `Please try again later`, color: "RANDOM" }] });
 						playerObj.auto = false;
 						return;
 					}
@@ -293,7 +288,7 @@ export class Handler {
 					playerMaps.get(guild.id)!.seekTime = 0;
 
 					// edit embed
-					embedLoading.edit({
+					msgInfo.edit({
 						embeds: [
 							{
 								author: { name: "▶ Autoplaying next song" },
@@ -344,17 +339,17 @@ export class Handler {
 					updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: queue } }); // update queue data
 
 					// send message to channel
-					textChannel.send({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
+					msgInfo.edit({ embeds: [{ title: `▶ Continuing next song in queue`, description: `Now playing: [${nextSong.title}](${nextSong.link})`, color: "RANDOM" }] });
 				} else {
 					// *if queue is empty
 					updateOne_Collection("music_state", { gid: guild.id }, { $set: { queue: [] } }); // update queue data
 					playerMaps.get(guild.id)!.seekTime = 0;
 
 					// send message telling finished playing all songs
-					textChannel.send({
+					msgInfo.edit({
 						embeds: [
 							{
-								author: { name: "Finished playing all songs" },
+								title: "Finished playing all songs",
 								description: "Bot will automatically leave the VC in 5 minutes if no more song is playing.",
 								color: "RANDOM",
 							},
@@ -373,6 +368,7 @@ export class Handler {
 			} catch (err) {
 				console.log(`[${new Date().toLocaleString()}]`);
 				console.error(err);
+				msgInfo.edit({ embeds: [{ title: "Error", description: `An error occured while trying to play the song.\n\n\`\`\`${err}\`\`\``, color: "RANDOM" }] });
 			}
 		});
 	}

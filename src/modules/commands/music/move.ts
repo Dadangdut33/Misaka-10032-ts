@@ -7,7 +7,7 @@ module.exports = class extends Command {
 		super("move", {
 			categories: "music",
 			info: "Move to user's connected voice channel",
-			usage: `\`${prefix}command/alias\``,
+			usage: `\`${prefix}command\``,
 			guildOnly: true,
 		});
 	}
