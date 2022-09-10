@@ -172,7 +172,7 @@ module.exports = class extends Command {
 			playerObj = musicP.get(guild.id)!;
 		}
 
-		const mReply = await message.reply({ content: `🎶 **Loading** \`${link}\``, allowedMentions: { repliedUser: false } });
+		const mReply = await message.reply({ content: `🎶 **Getting info** \`${link}\``, allowedMentions: { repliedUser: false } });
 		try {
 			const videoInfo = await getInfo(link);
 			mReply.edit({ content: `🎶 **Loading** \`${videoInfo.videoDetails.title}\`` });
