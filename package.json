@@ -59,8 +59,7 @@
 		"vaporwave": "^1.0.4",
 		"weather-js": "^2.0.0",
 		"youtubei": "^1.0.0-rc.5",
-		"ytdl-core": "^4.11.2",
-		"windows-build-tools": "^5.2.2"
+		"ytdl-core": "^4.11.2"
 	},
 	"engines": {
 		"node": ">=16.x"
