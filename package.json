@@ -10,9 +10,7 @@
 		"build:run": "node prod/index.js",
 		"build:watch": "nodemon prod/index.js",
 		"dev": "rimraf prod && tsc && node prod/index.js",
-		"dev:ts": "ts-node src/index.ts",
-		"tsc": "./node_modules/typescript/bin/tsc",
-		"postinstall": "npm run tsc"
+		"dev:ts": "ts-node src/index.ts"
 	},
 	"license": "MIT",
 	"dependencies": {
