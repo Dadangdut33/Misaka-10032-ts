@@ -194,10 +194,6 @@ export const activity: activityInterface[] = [
 	},
 	{
 		type: "PLAYING",
-		desc: "Running on heroku",
-	},
-	{
-		type: "PLAYING",
 		desc: "Running with no problems (I hope)",
 	},
 	{
