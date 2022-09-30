@@ -5,6 +5,7 @@
 	"main": "./src/index.ts",
 	"private": true,
 	"scripts": {
+		"preinstall": "npm install --save @discordjs/opus@0.8.0 --python=python3.9",
 		"start": "node prod/index.js",
 		"build": "tsc",
 		"build:run": "node prod/index.js",
