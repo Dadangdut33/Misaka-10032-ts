@@ -17,7 +17,7 @@ First clone the repo and install all the packages by doing `npm install` or `npm
 
 Alternatively, you can build/compile the bot to js by doing `npm run build`. You can also start the builded version by doing `npm run start-build`. Or you can build and run the file directly by running `npm run build-run`.
 
-This project is hosted on heroku hence why there are `tsc` and `postinstall` commands in the package.json file.
+This bot is hosted on [cyclic](https://app.cyclic.sh).
 
 ## 🔑 Project ENV
 
