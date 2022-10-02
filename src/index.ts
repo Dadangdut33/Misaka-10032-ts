@@ -1,5 +1,5 @@
 import mongoose from "mongoose"; // db
-import express, { Request, Response } from "express"; // keep alive by setting up a server and pinging it (if not premium)
+import express, { Request, Response } from "express";
 const app = express();
 const port = process.env.PORT || 10032;
 
@@ -21,6 +21,7 @@ const client = new Client({ intents: 32767, allowedMentions: { parse: ["users", 
 // v12
 // const client = new Client({ disableMentions: "none", partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"] }); // partials is for cache
 
+// Start the bot and connect to the database
 (async () => {
 	// verify env
 	if (!process.env.TOKEN) throw new Error("ERROR!!! Token is not set");

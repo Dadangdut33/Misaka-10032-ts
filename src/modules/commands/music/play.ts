@@ -1,4 +1,4 @@
-import { Message, VoiceBasedChannel, Guild } from "discord.js";
+import { Message } from "discord.js";
 import { Command, handlerLoadOptionsInterface, musicSettingsInterface, addNewPlayerArgsInterface } from "../../../handler";
 import { getVoiceConnection, joinVoiceChannel, DiscordGatewayAdapterCreator, createAudioResource } from "@discordjs/voice";
 import { getInfo, validateURL, videoInfo } from "ytdl-core";
@@ -22,21 +22,6 @@ module.exports = class extends Command {
 			usage: `\`${prefix}command <search YT video name/valid YT Link/[SRB24]/[khb]/[lofi]/[other predefined radio...]>\``,
 			guildOnly: true,
 		});
-	}
-
-	joinVcChannel(message: Message, vc: VoiceBasedChannel, guild: Guild) {
-		let con;
-		try {
-			con = joinVoiceChannel({
-				channelId: vc.id,
-				guildId: guild.id,
-				adapterCreator: guild.voiceAdapterCreator! as DiscordGatewayAdapterCreator,
-			});
-		} catch (error) {
-			message.reply({ content: `⛔ **An error occured!**\n${error}`, allowedMentions: { repliedUser: false } });
-		} finally {
-			return con;
-		}
 	}
 
 	sendVideoInfo(message: Message, title: string, videoInfo: videoInfo) {
@@ -78,7 +63,7 @@ module.exports = class extends Command {
 
 	async run(message: Message, args: string[], { musicP, addNewPlayer }: { musicP: musicSettingsInterface; addNewPlayer: addNewPlayerArgsInterface }) {
 		const radioDict: any = {
-			"[srb24]": "https://youtu.be/OK0EInPdATM",
+			"[srb24]": "https://youtu.be/U12qZmEpBwQ",
 			"[khb]": "https://youtu.be/wXhTKO9MLy0",
 			"[lofi]": "https://youtu.be/jfKfPfyJRdk",
 			"[lofisleep]": "https://youtu.be/rUxyKA_-grg",
@@ -89,8 +74,8 @@ module.exports = class extends Command {
 		};
 
 		// get data
-		const user = message.member!;
-		const guild = message.guild!;
+		const user = message.member!,
+			guild = message.guild!;
 
 		// check if user is in vc or not
 		if (!user.voice.channel) return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
@@ -154,15 +139,16 @@ module.exports = class extends Command {
 		let voiceConnection = getVoiceConnection(guild.id);
 
 		// if bot not in vc join vc
-		if (!getVoiceConnection(guild.id)) voiceConnection = this.joinVcChannel(message, vc, guild); // join vc
+		if (!getVoiceConnection(guild.id) || !guild.me?.voice.channel)
+			voiceConnection = joinVoiceChannel({
+				channelId: vc.id,
+				guildId: guild.id,
+				adapterCreator: guild.voiceAdapterCreator! as DiscordGatewayAdapterCreator,
+			});
 		else {
 			// if bot is in vc but is not the same as user vc tell user to use move command first
-			if (guild.me?.voice.channel?.id !== vc.id) {
-				return message.reply({
-					content: "⚠ Bot is already connected to another voice channel. Use the `move` command first to move the bot to another channel",
-					allowedMentions: { repliedUser: false },
-				});
-			}
+			if (guild.me?.voice.channel?.id !== vc.id)
+				return message.reply({ content: "⚠ Bot is already connected to another voice channel. Use the `move` command first to move the bot to another channel" });
 		}
 
 		// get player
@@ -173,53 +159,49 @@ module.exports = class extends Command {
 		}
 
 		const mReply = await message.reply({ content: `🎶 **Getting info** \`${link}\``, allowedMentions: { repliedUser: false } });
-		try {
-			const videoInfo = await getInfo(link);
-			mReply.edit({ content: `🎶 **Loading** \`${videoInfo.videoDetails.title}\`` });
+		const videoInfo = await getInfo(link);
+		mReply.edit({ content: `🎶 **Loading** \`${videoInfo.videoDetails.title}\`` });
 
-			// get video resource
-			const queueItem = {
-				id: videoInfo.videoDetails.videoId,
-				type: videoInfo.videoDetails.isLiveContent ? "live" : "video",
-				title: videoInfo.videoDetails.title,
-				link: link,
-				query: args.join(" "),
-			};
+		// get video resource
+		const queueItem = {
+			id: videoInfo.videoDetails.videoId,
+			type: videoInfo.videoDetails.isLiveContent ? "live" : "video",
+			title: videoInfo.videoDetails.title,
+			link: link,
+			query: args.join(" "),
+		};
 
-			playerObj.currentId = queueItem.id;
-			playerObj.currentTitle = queueItem.title;
-			playerObj.currentUrl = queueItem.link;
-			playerObj.seekTime = 0;
-			clearTimeout(playerObj.timeOutIdle);
+		playerObj.currentId = queueItem.id;
+		playerObj.currentTitle = queueItem.title;
+		playerObj.currentUrl = queueItem.link;
+		playerObj.seekTime = 0;
+		clearTimeout(playerObj.timeOutIdle);
 
-			// 1st play
-			if (playerObj.player.state.status !== "playing") {
-				// connect
-				const resource = await this.getVideoResource(link);
-				voiceConnection!.subscribe(playerObj.player);
-				playerObj.player.play(resource);
-				playerObj.query = args.join(" ");
+		// 1st play
+		if (playerObj.player.state.status !== "playing") {
+			// connect
+			const resource = await this.getVideoResource(link);
+			voiceConnection!.subscribe(playerObj.player);
+			playerObj.player.play(resource);
+			playerObj.query = args.join(" ");
 
-				// check db set or not
-				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
-				if (checkExist.length === 0) insert_collection("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [] });
-				else updateOne_Collection("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
+			// check db set or not
+			let checkExist = await find_DB_Return("music_state", { gid: guild.id });
+			if (checkExist.length === 0) insert_collection("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [] });
+			else updateOne_Collection("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id } });
 
-				// send info
-				this.sendVideoInfo(message, "Now Playing", videoInfo);
-				mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
-			} else {
-				// add to queue
-				// check db set or not
-				let checkExist = await find_DB_Return("music_state", { gid: guild.id });
-				if (!checkExist) insert_collection("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [queueItem] });
-				else updateOne_Collection("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
+			// send info
+			this.sendVideoInfo(message, "Now Playing", videoInfo);
+			mReply.edit({ content: `🎶 **Playing** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
+		} else {
+			// add to queue
+			// check db set or not
+			let checkExist = await find_DB_Return("music_state", { gid: guild.id });
+			if (!checkExist) insert_collection("music_state", { gid: guild.id, vc_id: vc.id, tc_id: message.channel.id, queue: [queueItem] });
+			else updateOne_Collection("music_state", { gid: guild.id }, { $set: { vc_id: vc.id, tc_id: message.channel.id }, $push: { queue: queueItem } });
 
-				this.sendVideoInfo(message, "Added to queue", videoInfo);
-				mReply.edit({ content: `🎶 **Added to queue** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
-			}
-		} catch (error) {
-			mReply.edit({ content: `⛔ **An error occured!**\n\`${error}\``, allowedMentions: { repliedUser: false } });
+			this.sendVideoInfo(message, "Added to queue", videoInfo);
+			mReply.edit({ content: `🎶 **Added to queue** \`${videoInfo.videoDetails.title}\``, allowedMentions: { repliedUser: false } });
 		}
 	}
 };

@@ -17,16 +17,12 @@ module.exports = class extends Command {
 		const guild = message.guild!;
 
 		// check if user is in vc or not
-		if (!user.voice.channel) {
-			return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
-		}
-
+		if (!user.voice.channel) return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
 		const vc = user.voice.channel;
 
 		// check if bot is in vc or not
-		if (guild.me?.voice.channel && getVoiceConnection(guild.id)) {
+		if (guild.me?.voice.channel && getVoiceConnection(guild.id))
 			return message.reply({ content: "⛔ **Bot is already in a voice channel!** Use `move` command if you want to change it's location", allowedMentions: { repliedUser: false } });
-		}
 
 		// join vc
 		joinVoiceChannel({

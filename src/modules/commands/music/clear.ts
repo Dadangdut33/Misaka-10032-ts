@@ -17,14 +17,10 @@ module.exports = class extends Command {
 		const user = message.member!;
 		const guild = message.guild!;
 		// check if user is in vc or not
-		if (!user.voice.channel) {
-			return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
-		}
+		if (!user.voice.channel) return message.reply({ content: "⛔ **You must be in a voice channel to use this command!**", allowedMentions: { repliedUser: false } });
 
 		// check if bot is in vc or not
-		if (!getVoiceConnection(guild.id)) {
-			return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
-		}
+		if (!getVoiceConnection(guild.id)) return message.reply({ content: "⛔ **Bot is not connected to any voice channel!**", allowedMentions: { repliedUser: false } });
 
 		// get player
 		let playerObj = musicP.get(guild.id)!;

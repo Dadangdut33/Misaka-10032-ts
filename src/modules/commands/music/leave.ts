@@ -39,9 +39,17 @@ module.exports = class extends Command {
 			addNewPlayer(guild, musicP, message.client);
 			playerObj = musicP.get(guild.id)!;
 		}
+
+		const wasLoop = playerObj.loop;
+		const wasAuto = playerObj.auto;
 		playerObj.relatedIdTakenThisSession = [];
+		playerObj.auto = false;
+		playerObj.loop = false;
 		playerObj.player.stop();
 
-		return message.reply({ content: `👌 **Left** \`${vc.name}\``, allowedMentions: { repliedUser: false } });
+		return message.reply({
+			content: `👌 **Left** \`${vc.name}\`${wasLoop ? ` Loop mode disabled automatically.` : ``} ${wasAuto ? ` Auto mode disabled automatically.` : ``}`,
+			allowedMentions: { repliedUser: false },
+		});
 	}
 };
