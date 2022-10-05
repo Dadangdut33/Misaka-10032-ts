@@ -1,6 +1,6 @@
 # Misaka-10032
 
-A Personal discord bot that I code and use for my private discord server. Now uses discord.js v13 and typescript.
+A Personal discord bot that I code and use for my personal discord server. Now uses discord.js v13 and typescript.
 
 <details open>
   <summary><b>Preview</b></summary>
