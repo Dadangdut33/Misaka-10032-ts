@@ -32,11 +32,16 @@ module.exports = class extends BotEvent {
 
 				let count = 0;
 				const msg = await reaction.message.channel.messages.fetch(reaction.message.id);
+				const everyone = reaction.message.guild.roles.everyone;
+
 				// make sure user is not bot
 				if (user.bot || msg.author.bot) return;
 
 				// make sure reaction is not in news channel or dm also make sure raction is not in same channel as highlightChannel
 				if (reaction.message.channel.type === "GUILD_NEWS" || reaction.message.channel.type === "DM" || reaction.message.channel === channel) return;
+
+				// make sure everyone has access to it
+				if (!(msg.channel as TextChannel).permissionsFor(everyone).has("VIEW_CHANNEL")) return;
 
 				reaction.message.reactions.cache.map(async (reaction) => {
 					count = count + reaction.count!;
